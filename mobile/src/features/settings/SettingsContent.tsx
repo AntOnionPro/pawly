@@ -1,12 +1,18 @@
 import { useTranslation } from 'react-i18next';
 
+import { Group } from '@/components/Group';
+import { NavRow } from '@/components/NavRow';
 import { OptionGroup, type Option } from '@/components/OptionGroup';
 import type { LanguagePreference } from '@/i18n';
 import { usePreferences } from '@/preferences/PreferencesProvider';
 import type { ThemePreference } from '@/preferences/storage';
 
-/** Theme and language choices. Rendered by the `/settings` route. */
-export function SettingsContent() {
+interface SettingsContentProps {
+  onOpenLegal?: (doc: 'terms' | 'privacy') => void;
+}
+
+/** Theme, language and legal documents. Rendered by the `/settings` route. */
+export function SettingsContent({ onOpenLegal }: SettingsContentProps) {
   const { t } = useTranslation();
   const { theme, language, setTheme, setLanguage } = usePreferences();
 
@@ -37,6 +43,21 @@ export function SettingsContent() {
         selected={language}
         onSelect={setLanguage}
       />
+      {onOpenLegal ? (
+        <Group title={t('settings.legal')}>
+          <NavRow
+            icon="document"
+            label={t('legal.terms.title')}
+            onPress={() => onOpenLegal('terms')}
+          />
+          <NavRow
+            icon="document"
+            label={t('legal.privacy.title')}
+            onPress={() => onOpenLegal('privacy')}
+            divider
+          />
+        </Group>
+      ) : null}
     </>
   );
 }

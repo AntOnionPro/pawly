@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import { useThemeColors } from '@/preferences/PreferencesProvider';
@@ -10,14 +10,21 @@ interface ScreenProps extends PropsWithChildren {
   edges?: Edge[];
 }
 
-/** Scrollable screen with the theme background and safe area padding. */
+/** Scrollable screen with the theme background, safe area padding and room for the keyboard. */
 export function Screen({ children, edges = ['top'] }: ScreenProps) {
   const colors = useThemeColors();
   return (
     <SafeAreaView edges={edges} style={[styles.root, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={styles.content} contentInsetAdjustmentBehavior="automatic">
-        {children}
-      </ScrollView>
+      <KeyboardAvoidingView
+        style={styles.root}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          contentInsetAdjustmentBehavior="automatic"
+          keyboardShouldPersistTaps="handled">
+          {children}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
