@@ -39,10 +39,10 @@ bin/pocketbase superuser upsert you@example.com 'a-long-password' --dir pb_data
 
 ## Scripts
 
-| Command            | What it does                                                         |
-| ------------------ | -------------------------------------------------------------------- |
-| `npm run download` | Downloads the pinned PocketBase version into `bin/`.                 |
-| `npm run dev`      | Starts PocketBase for development.                                   |
+| Command            | What it does                                                            |
+| ------------------ | ----------------------------------------------------------------------- |
+| `npm run download` | Downloads the pinned PocketBase version into `bin/`.                    |
+| `npm run dev`      | Starts PocketBase for development.                                      |
 | `npm test`         | Starts PocketBase on a temporary database and runs the tests (`test/`). |
 
 ## Structure
@@ -57,6 +57,35 @@ server/
 ├── bin/                  PocketBase binary (not in git)
 └── pb_data/              Local database and files (not in git)
 ```
+
+## Accounts
+
+The `users` collection holds the accounts (stage 1):
+
+| Field             | Visible to      | Notes                                                                                |
+| ----------------- | --------------- | ------------------------------------------------------------------------------------ |
+| `username`        | Everyone        | 3–30 characters: lowercase letters, numbers, `.` and `_`. Unique regardless of case. |
+| `bio`             | Everyone        | Up to 150 characters.                                                                |
+| `avatar`          | Everyone        | JPEG, PNG, WebP or HEIC, up to 5 MB, with 100×100 and 400×400 thumbnails.            |
+| `email`           | Owner only      |                                                                                      |
+| `birthdate`       | Nobody (hidden) | Set at sign-up and cannot be changed.                                                |
+| `termsAcceptedAt` | Nobody (hidden) | Set by the server at sign-up.                                                        |
+
+Rules enforced in `pb_hooks/accounts.pb.js`:
+
+- **Sign-up** sends `username`, `email`, `password`, `passwordConfirm`, `dateOfBirth` and `acceptTerms: true`. The birth date goes as `dateOfBirth` because PocketBase drops hidden fields from a user's request; the hook validates it (13 or older) and stores it in `birthdate`. Field errors: `dateOfBirth` (`birthdate_required`, `birthdate_invalid`, `too_young`) and `acceptTerms` (`terms_required`).
+- **Verification:** the email is sent right after sign-up. Only verified accounts can sign in: an unverified account gets **403**, a wrong password gets **400**.
+- **Profiles:** anyone can view one; listing them requires a session; each user edits and deletes only their own account.
+
+### Emails during development
+
+Without SMTP configured, emails are not sent: they are printed in the server console with their link, for example:
+
+```text
+[pawly-mail] to=luna@example.com subject="Verifica tu correo de Pawly / Verify your Pawly email" link=http://localhost:8090/_/#/auth/confirm-verification/…
+```
+
+Open the link in the computer's browser to verify the account or reset the password. Real email (SMTP) is configured in stage 8.
 
 ## How to change the database
 
