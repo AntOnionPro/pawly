@@ -1,0 +1,96 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fireEvent, render, screen, within } from '@testing-library/react-native';
+import { getLocales } from 'expo-localization';
+import { Appearance } from 'react-native';
+
+import { SettingsContent } from '@/features/settings/SettingsContent';
+import { PreferencesProvider, usePreferences } from '@/preferences/PreferencesProvider';
+import { PREFERENCES_KEY } from '@/preferences/storage';
+
+jest.mock('expo-localization', () => {
+  const locales = jest.fn(() => [{ languageCode: 'es', languageTag: 'es-MX' }]);
+  return { getLocales: locales, useLocales: () => locales() };
+});
+
+function ReadyGate({ children }: { children: React.ReactNode }) {
+  const { ready } = usePreferences();
+  return ready ? children : null;
+}
+
+async function renderSettings() {
+  await render(
+    <PreferencesProvider>
+      <ReadyGate>
+        <SettingsContent />
+      </ReadyGate>
+    </PreferencesProvider>,
+  );
+  await screen.findByLabelText(/^(Tema|Theme)$/);
+}
+
+// Option groups are labelled containers (not focusable themselves), so find them by label.
+const themeGroup = () => within(screen.getByLabelText(/^(Tema|Theme)$/));
+const languageGroup = () => within(screen.getByLabelText(/^(Idioma|Language)$/));
+
+describe('SettingsContent', () => {
+  beforeEach(async () => {
+    await AsyncStorage.clear();
+    jest
+      .mocked(getLocales)
+      .mockReturnValue([
+        { languageCode: 'es', languageTag: 'es-MX' } as ReturnType<typeof getLocales>[number],
+      ]);
+  });
+
+  it('follows the phone language and system theme by default', async () => {
+    await renderSettings();
+    expect(screen.getByText('Tema')).toBeOnTheScreen();
+    expect(themeGroup().getByRole('radio', { name: 'Sistema', checked: true })).toBeOnTheScreen();
+    expect(
+      languageGroup().getByRole('radio', { name: 'Sistema', checked: true }),
+    ).toBeOnTheScreen();
+  });
+
+  it('falls back to English when the phone language is not supported', async () => {
+    jest
+      .mocked(getLocales)
+      .mockReturnValue([
+        { languageCode: 'fr', languageTag: 'fr-FR' } as ReturnType<typeof getLocales>[number],
+      ]);
+    await renderSettings();
+    expect(screen.getByText('Theme')).toBeOnTheScreen();
+  });
+
+  it('switches the language and saves the choice', async () => {
+    await renderSettings();
+    await fireEvent.press(languageGroup().getByRole('radio', { name: 'English' }));
+    expect(screen.getByText('Theme')).toBeOnTheScreen();
+    expect(
+      languageGroup().getByRole('radio', { name: 'English', checked: true }),
+    ).toBeOnTheScreen();
+    expect(JSON.parse((await AsyncStorage.getItem(PREFERENCES_KEY)) ?? '{}')).toEqual({
+      theme: 'system',
+      language: 'en',
+    });
+  });
+
+  it('applies the dark theme to native views and saves it', async () => {
+    const setColorScheme = jest.spyOn(Appearance, 'setColorScheme');
+    await renderSettings();
+    await fireEvent.press(themeGroup().getByRole('radio', { name: 'Oscuro' }));
+    expect(setColorScheme).toHaveBeenLastCalledWith('dark');
+    expect(themeGroup().getByRole('radio', { name: 'Oscuro', checked: true })).toBeOnTheScreen();
+    expect(JSON.parse((await AsyncStorage.getItem(PREFERENCES_KEY)) ?? '{}')).toMatchObject({
+      theme: 'dark',
+    });
+  });
+
+  it('restores saved preferences on start', async () => {
+    await AsyncStorage.setItem(PREFERENCES_KEY, '{"theme":"light","language":"en"}');
+    await renderSettings();
+    expect(themeGroup().getByRole('radio', { name: 'Light', checked: true })).toBeOnTheScreen();
+    expect(
+      languageGroup().getByRole('radio', { name: 'English', checked: true }),
+    ).toBeOnTheScreen();
+  });
+});
