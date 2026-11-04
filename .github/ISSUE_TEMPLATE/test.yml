@@ -1,0 +1,89 @@
+name: Agregar o Actualizar Pruebas
+description: Crea una tarea para escribir nuevas pruebas o actualizar pruebas existentes en el directorio `test/`.
+title: "[Test]: "
+labels: [test]
+# El creador del issue se asigna automáticamente con .github/workflows/auto-assign.yml
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🧪 Agregar o Actualizar Pruebas
+        Completa este formulario para documentar el trabajo relacionado con pruebas unitarias, de integración o end-to-end. Esto puede incluir agregar nuevos tests, actualizar tests existentes o mejorar la cobertura.
+
+  - type: input
+    id: test-summary
+    attributes:
+      label: 📌 Resumen de la Tarea de Pruebas
+      placeholder: "Ej: Agregar pruebas unitarias para el módulo de login"
+      description: |
+        Proporciona un resumen breve del objetivo principal de esta tarea de pruebas.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📜 Descripción Detallada
+      description: |
+        Describe qué funcionalidades serán probadas, qué tipo de pruebas se están creando o actualizando (unitarias, integración, e2e) y la motivación detrás de estos cambios.
+        Para más detalles sobre buenas prácticas de pruebas, consulta [Guía de Estrategias de Pruebas de Software](https://martinfowler.com/articles/practical-test-pyramid.html) (haz clic derecho para abrir en nueva pestaña).
+      placeholder: |
+        Se agregarán pruebas unitarias para validar el flujo de autenticación y manejo de errores en el componente LoginForm.
+    validations:
+      required: true
+
+  - type: input
+    id: affected-files
+    attributes:
+      label: 📝 Archivos de Prueba Afectados
+      placeholder: "Ej: test/login.test.js, test/userService.test.js"
+      description: |
+        Lista los archivos de prueba nuevos o modificados. Esto ayuda a identificar rápidamente las áreas cubiertas por esta tarea.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test-type
+    attributes:
+      label: 🧱 Tipo de Pruebas
+      description: |
+        Selecciona el tipo principal de pruebas involucradas en esta tarea.
+      options:
+        - Unitarias
+        - Integración
+        - End-to-End (E2E)
+        - Mixtas
+    validations:
+      required: true
+
+  - type: dropdown
+    id: coverage-impact
+    attributes:
+      label: 📈 Impacto en la Cobertura
+      description: |
+        ¿Qué impacto se espera que tenga esta tarea en la cobertura del código?
+      options:
+        - Incremento significativo
+        - Incremento moderado
+        - Sin cambios relevantes
+        - Reducción (justificada)
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-context
+    attributes:
+      label: 📎 Contexto Adicional
+      description: |
+        Agrega cualquier información adicional útil, como configuraciones necesarias, mocks requeridos o limitaciones conocidas.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: definition-of-ready
+    attributes:
+      label: ✅ Confirmación de Definición de Listo
+      description: |
+        Confirma que esta tarea cumple con nuestra [Definición de Listo](https://microsoft.github.io/code-with-engineering-playbook/agile-development/team-agreements/definition-of-ready/) antes de ser tomada.
+      options:
+        - label: Confirmo que esta tarea contiene suficiente información para ser procesada.
+          required: true

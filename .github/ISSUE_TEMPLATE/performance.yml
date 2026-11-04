@@ -1,0 +1,90 @@
+name: Mejora de Rendimiento
+description: Crea una tarea para identificar y aplicar optimizaciones que mejoren el rendimiento del sistema.
+title: "[Perf]: "
+labels: [performance]
+# El creador del issue se asigna automáticamente con .github/workflows/auto-assign.yml
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🚀 Mejora de Rendimiento
+        Este formulario se utiliza para describir tareas relacionadas con la optimización del rendimiento. Esto incluye reducción de tiempos de respuesta, uso de memoria, procesamiento eficiente, lazy loading, mejoras en el renderizado, entre otros.
+
+  - type: input
+    id: perf-summary
+    attributes:
+      label: 📌 Resumen de la Mejora
+      placeholder: "Ej: Optimizar el tiempo de carga de la página de inicio"
+      description: |
+        Proporciona un resumen claro y breve del objetivo principal de esta mejora de rendimiento.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📜 Descripción Detallada
+      description: |
+        Describe qué parte del sistema será optimizada, cómo se detectó el problema (ej. profiling, métricas, auditorías) y qué técnicas o estrategias se utilizarán para mejorarlo.
+        Para más detalles, revisa [Guía de Optimización de Rendimiento Web](https://web.dev/performance/) o [Mejoras de rendimiento en aplicaciones](https://developer.mozilla.org/es/docs/Web/Performance).
+      placeholder: |
+        Se identificó un cuello de botella en la renderización de la lista de productos mediante Chrome DevTools. Se implementará virtualización para mejorar la performance en dispositivos móviles.
+    validations:
+      required: true
+
+  - type: input
+    id: affected-files
+    attributes:
+      label: 📝 Archivos Afectados
+      placeholder: "Ej: perf/lazy-load.js, components/ProductList.jsx"
+      description: |
+        Lista los archivos específicos que se modificarán durante esta optimización.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: performance-area
+    attributes:
+      label: 🔍 Área de Optimización
+      description: |
+        ¿Qué parte del sistema se está optimizando?
+      options:
+        - Backend (API, lógica del servidor, consultas)
+        - Frontend (renderizado, interacciones, carga)
+        - Base de datos
+        - Red (peticiones HTTP, headers, compresión)
+        - Otro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: expected-impact
+    attributes:
+      label: 📈 Impacto Esperado
+      description: |
+        ¿Qué tipo de mejora se espera como resultado de esta tarea?
+      options:
+        - Mejora significativa (mayor al 50%)
+        - Mejora moderada (entre 20% y 50%)
+        - Mejora leve (menos del 20%)
+        - Otro tipo de optimización no cuantificable
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📎 Contexto Adicional
+      description: |
+        Incluye información sobre herramientas usadas para medir rendimiento, pruebas de benchmark, links a auditorías o capturas relevantes.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: definition-of-ready
+    attributes:
+      label: ✅ Confirmación de Definición de Listo
+      description: |
+        Confirma que esta tarea tiene suficiente información para ser tomada por cualquier miembro del equipo.
+      options:
+        - label: Confirmo que esta tarea contiene suficiente información para ser procesada.
+          required: true
