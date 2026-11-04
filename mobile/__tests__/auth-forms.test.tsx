@@ -1,15 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fireEvent, render, screen } from '@testing-library/react-native';
-import type PocketBase from 'pocketbase';
-import { ClientResponseError } from 'pocketbase';
-import type { ReactNode } from 'react';
+import { fireEvent, screen } from '@testing-library/react-native';
 
-import { AuthContext, type AuthContextValue } from '@/auth/AuthProvider';
 import { ForgotPasswordForm } from '@/features/auth/ForgotPasswordForm';
 import { SignInForm } from '@/features/auth/SignInForm';
 import { SignUpForm } from '@/features/auth/SignUpForm';
-import { PreferencesProvider, usePreferences } from '@/preferences/PreferencesProvider';
 import { PREFERENCES_KEY } from '@/preferences/storage';
+
+import { authValue, renderWith, serverError } from '../test-utils/render';
 
 // The native date picker cannot be driven in tests: a text field stands in for it.
 jest.mock('@/components/DateField', () => {
@@ -38,38 +35,6 @@ jest.mock('expo-localization', () => ({
   getLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],
   useLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],
 }));
-
-function authValue(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
-  return {
-    status: 'visitor',
-    user: null,
-    client: {} as PocketBase,
-    signIn: jest.fn().mockResolvedValue(undefined),
-    signUp: jest.fn().mockResolvedValue(undefined),
-    signOut: jest.fn(),
-    requestVerification: jest.fn().mockResolvedValue(undefined),
-    requestPasswordReset: jest.fn().mockResolvedValue(undefined),
-    ...overrides,
-  };
-}
-
-function ReadyGate({ children }: { children: ReactNode }) {
-  return usePreferences().ready ? children : null;
-}
-
-async function renderWith(ui: ReactNode, auth: AuthContextValue) {
-  await render(
-    <PreferencesProvider>
-      <AuthContext.Provider value={auth}>
-        <ReadyGate>{ui}</ReadyGate>
-      </AuthContext.Provider>
-    </PreferencesProvider>,
-  );
-}
-
-function serverError(status: number, data: Record<string, unknown> = {}) {
-  return new ClientResponseError({ status, response: { status, message: 'x', data } });
-}
 
 const type = (label: string, text: string) =>
   fireEvent.changeText(screen.getByLabelText(label), text);

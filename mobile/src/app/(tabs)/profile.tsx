@@ -15,7 +15,15 @@ export default function ProfileScreen() {
   return (
     <Screen>
       {status === 'signedIn' && user ? (
-        <ProfileHeader user={user} />
+        <>
+          <ProfileHeader user={user} />
+          <Button
+            variant="secondary"
+            icon="edit"
+            label={t('profile.editButton')}
+            onPress={() => router.push('/edit-profile')}
+          />
+        </>
       ) : (
         <AuthPrompt icon="profile" message={t('auth.prompt.profile')} />
       )}

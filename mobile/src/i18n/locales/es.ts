@@ -33,6 +33,45 @@ const es: Resources = {
     title: 'Perfil',
     description: 'Tu perfil, tus mascotas y tus publicaciones.',
     settings: 'Ajustes',
+    editButton: 'Editar perfil',
+    edit: {
+      title: 'Editar perfil',
+      addPhoto: 'Agregar foto',
+      changePhoto: 'Cambiar foto',
+      removePhoto: 'Quitar foto',
+      bio: 'Bio',
+      bioHint: 'Te quedan {{remaining}} caracteres.',
+      save: 'Guardar',
+    },
+  },
+  account: {
+    password: {
+      title: 'Cambiar contraseña',
+      current: 'Contraseña actual',
+      new: 'Nueva contraseña',
+      confirm: 'Confirma la nueva contraseña',
+      save: 'Cambiar contraseña',
+      changed: 'Tu contraseña se cambió.',
+    },
+    signOut: {
+      label: 'Cerrar sesión',
+      confirmTitle: '¿Cerrar sesión?',
+      confirmMessage: 'Puedes volver a entrar con tu correo y tu contraseña.',
+    },
+    delete: {
+      label: 'Eliminar cuenta',
+      title: 'Eliminar tu cuenta',
+      explanation:
+        'Se borrarán tu perfil, tu foto y todo lo que hayas publicado. No se puede deshacer. Escribe tu contraseña para confirmar.',
+      understand: 'Entiendo que mi cuenta no se puede recuperar',
+      mustConfirm: 'Confirma que entiendes que la cuenta no se puede recuperar.',
+      confirmTitle: '¿Eliminar tu cuenta para siempre?',
+      confirmMessage: 'Esto no se puede deshacer.',
+      submit: 'Eliminar mi cuenta',
+    },
+  },
+  common: {
+    cancel: 'Cancelar',
   },
   settings: {
     title: 'Ajustes',

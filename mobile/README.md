@@ -86,11 +86,13 @@ mobile/
 │   ├── api/            PocketBase client, server URL and error messages
 │   ├── auth/           Session (AuthProvider) and form validation
 │   ├── components/     Reusable UI (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Screen content grouped by feature
+│   ├── features/       Screen content grouped by feature (auth, profile, account, legal, settings)
 │   ├── i18n/           Translations (Spanish and English)
 │   ├── preferences/    Theme and language chosen by the user, saved on the phone
-│   └── theme/          Colors, icons, typography and contrast helpers
+│   ├── theme/          Colors, icons, typography and contrast helpers
+│   └── utils/          Small helpers (native or browser confirmation dialog)
 ├── __tests__/          Jest tests
+├── test-utils/         Shared test helpers (providers and a fake session)
 └── assets/             Icons and splash screen (placeholders until there is a logo)
 ```
 

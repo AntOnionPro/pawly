@@ -86,11 +86,13 @@ mobile/
 │   ├── api/            Cliente de PocketBase, URL del servidor y mensajes de error
 │   ├── auth/           Sesión (AuthProvider) y validación de formularios
 │   ├── components/     Interfaz reutilizable (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Contenido de pantallas agrupado por funcionalidad
+│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
-│   └── theme/          Colores, íconos, tipografía y utilidades de contraste
+│   ├── theme/          Colores, íconos, tipografía y utilidades de contraste
+│   └── utils/          Utilidades pequeñas (diálogo de confirmación nativo o del navegador)
 ├── __tests__/          Pruebas de Jest
+├── test-utils/         Utilidades de prueba compartidas (providers y sesión simulada)
 └── assets/             Íconos y pantalla de carga (provisionales hasta tener logo)
 ```
 

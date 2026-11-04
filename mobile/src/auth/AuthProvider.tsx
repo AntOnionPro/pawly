@@ -36,11 +36,39 @@ export interface AuthContextValue {
   signOut: () => void;
   requestVerification: (email: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
+  updateProfile: (changes: ProfileChanges) => Promise<void>;
+  changePassword: (oldPassword: string, password: string, passwordConfirm: string) => Promise<void>;
+  /** Checks the password again, deletes the account and signs out. */
+  deleteAccount: (password: string) => Promise<void>;
+}
+
+/** A photo picked on the phone, ready to upload. */
+export interface PickedImage {
+  uri: string;
+  name: string;
+  type: string;
+}
+
+export interface ProfileChanges {
+  username?: string;
+  bio?: string;
+  /** New photo, `null` to remove it, or leave out to keep it. */
+  avatar?: PickedImage | null;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const USERS = 'users';
+
+/** URL of a profile photo (a 400×400 thumbnail by default), or null if there is none. */
+export function avatarUrl(client: PocketBase, user: User, thumb = '400x400'): string | null {
+  if (!user.avatar) return null;
+  return client.files.getURL(
+    { id: user.id, collectionId: user.collectionId, collectionName: USERS },
+    user.avatar,
+    { thumb },
+  );
+}
 
 export function toUser(record: RecordModel | null | undefined): User | null {
   if (!record) return null;
@@ -137,6 +165,48 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
     [client],
   );
 
+  const updateProfile = useCallback(
+    async ({ username, bio, avatar }: ProfileChanges) => {
+      const id = client.authStore.record?.id;
+      if (!id) throw new Error('Not signed in');
+      const data = new FormData();
+      if (username !== undefined) data.append('username', normalizeUsername(username));
+      if (bio !== undefined) data.append('bio', bio.trim());
+      if (avatar === null) {
+        data.append('avatar', '');
+      } else if (avatar) {
+        // React Native uploads a local file from { uri, name, type }.
+        data.append('avatar', avatar as unknown as Blob);
+      }
+      // The SDK updates the saved session with the new profile.
+      await client.collection(USERS).update(id, data);
+    },
+    [client],
+  );
+
+  const changePassword = useCallback(
+    async (oldPassword: string, password: string, passwordConfirm: string) => {
+      const record = client.authStore.record;
+      if (!record) throw new Error('Not signed in');
+      await client.collection(USERS).update(record.id, { oldPassword, password, passwordConfirm });
+      // Changing the password invalidates every session: sign in again with the new one.
+      await client.collection(USERS).authWithPassword(String(record.email), password);
+    },
+    [client],
+  );
+
+  const deleteAccount = useCallback(
+    async (password: string) => {
+      const record = client.authStore.record;
+      if (!record) throw new Error('Not signed in');
+      // Re-authenticate so a borrowed, unlocked phone cannot delete the account.
+      await client.collection(USERS).authWithPassword(String(record.email), password);
+      await client.collection(USERS).delete(record.id);
+      client.authStore.clear();
+    },
+    [client],
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
@@ -147,8 +217,23 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
       signOut,
       requestVerification,
       requestPasswordReset,
+      updateProfile,
+      changePassword,
+      deleteAccount,
     }),
-    [status, user, client, signIn, signUp, signOut, requestVerification, requestPasswordReset],
+    [
+      status,
+      user,
+      client,
+      signIn,
+      signUp,
+      signOut,
+      requestVerification,
+      requestPasswordReset,
+      updateProfile,
+      changePassword,
+      deleteAccount,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -30,6 +30,45 @@ const en = {
     title: 'Profile',
     description: 'Your profile, your pets and your posts.',
     settings: 'Settings',
+    editButton: 'Edit profile',
+    edit: {
+      title: 'Edit profile',
+      addPhoto: 'Add photo',
+      changePhoto: 'Change photo',
+      removePhoto: 'Remove photo',
+      bio: 'Bio',
+      bioHint: '{{remaining}} characters left.',
+      save: 'Save',
+    },
+  },
+  account: {
+    password: {
+      title: 'Change password',
+      current: 'Current password',
+      new: 'New password',
+      confirm: 'Confirm the new password',
+      save: 'Change password',
+      changed: 'Your password was changed.',
+    },
+    signOut: {
+      label: 'Sign out',
+      confirmTitle: 'Sign out?',
+      confirmMessage: 'You can sign in again with your email and password.',
+    },
+    delete: {
+      label: 'Delete account',
+      title: 'Delete your account',
+      explanation:
+        'Your profile, your photo and everything you have posted will be deleted. This cannot be undone. Enter your password to confirm.',
+      understand: 'I understand that my account cannot be recovered',
+      mustConfirm: 'Confirm that you understand the account cannot be recovered.',
+      confirmTitle: 'Delete your account for good?',
+      confirmMessage: 'This cannot be undone.',
+      submit: 'Delete my account',
+    },
+  },
+  common: {
+    cancel: 'Cancel',
   },
   settings: {
     title: 'Settings',
