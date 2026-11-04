@@ -1,0 +1,17 @@
+extends: default
+
+rules:
+  # Las plantillas incluyen descripciones y enlaces largos.
+  line-length: disable
+  document-start: disable
+  # Las plantillas de issue usan dos espacios al final de línea como salto en Markdown.
+  trailing-spaces: disable
+  # Permite la clave `on:` de GitHub Actions.
+  truthy:
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1
+
+ignore: |
+  node_modules/
+  mobile/.expo/

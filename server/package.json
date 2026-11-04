@@ -1,0 +1,11 @@
+{
+  "name": "pawly-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "download": "./scripts/download.sh",
+    "dev": "./scripts/dev.sh",
+    "test": "./scripts/download.sh && node --test test/*.test.mjs"
+  }
+}

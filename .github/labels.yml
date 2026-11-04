@@ -1,0 +1,27 @@
+# Etiquetas del repositorio. Se sincronizan con .github/workflows/labels.yml.
+# Cada plantilla de .github/ISSUE_TEMPLATE debe usar una etiqueta de esta lista
+# (lo verifica el job "Lint" de CI).
+- name: enhancement
+  color: "a2eeef"
+  description: Nueva funcionalidad o mejora
+- name: bug
+  color: "d73a4a"
+  description: Algo no funciona como debería
+- name: chore
+  color: "c5def5"
+  description: Mantenimiento, configuración o limpieza
+- name: ci
+  color: "0e8a16"
+  description: Cambios en integración o entrega continua
+- name: docs
+  color: "0075ca"
+  description: Cambios en la documentación
+- name: performance
+  color: "fbca04"
+  description: Mejora de rendimiento
+- name: refactor
+  color: "5319e7"
+  description: Reestructuración del código sin cambios funcionales
+- name: test
+  color: "bfd4f2"
+  description: Agregar o actualizar pruebas

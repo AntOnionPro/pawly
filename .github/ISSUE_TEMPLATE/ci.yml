@@ -1,0 +1,90 @@
+name: Cambios en la Integración Continua (CI/CD)
+description: Crea una tarea para modificar, optimizar o agregar nuevas configuraciones relacionadas con la integración y entrega continua.
+title: "[CI]: "
+labels: [ci]
+# El creador del issue se asigna automáticamente con .github/workflows/auto-assign.yml
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔁 Cambios en la Integración Continua (CI/CD)
+        Usa este formulario para documentar tareas relacionadas con la configuración, mejora o mantenimiento de pipelines de CI/CD, como GitHub Actions, Jenkins, GitLab CI, etc.
+
+  - type: input
+    id: ci-summary
+    attributes:
+      label: 📌 Resumen del Cambio en CI/CD
+      placeholder: "Ej: Agregar caché para dependencias en GitHub Actions"
+      description: |
+        Describe brevemente el cambio que se realizará en el sistema de integración o entrega continua.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📜 Descripción Detallada
+      description: |
+        Explica en qué consiste el cambio, qué parte del flujo CI/CD será afectada y por qué se hace. Esto puede incluir mejoras de velocidad, cambios de entorno, configuración de jobs, estrategias de despliegue, etc.
+        Consulta más sobre buenas prácticas en [CI/CD con GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions).
+      placeholder: |
+        Se añadirá una estrategia de caché para las dependencias de Node.js en el workflow principal con el fin de reducir tiempos de ejecución.
+    validations:
+      required: true
+
+  - type: input
+    id: affected-files
+    attributes:
+      label: 📝 Archivos Afectados
+      placeholder: "Ej: ci/deploy.yml, .github/workflows/test.yml"
+      description: |
+        Menciona los archivos de configuración o scripts modificados dentro de la carpeta `ci/` u otros relacionados con los pipelines.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: pipeline-impact
+    attributes:
+      label: ⚙️ Impacto en los Pipelines
+      description: |
+        ¿Cómo afecta este cambio al funcionamiento general de los pipelines?
+      options:
+        - Mejora de rendimiento
+        - Corrección de errores
+        - Nueva funcionalidad
+        - Refactor estructural
+        - Otro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: env-impact
+    attributes:
+      label: 🌍 Impacto en el Entorno
+      description: |
+        Indica si el cambio afecta a entornos de ejecución (producción, staging, desarrollo).
+      options:
+        - Solo afecta entornos de prueba/desarrollo
+        - Afecta staging
+        - Afecta producción
+        - No aplica
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📎 Contexto Adicional
+      description: |
+        Agrega detalles sobre dependencias externas, restricciones técnicas, problemas conocidos o cualquier otro contexto relevante para los cambios en CI/CD.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: definition-of-ready
+    attributes:
+      label: ✅ Confirmación de Definición de Listo
+      description: |
+        Asegúrate de que esta tarea esté lista para ser trabajada, con la información y contexto necesarios.
+      options:
+        - label: Confirmo que esta tarea contiene suficiente información para ser procesada.
+          required: true
