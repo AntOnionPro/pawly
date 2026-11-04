@@ -48,6 +48,9 @@ jobs:
           done
           exit "$status"
 
+      - name: Revisar scripts del servidor (ShellCheck)
+        run: shellcheck server/scripts/*.sh
+
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
@@ -86,6 +89,10 @@ jobs:
           node-version-file: mobile/.nvmrc
           cache: npm
           cache-dependency-path: mobile/package-lock.json
+
+      - name: Pruebas del servidor (PocketBase)
+        working-directory: server
+        run: npm test
 
       - name: Instalar dependencias de la app
         run: npm ci

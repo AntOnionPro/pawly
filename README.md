@@ -8,12 +8,12 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 0, Foundations (in progress).** The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 0, Foundations (done, pending the `v0.1.0` release to `main`).** Stage 1 starts after that release is merged. The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
 | – | Repository, CI, workflow and functional scope | Done |
-| 0 | Foundations | In progress |
+| 0 | Foundations | Done |
 | 1 | Accounts | Not started |
 | 2 | Pets and posts | Not started |
 | 3 | Social interaction | Not started |
@@ -26,7 +26,7 @@ Current stage: **Stage 0, Foundations (in progress).** The plan for every stage 
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 0 issues: plan and colors ([#5](https://github.com/AntOnionPro/pawly/issues/5)), app scaffold ([#6](https://github.com/AntOnionPro/pawly/issues/6)) and server scaffold ([#7](https://github.com/AntOnionPro/pawly/issues/7)).
+Stage 0 delivered: plan and colors ([#5](https://github.com/AntOnionPro/pawly/issues/5)), app scaffold ([#6](https://github.com/AntOnionPro/pawly/issues/6)) and server scaffold ([#7](https://github.com/AntOnionPro/pawly/issues/7)).
 
 ## Features
 
@@ -193,6 +193,7 @@ pawly/
 How to run each part:
 
 - App: [mobile/README.md](mobile/README.md)
+- Server: [server/README.md](server/README.md)
 
 ## Publishing requirements
 

@@ -8,12 +8,12 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 0, Cimientos (en progreso).** El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 0, Cimientos (terminada, falta la release `v0.1.0` a `main`).** La etapa 1 empieza cuando esa release esté mergeada. El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
 | – | Repositorio, CI, flujo de trabajo y alcance funcional | Hecho |
-| 0 | Cimientos | En progreso |
+| 0 | Cimientos | Hecho |
 | 1 | Cuentas | Sin empezar |
 | 2 | Mascotas y publicaciones | Sin empezar |
 | 3 | Interacción social | Sin empezar |
@@ -26,7 +26,7 @@ Etapa actual: **etapa 0, Cimientos (en progreso).** El plan de todas las etapas 
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 0: plan y colores ([#5](https://github.com/AntOnionPro/pawly/issues/5)), esqueleto de la app ([#6](https://github.com/AntOnionPro/pawly/issues/6)) y esqueleto del servidor ([#7](https://github.com/AntOnionPro/pawly/issues/7)).
+Entregado en la etapa 0: plan y colores ([#5](https://github.com/AntOnionPro/pawly/issues/5)), esqueleto de la app ([#6](https://github.com/AntOnionPro/pawly/issues/6)) y esqueleto del servidor ([#7](https://github.com/AntOnionPro/pawly/issues/7)).
 
 ## Funcionalidades
 
@@ -193,6 +193,7 @@ pawly/
 Cómo correr cada parte:
 
 - App: [mobile/README.es.md](mobile/README.es.md)
+- Servidor: [server/README.es.md](server/README.es.md)
 
 ## Requisitos de publicación
 
