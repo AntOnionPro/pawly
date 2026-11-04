@@ -48,50 +48,50 @@ jobs:
           done
           exit "$status"
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: mobile/.nvmrc
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Instalar dependencias de la app
+        working-directory: mobile
+        run: npm ci
+
+      - name: Lint de la app (ESLint)
+        working-directory: mobile
+        run: npm run lint
+
+      - name: Formato de la app (Prettier)
+        working-directory: mobile
+        run: npm run format:check
+
+      - name: Tipos de la app (TypeScript)
+        working-directory: mobile
+        run: npm run typecheck
+
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
     steps:
       - uses: actions/checkout@v4
 
-      - name: Detectar suite de pruebas
-        id: detect
-        run: |
-          if [ -f package.json ]; then
-            echo "stack=node" >> "$GITHUB_OUTPUT"
-          elif [ -f pyproject.toml ] || [ -f requirements.txt ]; then
-            echo "stack=python" >> "$GITHUB_OUTPUT"
-          else
-            echo "stack=none" >> "$GITHUB_OUTPUT"
-          fi
-
-      # --- Node.js ---
       - name: Configurar Node.js
-        if: steps.detect.outputs.stack == 'node'
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
-      - name: Ejecutar pruebas (npm)
-        if: steps.detect.outputs.stack == 'node'
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
-          npm test
+          node-version-file: mobile/.nvmrc
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
 
-      # --- Python ---
-      - name: Configurar Python
-        if: steps.detect.outputs.stack == 'python'
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-      - name: Ejecutar pruebas (pytest)
-        if: steps.detect.outputs.stack == 'python'
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f pyproject.toml ]; then pip install -e .; fi
-          pip install pytest
-          pytest
+      - name: Instalar dependencias de la app
+        run: npm ci
 
-      - name: Sin suite de pruebas
-        if: steps.detect.outputs.stack == 'none'
-        run: echo "::warning::Aún no hay suite de pruebas (no se encontró package.json, pyproject.toml ni requirements.txt). Ajusta este job cuando se defina el stack."
+      - name: Pruebas de la app (Jest)
+        run: npm test -- --ci
+
+      - name: Compilar la app para Android, iOS y web
+        run: npx expo export --platform android --platform ios --platform web --output-dir "$RUNNER_TEMP/expo-export"

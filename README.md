@@ -190,6 +190,10 @@ pawly/
 └── LICENSE
 ```
 
+How to run each part:
+
+- App: [mobile/README.md](mobile/README.md)
+
 ## Publishing requirements
 
 App Store and Google Play:
@@ -212,6 +216,8 @@ External costs:
 
 ## Open items
 
+- Logo and app icon (the app uses Expo placeholders).
+- App identifiers for the stores (iOS bundle ID and Android package name).
 - Domain name.
 - Map provider.
 - Email (SMTP) provider.

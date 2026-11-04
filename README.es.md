@@ -190,6 +190,10 @@ pawly/
 └── LICENSE
 ```
 
+Cómo correr cada parte:
+
+- App: [mobile/README.es.md](mobile/README.es.md)
+
 ## Requisitos de publicación
 
 App Store y Google Play:
@@ -212,6 +216,8 @@ Costos externos:
 
 ## Pendientes
 
+- Logo e ícono de la app (la app usa los provisionales de Expo).
+- Identificadores de la app para las tiendas (bundle ID de iOS y nombre de paquete de Android).
 - Nombre de dominio.
 - Proveedor de mapas.
 - Proveedor de email (SMTP).
