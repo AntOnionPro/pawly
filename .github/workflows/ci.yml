@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [development, main]
+  push:
+    branches: [development, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validar YAML (yamllint)
+        run: pipx run --spec 'yamllint==1.35.1' yamllint --strict .
+
+      - name: Validar workflows (actionlint)
+        run: |
+          bash <(curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
+          ./actionlint -color
+
+      - name: Validar plantillas de issue y etiquetas
+        run: |
+          status=0
+          for f in .github/ISSUE_TEMPLATE/*.yml; do
+            [ "$(basename "$f")" = "config.yml" ] && continue
+            if ! yq -e '.name and .description and .body' "$f" > /dev/null; then
+              echo "::error file=$f::La plantilla debe definir name, description y body."
+              status=1
+            fi
+            while IFS= read -r label; do
+              [ -z "$label" ] && continue
+              if ! LABEL="$label" yq -e '.[] | select(.name == strenv(LABEL))' .github/labels.yml > /dev/null; then
+                echo "::error file=$f::La etiqueta '$label' no está definida en .github/labels.yml."
+                status=1
+              fi
+            done < <(yq '.labels[]' "$f")
+          done
+          exit "$status"
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detectar suite de pruebas
+        id: detect
+        run: |
+          if [ -f package.json ]; then
+            echo "stack=node" >> "$GITHUB_OUTPUT"
+          elif [ -f pyproject.toml ] || [ -f requirements.txt ]; then
+            echo "stack=python" >> "$GITHUB_OUTPUT"
+          else
+            echo "stack=none" >> "$GITHUB_OUTPUT"
+          fi
+
+      # --- Node.js ---
+      - name: Configurar Node.js
+        if: steps.detect.outputs.stack == 'node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Ejecutar pruebas (npm)
+        if: steps.detect.outputs.stack == 'node'
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          npm test
+
+      # --- Python ---
+      - name: Configurar Python
+        if: steps.detect.outputs.stack == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Ejecutar pruebas (pytest)
+        if: steps.detect.outputs.stack == 'python'
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f pyproject.toml ]; then pip install -e .; fi
+          pip install pytest
+          pytest
+
+      - name: Sin suite de pruebas
+        if: steps.detect.outputs.stack == 'none'
+        run: echo "::warning::Aún no hay suite de pruebas (no se encontró package.json, pyproject.toml ni requirements.txt). Ajusta este job cuando se defina el stack."

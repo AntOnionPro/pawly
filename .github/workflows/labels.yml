@@ -1,0 +1,33 @@
+name: Sincronizar etiquetas
+
+on:
+  push:
+    branches: [development, main]
+    paths:
+      - .github/labels.yml
+      - .github/workflows/labels.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    name: Sincronizar etiquetas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Crear o actualizar etiquetas desde .github/labels.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          count=$(yq 'length' .github/labels.yml)
+          for i in $(seq 0 $((count - 1))); do
+            name=$(yq ".[$i].name" .github/labels.yml)
+            color=$(yq ".[$i].color" .github/labels.yml)
+            description=$(yq ".[$i].description" .github/labels.yml)
+            gh label create "$name" --color "$color" --description "$description" --force
+          done

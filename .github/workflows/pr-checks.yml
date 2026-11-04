@@ -1,0 +1,49 @@
+name: PR checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches: [development, main]
+
+permissions:
+  contents: read
+
+jobs:
+  base-branch:
+    name: Rama destino
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar flujo de ramas
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          # main solo recibe cambios desde development (release).
+          if [ "$BASE" = "main" ] && [ "$HEAD" != "development" ]; then
+            echo "::error::Solo se aceptan PR hacia main desde development (rama recibida: $HEAD). Abre el PR hacia development."
+            exit 1
+          fi
+          echo "Flujo válido: $HEAD → $BASE"
+
+  linked-issue:
+    name: Issue vinculado
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar referencia a un issue
+        env:
+          BASE: ${{ github.base_ref }}
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [ "$BASE" = "main" ]; then
+            echo "PR de release (development → main): no requiere issue."
+            exit 0
+          fi
+          # Se ignoran las citas (> ...) y comentarios HTML de la plantilla,
+          # que contienen ejemplos como "#123".
+          clean=$(printf '%s\n' "$BODY" | tr -d '\r' | sed -e '/<!--/,/-->/d' -e '/^[[:space:]]*>/d')
+          if printf '%s\n' "$clean" | grep -Eq '(^|[^[:alnum:]&/])#[0-9]+|github\.com/[^/[:space:]]+/[^/[:space:]]+/issues/[0-9]+'; then
+            echo "El PR referencia un issue."
+          else
+            echo "::error::Todo cambio debe salir de un issue. Agrega en 'Notas Adicionales' una línea como: Closes #12"
+            exit 1
+          fi
