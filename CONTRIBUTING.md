@@ -26,8 +26,8 @@ Work branch examples: `feat/12-dark-mode`, `fix/31-crash-on-image-upload`, `docs
 
 | Check | Workflow | What it validates |
 | --- | --- | --- |
-| `Lint` | `.github/workflows/ci.yml` | YAML syntax (yamllint), workflows (actionlint), and that templates only use labels defined in `.github/labels.yml`. |
-| `Tests` | `.github/workflows/ci.yml` | Runs the project's test suite (`npm test` or `pytest`, depending on the detected stack). |
+| `Lint` | `.github/workflows/ci.yml` | YAML syntax (yamllint), workflows (actionlint), labels used by the templates, server scripts (ShellCheck), and the app's ESLint, Prettier and TypeScript. |
+| `Tests` | `.github/workflows/ci.yml` | Server tests (PocketBase), app tests (Jest) and an app build for Android, iOS and web. |
 | `Rama destino` | `.github/workflows/pr-checks.yml` | PRs to `main` only come from `development`. |
 | `Issue vinculado` | `.github/workflows/pr-checks.yml` | PRs to `development` reference an issue (`#N`). |
 

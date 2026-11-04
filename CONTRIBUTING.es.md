@@ -26,8 +26,8 @@ Ejemplos de rama de trabajo: `feat/12-modo-oscuro`, `fix/31-cierre-al-subir-imag
 
 | Check | Workflow | Qué valida |
 | --- | --- | --- |
-| `Lint` | `.github/workflows/ci.yml` | Sintaxis YAML (yamllint), workflows (actionlint) y que las plantillas usen etiquetas definidas en `.github/labels.yml`. |
-| `Tests` | `.github/workflows/ci.yml` | Ejecuta la suite de pruebas del proyecto (`npm test` o `pytest`, según el stack detectado). |
+| `Lint` | `.github/workflows/ci.yml` | Sintaxis YAML (yamllint), workflows (actionlint), etiquetas de las plantillas, scripts del servidor (ShellCheck), y ESLint, Prettier y TypeScript de la app. |
+| `Tests` | `.github/workflows/ci.yml` | Pruebas del servidor (PocketBase), pruebas de la app (Jest) y compilación de la app para Android, iOS y web. |
 | `Rama destino` | `.github/workflows/pr-checks.yml` | Que los PR hacia `main` vengan únicamente de `development`. |
 | `Issue vinculado` | `.github/workflows/pr-checks.yml` | Que el PR hacia `development` referencie un issue (`#N`). |
 
