@@ -8,28 +8,25 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **alcance acordado, todavía sin código de la aplicación.**
+Etapa actual: **etapa 0, Cimientos (en progreso).** El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
-| Área | Estado |
-| --- | --- |
-| Repositorio, CI y flujo de trabajo | Hecho |
-| Alcance funcional (este README) | Acordado |
-| Esqueleto de la app (Expo) | Sin empezar |
-| Backend (PocketBase) | Sin empezar |
-| Cuentas | Sin empezar |
-| Perfiles de mascota | Sin empezar |
-| Publicaciones y feed | Sin empezar |
-| Mensajes directos | Sin empezar |
-| Adopción | Sin empezar |
-| Rescate (necesita ayuda, perdido, encontrado) | Sin empezar |
-| Moderación | Sin empezar |
-| Notificaciones | Sin empezar |
-| Ajustes e idiomas | Sin empezar |
-| Versión web | Sin empezar |
-| Publicación en tiendas | Sin empezar |
-| Fase 2: veterinarias y donaciones | Sin empezar |
+| # | Etapa | Estado |
+| --- | --- | --- |
+| – | Repositorio, CI, flujo de trabajo y alcance funcional | Hecho |
+| 0 | Cimientos | En progreso |
+| 1 | Cuentas | Sin empezar |
+| 2 | Mascotas y publicaciones | Sin empezar |
+| 3 | Interacción social | Sin empezar |
+| 4 | Mensajes y notificaciones | Sin empezar |
+| 5 | Adopción | Sin empezar |
+| 6 | Rescate | Sin empezar |
+| 7 | Moderación | Sin empezar |
+| 8 | Infraestructura y web | Sin empezar |
+| 9 | Lanzamiento | Sin empezar |
+| 10 | Fase 2: veterinarias | Sin empezar |
+| 11 | Fase 2: donaciones | Sin empezar |
 
-Siguiente paso: crear el esqueleto de la app con Expo y del servidor con PocketBase.
+Issues de la etapa 0: plan y colores ([#5](https://github.com/AntOnionPro/pawly/issues/5)), esqueleto de la app ([#6](https://github.com/AntOnionPro/pawly/issues/6)) y esqueleto del servidor ([#7](https://github.com/AntOnionPro/pawly/issues/7)).
 
 ## Funcionalidades
 
@@ -117,13 +114,27 @@ Los reportes se ven en una lista y en un mapa de casos cercanos. Los usuarios pu
 
 ### Colores
 
-| Rol | Tema claro | Tema oscuro |
-| --- | --- | --- |
-| Primario | Rosa pastel muy clarito | Blanco |
-| Secundario | Vino oscuro | Escala de grises |
-| Terciario | Blanco o negro | Negro (fondo) |
+Tema claro:
 
-El tema oscuro usa fondo negro, escala de grises, y textos y detalles en blanco. El rosa y el vino no se usan en él. El tema sigue la configuración del sistema y se puede cambiar en ajustes.
+| Rol | Color | Uso |
+| --- | --- | --- |
+| Primario | `#FFF5F7` (rosa pastel muy clarito) | Fondo |
+| Secundario | `#4A0818` (vino oscuro) | Texto, íconos y barras |
+| Terciario | `#D84080` (rosa) | Acentos: huella activa, botón principal, pestaña activa |
+
+Tema oscuro:
+
+| Color | Uso |
+| --- | --- |
+| `#000000` | Fondo |
+| `#FFFFFF` | Texto, íconos y acentos |
+| `#1C1C1E`, `#2C2C2E` | Superficies (tarjetas, barras) |
+| `#3A3A3C` | Bordes y separadores |
+| `#8E8E93` | Texto secundario |
+
+El rosa y el vino no se usan en el tema oscuro. El tema sigue la configuración del sistema y se puede cambiar en ajustes.
+
+Contraste: `#D84080` sobre `#FFF5F7` da 3.96:1, suficiente para íconos y textos grandes o en negrita, pero no para texto pequeño (que necesita 4.5:1). El texto pequeño va en `#4A0818` (14.7:1).
 
 ### Idiomas
 
@@ -172,7 +183,7 @@ Estructura planeada:
 pawly/
 ├── mobile/        App de Expo (iOS, Android y web)
 ├── server/        PocketBase: migraciones, hooks y configuración
-├── docs/          Documentación adicional (aviso de privacidad, decisiones)
+├── docs/          Plan de trabajo y documentación adicional (aviso de privacidad, decisiones)
 ├── .github/       Plantillas de issues y PR, workflows y rulesets
 ├── CLAUDE.md      Contexto para Claude Code
 ├── CONTRIBUTING.md
@@ -201,7 +212,6 @@ Costos externos:
 
 ## Pendientes
 
-- Valores exactos de los colores (hex).
 - Nombre de dominio.
 - Proveedor de mapas.
 - Proveedor de email (SMTP).

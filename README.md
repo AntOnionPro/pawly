@@ -8,28 +8,25 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **scope agreed, no application code yet.**
+Current stage: **Stage 0, Foundations (in progress).** The plan for every stage is in the [roadmap](docs/roadmap.md).
 
-| Area | Status |
-| --- | --- |
-| Repository, CI and workflow | Done |
-| Functional scope (this README) | Agreed |
-| App scaffold (Expo) | Not started |
-| Backend (PocketBase) | Not started |
-| Accounts | Not started |
-| Pet profiles | Not started |
-| Posts and feed | Not started |
-| Direct messages | Not started |
-| Adoption | Not started |
-| Rescue (needs help, lost, found) | Not started |
-| Moderation | Not started |
-| Notifications | Not started |
-| Settings and languages | Not started |
-| Web version | Not started |
-| Store publishing | Not started |
-| Phase 2: veterinary clinics and donations | Not started |
+| # | Stage | Status |
+| --- | --- | --- |
+| – | Repository, CI, workflow and functional scope | Done |
+| 0 | Foundations | In progress |
+| 1 | Accounts | Not started |
+| 2 | Pets and posts | Not started |
+| 3 | Social interaction | Not started |
+| 4 | Messages and notifications | Not started |
+| 5 | Adoption | Not started |
+| 6 | Rescue | Not started |
+| 7 | Moderation | Not started |
+| 8 | Infrastructure and web | Not started |
+| 9 | Launch | Not started |
+| 10 | Phase 2: veterinary clinics | Not started |
+| 11 | Phase 2: donations | Not started |
 
-Next step: scaffold the Expo app and the PocketBase server.
+Stage 0 issues: plan and colors ([#5](https://github.com/AntOnionPro/pawly/issues/5)), app scaffold ([#6](https://github.com/AntOnionPro/pawly/issues/6)) and server scaffold ([#7](https://github.com/AntOnionPro/pawly/issues/7)).
 
 ## Features
 
@@ -117,13 +114,27 @@ Reports appear as a list and on a map of nearby cases. Users can opt in to push 
 
 ### Colors
 
-| Role | Light theme | Dark theme |
-| --- | --- | --- |
-| Primary | Very light pastel pink | White |
-| Secondary | Dark wine | Gray scale |
-| Tertiary | White or black | Black (background) |
+Light theme:
 
-The dark theme uses a black background, gray scale, and white text and details. Pink and wine are not used in it. The theme follows the system setting and can be changed in settings.
+| Role | Color | Use |
+| --- | --- | --- |
+| Primary | `#FFF5F7` (very light pastel pink) | Background |
+| Secondary | `#4A0818` (dark wine) | Text, icons and bars |
+| Tertiary | `#D84080` (pink) | Accents: active paw print, main button, active tab |
+
+Dark theme:
+
+| Color | Use |
+| --- | --- |
+| `#000000` | Background |
+| `#FFFFFF` | Text, icons and accents |
+| `#1C1C1E`, `#2C2C2E` | Surfaces (cards, bars) |
+| `#3A3A3C` | Borders and dividers |
+| `#8E8E93` | Secondary text |
+
+Pink and wine are not used in the dark theme. The theme follows the system setting and can be changed in settings.
+
+Contrast: `#D84080` on `#FFF5F7` is 3.96:1, enough for icons and large or bold text but not for small text (which needs 4.5:1). Small text uses `#4A0818` (14.7:1).
 
 ### Languages
 
@@ -172,7 +183,7 @@ Planned layout:
 pawly/
 ├── mobile/        Expo app (iOS, Android and web)
 ├── server/        PocketBase: migrations, hooks and configuration
-├── docs/          Additional documentation (privacy notice, decisions)
+├── docs/          Roadmap and additional documentation (privacy notice, decisions)
 ├── .github/       Issue and PR templates, workflows and rulesets
 ├── CLAUDE.md      Context for Claude Code
 ├── CONTRIBUTING.md
@@ -201,7 +212,6 @@ External costs:
 
 ## Open items
 
-- Exact color values (hex).
 - Domain name.
 - Map provider.
 - Email (SMTP) provider.
