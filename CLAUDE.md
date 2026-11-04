@@ -17,3 +17,4 @@ Context for Claude Code. Read it before every change.
 - Update the "Project status" section of both READMEs in the same pull request as the change.
 - App interface: icons only, never emojis; the reaction is a paw print; colors, themes and languages as defined in the README.
 - In `mobile/`, follow `mobile/AGENTS.md` (Expo SDK 58: check the versioned docs, never trust memory) and the conventions in `mobile/README.md`. Run `npm run check` in `mobile/` before opening a pull request.
+- In `server/`, database changes are PocketBase migrations in `pb_migrations/` (never manual edits), custom logic goes in `pb_hooks/`, and `npm test` must pass. Follow `server/README.md`.
