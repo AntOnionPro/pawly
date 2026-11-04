@@ -1,44 +1,49 @@
-# Guía de contribución
+# Contributing guide
 
-## Ramas
+**English** · [Español](CONTRIBUTING.es.md)
 
-| Rama | Uso | Protección |
+## Branches
+
+| Branch | Purpose | Protection |
 | --- | --- | --- |
-| `main` | Producción: lo que está aquí se despliega. | Sin push directo ni borrado. Solo recibe PR desde `development`. |
-| `development` | Integración: aquí llega todo el trabajo del equipo. | Sin push directo ni borrado. Solo recibe PR aprobados. |
-| `<tipo>/<n°issue>-<descripcion>` | Trabajo de un issue concreto. | Se borra al mergear. |
+| `main` | Production: whatever is here gets deployed. | No direct pushes or deletion. Only accepts PRs from `development`. |
+| `development` | Integration: all work lands here. It is the default branch. | No direct pushes or deletion. Only accepts PRs with CI in green. |
+| `<type>/<issue#>-<description>` | Work on a single issue. | Deleted on merge. |
 
-Ejemplos de rama de trabajo: `feat/12-modo-oscuro`, `fix/31-cierre-al-subir-imagen`, `docs/7-instalacion`.
+Work branch examples: `feat/12-dark-mode`, `fix/31-crash-on-image-upload`, `docs/7-installation`.
 
-## Flujo de trabajo
+## Workflow
 
-1. **Issue.** Todo cambio sale de un issue creado con una de las plantillas (`feat`, `bug`, `chore`, `ci`, `docs`, `perf`, `refactor`, `test`). No se permiten issues en blanco. Quien crea el issue queda asignado automáticamente.
-2. **Rama.** Crea la rama desde `development`. Desde el issue puedes usar *Development → Create a branch* y elegir `development` como rama base.
-3. **Commits.** Usa [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/): `feat: ...`, `fix: ...`, `docs: ...`, `ci: ...`, etc.
-4. **Pull Request hacia `development`.** Completa la plantilla y referencia el issue en *Notas Adicionales* (por ejemplo `Closes #12`).
-5. **Revisión.** Para mergear hace falta que el CI esté en verde, al menos **1 aprobación** de otra persona y todas las conversaciones resueltas. Si subes cambios nuevos, la aprobación se descarta y hay que volver a aprobar.
-6. **Release.** Para desplegar se abre un PR `development → main` (merge commit, sin squash, para que ambas ramas no diverjan).
+1. **Issue.** Every change starts from an issue created with one of the templates (`feat`, `bug`, `chore`, `ci`, `docs`, `perf`, `refactor`, `test`). Blank issues are disabled. The issue author is assigned automatically.
+2. **Branch.** Create the branch from `development`. From the issue you can use *Development → Create a branch* and pick `development` as the base branch.
+3. **Commits.** Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): `feat: ...`, `fix: ...`, `docs: ...`, `ci: ...`, etc.
+4. **Pull request to `development`.** Fill in the template and reference the issue under *Notas Adicionales* (for example `Closes #12`).
+5. **Documentation.** Update the *Project status* section of `README.md` and `README.es.md` in the same PR. All documentation is kept in English and Spanish.
+6. **Review and merge.** Merging requires the 4 checks in green and every conversation resolved. Approvals are not required (the repository has a single maintainer and GitHub does not allow approving your own PR); whoever merges reviews the PR first.
+7. **Release.** To deploy, open a `development → main` PR (merge commit, no squash, so both branches do not diverge).
 
-## Checks de CI obligatorios
+## Required CI checks
 
-| Check | Workflow | Qué valida |
+| Check | Workflow | What it validates |
 | --- | --- | --- |
-| `Lint` | `.github/workflows/ci.yml` | Sintaxis YAML (yamllint), workflows (actionlint) y que las plantillas usen etiquetas definidas en `.github/labels.yml`. |
-| `Tests` | `.github/workflows/ci.yml` | Ejecuta la suite de pruebas del proyecto (`npm test` o `pytest`, según el stack detectado). |
-| `Rama destino` | `.github/workflows/pr-checks.yml` | Que los PR hacia `main` vengan únicamente de `development`. |
-| `Issue vinculado` | `.github/workflows/pr-checks.yml` | Que el PR hacia `development` referencie un issue (`#N`). |
+| `Lint` | `.github/workflows/ci.yml` | YAML syntax (yamllint), workflows (actionlint), and that templates only use labels defined in `.github/labels.yml`. |
+| `Tests` | `.github/workflows/ci.yml` | Runs the project's test suite (`npm test` or `pytest`, depending on the detected stack). |
+| `Rama destino` | `.github/workflows/pr-checks.yml` | PRs to `main` only come from `development`. |
+| `Issue vinculado` | `.github/workflows/pr-checks.yml` | PRs to `development` reference an issue (`#N`). |
 
-Workflows de apoyo:
+Supporting workflows:
 
-- `.github/workflows/auto-assign.yml`: asigna cada issue nuevo a quien lo creó.
-- `.github/workflows/labels.yml`: crea y actualiza las etiquetas definidas en `.github/labels.yml`.
+- `.github/workflows/auto-assign.yml`: assigns each new issue to its author.
+- `.github/workflows/labels.yml`: creates and updates the labels defined in `.github/labels.yml`.
 
-## Configuración del repositorio (administradores)
+## Repository settings (admins)
 
-Las reglas de protección de `main` y `development` están en `.github/rulesets/` y se aplican una sola vez:
+The protection rules for `main` and `development` live in `.github/rulesets/`. If you change them, also update the rule on GitHub (*Settings → Rules → Rulesets*), because GitHub does not read these files on its own.
 
-- **Desde la web:** *Settings → Rules → Rulesets → New ruleset → Import a ruleset* y sube `development.json` y luego `main.json`.
-- **Desde la terminal** (con `gh` autenticado como administrador):
+To create them from scratch:
+
+- **From the web:** *Settings → Rules → Rulesets → New ruleset → Import a ruleset*, then upload `development.json` and then `main.json`.
+- **From the terminal** (with `gh` authenticated as an admin):
 
   ```bash
   gh api -X POST repos/AntOnionPro/pawly/rulesets --input .github/rulesets/development.json
@@ -48,9 +53,9 @@ Las reglas de protección de `main` y `development` están en `.github/rulesets/
   gh api -X POST repos/AntOnionPro/pawly/rulesets --input .github/rulesets/main.json
   ```
 
-Ninguna regla tiene excepciones (`bypass_actors` vacío): tampoco los administradores pueden hacer push directo ni borrar estas ramas.
+No rule has exceptions (`bypass_actors` is empty): admins cannot push directly to or delete these branches either.
 
-Ajustes recomendados en *Settings → General*:
+Settings under *Settings → General*:
 
-- **Default branch:** `development`, para que los PR apunten ahí por defecto y `Closes #N` cierre el issue al mergear.
-- **Automatically delete head branches:** activado.
+- **Default branch:** `development`.
+- **Automatically delete head branches:** enabled.
