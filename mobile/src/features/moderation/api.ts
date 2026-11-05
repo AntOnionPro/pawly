@@ -8,8 +8,10 @@ export const BLOCKS = 'blocks';
 /** Same limit as the server (server/pb_migrations/…_moderation.js). */
 export const REPORT_DETAILS_MAX = 500;
 
-export type ReportReason = 'spam' | 'offensive' | 'animal_abuse' | 'animal_sale' | 'other';
+export type ReportReason =
+  'spam' | 'offensive' | 'animal_abuse' | 'animal_sale' | 'other' | 'adoption_followup';
 
+/** Reasons offered for any report. `adoption_followup` is only offered from a follow-up. */
 export const REPORT_REASONS: readonly ReportReason[] = [
   'spam',
   'offensive',
@@ -23,6 +25,10 @@ export type ReportKind = 'post' | 'comment' | 'user' | 'message';
 export interface ReportTarget {
   kind: ReportKind;
   id: string;
+}
+
+export function isReportReason(value: unknown): value is ReportReason {
+  return REPORT_REASONS.includes(value as ReportReason) || value === 'adoption_followup';
 }
 
 export function isReportKind(value: unknown): value is ReportKind {

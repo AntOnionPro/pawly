@@ -52,6 +52,7 @@ function notification(
     postId: type === 'follow' ? '' : 'post1',
     commentText: type === 'comment' ? '¡Qué linda!' : '',
     adoptionId: '',
+    followupMilestone: '',
     read: false,
     created: new Date().toISOString(),
     ...overrides,
@@ -112,7 +113,7 @@ describe('notification API helpers', () => {
     expect(getList).toHaveBeenCalledWith(1, 30, {
       filter: 'recipient = "u1"',
       sort: '-created,-id',
-      expand: 'actor,post,comment,adoption.pet',
+      expand: 'actor,post,comment,adoption.pet,followup',
       skipTotal: true,
     });
     expect(await actual.countUnreadNotifications(client, 'u1')).toBe(4);

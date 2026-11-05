@@ -348,6 +348,7 @@ describe('adoption notifications', () => {
       commentText: '',
       adoptionId: 'a1',
       adoption: LISTING,
+      followupMilestone: '',
       read: true,
       created: new Date().toISOString(),
     };

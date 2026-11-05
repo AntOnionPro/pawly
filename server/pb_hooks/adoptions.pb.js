@@ -77,7 +77,8 @@ onRecordUpdateRequest(validateAdoption, 'adoptions');
 // Marks a listing as adopted by someone whose request the publisher accepted (body:
 // `{ "request": "<id>" }`). Only the publisher, only while the listing is available. In one
 // transaction: the listing records the adopter and the date, the pet moves to the adopter
-// (keeping the previous owner and the date), and the other open requests are rejected.
+// (keeping the previous owner and the date), the other open requests are rejected, and the
+// four follow-ups are scheduled (pb_hooks/lib/followups.js).
 // Then the adopter is congratulated and the other applicants are told.
 routerAdd(
   'POST',
@@ -123,7 +124,9 @@ routerAdd(
       fail('adoption', 'pet_not_owned', 'This pet is no longer yours.');
     }
 
-    const now = new DateTime();
+    const { createFollowups, toServerDate } = require(`${__hooks}/lib/followups.js`);
+    const adoptedAt = new Date();
+    const now = toServerDate(adoptedAt);
     const rejected = [];
     e.app.runInTransaction((txApp) => {
       adoption.set('status', 'adopted');
@@ -149,6 +152,8 @@ routerAdd(
         txApp.save(other);
         rejected.push(other.getString('applicant'));
       }
+
+      createFollowups(txApp, adoption.id, adoptedAt);
     });
 
     const { notify } = require(`${__hooks}/lib/notifications.js`);

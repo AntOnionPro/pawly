@@ -124,7 +124,7 @@ El feed "Siguiendo" lista las publicaciones con el filtro `author.follows_via_fo
 
 ## Reportes y bloqueos
 
-La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`) o un usuario (`user`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale` u `other`) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración; su revisión llega en la etapa 7. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
+La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`) o un usuario (`user`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, o `adoption_followup` para un [seguimiento posadopción](#seguimiento-posadopción) no cumplido) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración; su revisión llega en la etapa 7. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
 
 La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
 
@@ -140,7 +140,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected` o `adopted`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, y cerrar la adopción felicita al adoptante. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due` o `followup_posted`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 
@@ -185,6 +185,14 @@ Aceptar una solicitud no traspasa la mascota: eso pasa cuando quien publica la m
 - Las demás solicitudes `pending` y `accepted` se rechazan, y sus solicitantes reciben una notificación `request_rejected`.
 
 El adoptante recibe una notificación `adopted`. Las publicaciones anteriores que etiquetan a la mascota conservan su autor y la etiqueta, y su autor todavía puede editarlas; desde entonces solo el nuevo dueño etiqueta a la mascota en publicaciones nuevas.
+
+## Seguimiento posadopción
+
+`adoption_followups` guarda los seguimientos de cada ficha adoptada (etapa 5): cuatro por adopción (`milestone` `week1`, `month1`, `month3` y `month6`), para 7, 30, 90 y 180 días después (`dueAt`). Solo el servidor los crea y cambia (`pb_hooks/followups.pb.js` y `pb_hooks/lib/followups.js`); solo el adoptante y el dueño anterior los ven. Se borran con la ficha.
+
+- **Recordatorios:** una tarea diaria (15:00 UTC, 9:00 en la Ciudad de México) envía al adoptante una notificación `followup_due` el día de cada seguimiento, una sola vez (`remindedAt`). `POST /api/pawly/followups/run` la corre al momento, opcionalmente como si fuera `{ "now": "<fecha ISO>" }`; solo los superusuarios pueden llamarla, y las pruebas la usan con fechas simuladas.
+- **Actualizaciones:** una publicación del adoptante que etiqueta a la mascota cuenta como la actualización (`post`) del seguimiento cuya ventana está abierta, desde su fecha hasta 14 días después. El dueño anterior recibe una notificación `followup_posted`.
+- **Vencidos:** un seguimiento sin actualización 14 días después de su fecha está vencido. Entonces el dueño anterior puede reportar al adoptante con el motivo `adoption_followup`; cualquier otra persona, o antes de eso, falla con `followup_not_overdue`.
 
 ## Contadores
 

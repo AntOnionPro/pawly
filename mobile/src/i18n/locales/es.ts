@@ -60,6 +60,20 @@ const es: Resources = {
     adopted: 'Adoptada',
     adoptedBy: 'Adoptada por @{{username}}',
     markAdopted: 'Marcar como adoptada',
+    followups: {
+      title: 'Seguimiento',
+      introAdopter:
+        'Comparte una foto o video de {{name}} en cada fecha: tu publicación con {{name}} etiquetada cuenta como actualización.',
+      introPublisher: 'Aquí verás las actualizaciones de @{{username}} sobre {{name}}.',
+      milestones: { week1: '1 semana', month1: '1 mes', month3: '3 meses', month6: '6 meses' },
+      status: { upcoming: 'Próximo', due: 'Pendiente', done: 'Cumplido', overdue: 'Vencido' },
+      upcomingOn: 'El {{date}}',
+      dueUntil: 'Hasta el {{date}}',
+      overdueOn: 'Venció el {{date}}',
+      viewPost: 'Ver la publicación',
+      share: 'Compartir actualización',
+      report: 'Reportar seguimiento no cumplido',
+    },
     complete: {
       intro: '¿Quién adoptó a {{name}}? Elige entre las solicitudes que aceptaste.',
       none: 'Primero acepta la solicitud de quien va a adoptar a {{name}}.',
@@ -274,6 +288,7 @@ const es: Resources = {
       animal_abuse: 'Maltrato animal',
       animal_sale: 'Venta de animales',
       other: 'Otro',
+      adoption_followup: 'Seguimiento de adopción no cumplido',
     },
     chooseReason: 'Elige un motivo.',
     details: 'Detalles (opcional)',
@@ -326,6 +341,9 @@ const es: Resources = {
     requestAccepted: '@{{username}} aceptó tu solicitud para adoptar a {{pet}}.',
     requestRejected: '@{{username}} no aceptó tu solicitud para adoptar a {{pet}}.',
     adopted: '¡Felicidades! Ahora {{pet}} es parte de tu familia.',
+    followupDue:
+      'Ya pasó {{when}} desde que adoptaste a {{pet}}. Comparte una foto o video para @{{username}}.',
+    followupPosted: '@{{username}} compartió cómo está {{pet}}.',
   },
   pushSettings: {
     title: 'Notificaciones',
@@ -524,6 +542,8 @@ const es: Resources = {
     ownAdoption: 'No puedes pedir adoptar a tu propia mascota.',
     adoptionClosed: 'Esta mascota ya no está en adopción.',
     requestNotAccepted: 'Elige a alguien cuya solicitud aceptaste.',
+    followupNotOverdue:
+      'Solo puedes reportar un seguimiento vencido de una mascota que diste en adopción.',
     alreadyReposted: 'Ya republicaste esta publicación.',
     alreadyReported: 'Ya reportaste esto.',
     blocked: 'No puedes hacerlo porque hay un bloqueo.',

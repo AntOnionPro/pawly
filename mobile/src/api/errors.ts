@@ -33,6 +33,7 @@ export type ErrorKey =
   | 'errors.ownAdoption'
   | 'errors.adoptionClosed'
   | 'errors.requestNotAccepted'
+  | 'errors.followupNotOverdue'
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
   | 'errors.blocked';
@@ -93,6 +94,8 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.adoptionClosed';
     case 'request_not_accepted':
       return 'errors.requestNotAccepted';
+    case 'followup_not_overdue':
+      return 'errors.followupNotOverdue';
     case 'blocked':
       return 'errors.blocked';
     case 'validation_too_many_files':

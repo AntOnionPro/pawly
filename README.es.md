@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 5, Adopción (en progreso).** Última release: `v0.5.0` (etapa 4). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 5, Adopción (terminada, falta la release `v0.6.0` a `main`).** La etapa 6 empieza cuando esa release esté mergeada. Última release: `v0.5.0` (etapa 4). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -18,7 +18,7 @@ Etapa actual: **etapa 5, Adopción (en progreso).** Última release: `v0.5.0` (e
 | 2 | Mascotas y publicaciones | Hecho |
 | 3 | Interacción social | Hecho |
 | 4 | Mensajes y notificaciones | Hecho |
-| 5 | Adopción | En progreso |
+| 5 | Adopción | Hecho |
 | 6 | Rescate | Sin empezar |
 | 7 | Moderación | Sin empezar |
 | 8 | Infraestructura y web | Sin empezar |
@@ -26,9 +26,7 @@ Etapa actual: **etapa 5, Adopción (en progreso).** Última release: `v0.5.0` (e
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 5: fichas de adopción y pestaña Adopción ([#56](https://github.com/AntOnionPro/pawly/issues/56), hecho), solicitudes de adopción ([#57](https://github.com/AntOnionPro/pawly/issues/57), hecho), marcar como adoptada y traspasar el perfil ([#58](https://github.com/AntOnionPro/pawly/issues/58), hecho) y seguimiento posadopción ([#59](https://github.com/AntOnionPro/pawly/issues/59)).
-
-Entregado en la etapa 4: mensajes directos ([#43](https://github.com/AntOnionPro/pawly/issues/43)), enviar publicaciones por mensaje ([#44](https://github.com/AntOnionPro/pawly/issues/44)), notificaciones dentro de la app ([#45](https://github.com/AntOnionPro/pawly/issues/45)), notificaciones push ([#46](https://github.com/AntOnionPro/pawly/issues/46)) y preferencias de notificaciones ([#47](https://github.com/AntOnionPro/pawly/issues/47)). El push en Android necesita un build de desarrollo (etapa 8).
+Entregado en la etapa 5: fichas de adopción y pestaña Adopción ([#56](https://github.com/AntOnionPro/pawly/issues/56)), solicitudes de adopción ([#57](https://github.com/AntOnionPro/pawly/issues/57)), marcar como adoptada y traspasar el perfil ([#58](https://github.com/AntOnionPro/pawly/issues/58)) y seguimiento posadopción ([#59](https://github.com/AntOnionPro/pawly/issues/59)). El push en Android necesita un build de desarrollo (etapa 8).
 
 ## Funcionalidades
 

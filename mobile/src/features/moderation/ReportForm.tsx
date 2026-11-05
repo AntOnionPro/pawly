@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { requestErrorKey, requestErrorKind } from '@/api/errors';
+import { requestErrorKey, requestErrorKind, toFieldErrors } from '@/api/errors';
 import { Button } from '@/components/Button';
 import { ChipGroup } from '@/components/ChipGroup';
 import { FieldError } from '@/components/FieldError';
@@ -19,11 +19,19 @@ import {
 } from './api';
 import { useSendReport } from './hooks';
 
+interface ReportFormProps {
+  target: ReportTarget;
+  /** A reason chosen beforehand (such as an overdue adoption follow-up): the only one offered. */
+  reason?: ReportReason;
+  onSent: () => void;
+}
+
 /** Reason (required) and optional details for a report. */
-export function ReportForm({ target, onSent }: { target: ReportTarget; onSent: () => void }) {
+export function ReportForm({ target, reason: fixedReason, onSent }: ReportFormProps) {
   const { t } = useTranslation();
   const send = useSendReport();
-  const [reason, setReason] = useState<ReportReason | ''>('');
+  const [reason, setReason] = useState<ReportReason | ''>(fixedReason ?? '');
+  const reasons = fixedReason ? [fixedReason] : REPORT_REASONS;
   const [details, setDetails] = useState('');
   const [missingReason, setMissingReason] = useState(false);
 
@@ -44,14 +52,16 @@ export function ReportForm({ target, onSent }: { target: ReportTarget; onSent: (
     ? null
     : isAlreadyReported(send.error)
       ? 'errors.alreadyReported'
-      : (requestErrorKey(requestErrorKind(send.error)) ?? 'errors.generic');
+      : (Object.values(toFieldErrors(send.error))[0] ??
+        requestErrorKey(requestErrorKind(send.error)) ??
+        'errors.generic');
 
   return (
     <View style={styles.form}>
       <ThemedText variant="heading">{t(`report.question.${target.kind}`)}</ThemedText>
       <ChipGroup
         label={t('report.reason')}
-        chips={REPORT_REASONS.map((value) => ({ value, label: t(`report.reasons.${value}`) }))}
+        chips={reasons.map((value) => ({ value, label: t(`report.reasons.${value}`) }))}
         selected={reason}
         onSelect={(value) => {
           setReason(value);
