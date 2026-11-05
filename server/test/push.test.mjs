@@ -175,3 +175,66 @@ describe('sending', () => {
     }
   });
 });
+
+describe('preferences', () => {
+  const PREFS = '/api/collections/notification_prefs/records';
+
+  test('only the owner sees and changes theirs, one record per user', async () => {
+    const sol = await verifiedUser();
+    const luna = await verifiedUser();
+    const { status, body } = await create(PREFS, sol, { user: sol.record.id, pawOff: true });
+    assert.equal(status, 200, JSON.stringify(body));
+    assert.equal((await create(PREFS, sol, { user: sol.record.id })).status, 400);
+    assert.equal((await create(PREFS, luna, { user: sol.record.id })).status, 400);
+    assert.equal((await pb.api(`${PREFS}/${body.id}`, { token: luna.token })).status, 404);
+    const edited = await pb.api(`${PREFS}/${body.id}`, {
+      method: 'PATCH',
+      token: luna.token,
+      body: { pawOff: false },
+    });
+    assert.equal(edited.status, 404);
+    const own = await pb.api(`${PREFS}/${body.id}`, {
+      method: 'PATCH',
+      token: sol.token,
+      body: { pawOff: false, messageOff: true },
+    });
+    assert.equal(own.status, 200);
+    assert.equal(own.body.messageOff, true);
+  });
+
+  test('a type turned off sends no push, but the in-app notification stays', async () => {
+    const sol = await verifiedUser();
+    const luna = await verifiedUser();
+    await device(sol);
+    await create(PREFS, sol, { user: sol.record.id, pawOff: true, messageOff: true });
+    const { body: post } = await create(POSTS, sol, { author: sol.record.id, text: 'Hola' });
+
+    await create('/api/collections/paws/records', luna, { user: luna.record.id, post: post.id });
+    const { body: conversation } = await create(CONVERSATIONS, luna, {
+      userA: luna.record.id,
+      userB: sol.record.id,
+    });
+    await create(MESSAGES, luna, {
+      conversation: conversation.id,
+      sender: luna.record.id,
+      text: 'Hola',
+    });
+    assert.deepEqual(received, []);
+    const { body } = await pb.api('/api/collections/notifications/records', { token: sol.token });
+    assert.deepEqual(
+      body.items.map((item) => item.type),
+      ['paw'],
+    );
+
+    // Other types still arrive.
+    await create('/api/collections/comments/records', luna, {
+      author: luna.record.id,
+      post: post.id,
+      text: '¡Linda!',
+    });
+    assert.deepEqual(
+      received.map((message) => message.data.type),
+      ['comment'],
+    );
+  });
+});

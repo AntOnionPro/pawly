@@ -39,3 +39,47 @@ export async function forgetPushToken(client: PocketBase, authToken: string): Pr
     // Nothing else to do.
   }
 }
+
+export const NOTIFICATION_PREFS = 'notification_prefs';
+
+/** Push types the user can turn off. */
+export type PushType = 'paw' | 'comment' | 'follow' | 'repost' | 'message';
+
+export const PUSH_TYPES: readonly PushType[] = ['paw', 'comment', 'follow', 'repost', 'message'];
+
+/** `true` = the user wants pushes of that type. */
+export type PushPrefs = Record<PushType, boolean>;
+
+export interface SavedPushPrefs {
+  /** Id of the saved record, or null while the user never changed anything (all on). */
+  id: string | null;
+  prefs: PushPrefs;
+}
+
+const ALL_ON: PushPrefs = { paw: true, comment: true, follow: true, repost: true, message: true };
+
+export async function getPushPrefs(client: PocketBase, userId: string): Promise<SavedPushPrefs> {
+  const result = await client.collection(NOTIFICATION_PREFS).getList(1, 1, {
+    filter: client.filter('user = {:user}', { user: userId }),
+    skipTotal: true,
+  });
+  const record = result.items[0];
+  if (!record) return { id: null, prefs: { ...ALL_ON } };
+  const prefs = { ...ALL_ON };
+  for (const type of PUSH_TYPES) prefs[type] = !record[`${type}Off`];
+  return { id: record.id, prefs };
+}
+
+/** Saves the preferences (the server stores which types are off). */
+export async function savePushPrefs(
+  client: PocketBase,
+  userId: string,
+  saved: SavedPushPrefs,
+): Promise<string> {
+  const body: Record<string, boolean> = {};
+  for (const type of PUSH_TYPES) body[`${type}Off`] = !saved.prefs[type];
+  const record = saved.id
+    ? await client.collection(NOTIFICATION_PREFS).update(saved.id, body)
+    : await client.collection(NOTIFICATION_PREFS).create({ user: userId, ...body });
+  return record.id;
+}

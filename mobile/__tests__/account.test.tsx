@@ -215,13 +215,16 @@ describe('DeleteAccountForm', () => {
 describe('SettingsContent account section', () => {
   it('is only shown with a session and runs each action', async () => {
     const account = {
+      onNotifications: jest.fn(),
       onBlockedUsers: jest.fn(),
       onChangePassword: jest.fn(),
       onSignOut: jest.fn(),
       onDeleteAccount: jest.fn(),
     };
     await renderWith(<SettingsContent account={account} />, signedIn());
-    await fireEvent.press(await screen.findByRole('button', { name: 'Usuarios bloqueados' }));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Notificaciones' }));
+    expect(account.onNotifications).toHaveBeenCalled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Usuarios bloqueados' }));
     expect(account.onBlockedUsers).toHaveBeenCalled();
     await fireEvent.press(screen.getByRole('button', { name: 'Cambiar contraseña' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Cerrar sesión' }));

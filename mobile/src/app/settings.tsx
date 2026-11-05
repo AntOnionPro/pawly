@@ -30,6 +30,7 @@ export default function SettingsScreen() {
         account={
           status === 'signedIn'
             ? {
+                onNotifications: () => router.push('/notification-settings'),
                 onBlockedUsers: () => router.push('/blocked'),
                 onChangePassword: () => router.push('/change-password'),
                 onSignOut: confirmSignOut,

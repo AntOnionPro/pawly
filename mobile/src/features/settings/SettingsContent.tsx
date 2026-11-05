@@ -8,6 +8,7 @@ import { usePreferences } from '@/preferences/PreferencesProvider';
 import type { ThemePreference } from '@/preferences/storage';
 
 export interface AccountActions {
+  onNotifications: () => void;
   onBlockedUsers: () => void;
   onChangePassword: () => void;
   onSignOut: () => void;
@@ -42,7 +43,12 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
     <>
       {account ? (
         <Group title={t('settings.account')}>
-          <NavRow icon="block" label={t('blocks.title')} onPress={account.onBlockedUsers} />
+          <NavRow
+            icon="notifications"
+            label={t('pushSettings.title')}
+            onPress={account.onNotifications}
+          />
+          <NavRow icon="block" label={t('blocks.title')} onPress={account.onBlockedUsers} divider />
           <NavRow
             icon="lock"
             label={t('account.password.title')}

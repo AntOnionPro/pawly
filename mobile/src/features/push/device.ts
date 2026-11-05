@@ -34,6 +34,15 @@ export function pushAvailable(): boolean {
   return Boolean(projectId());
 }
 
+/** Whether this phone can show push: allowed, not allowed, not asked yet, or not possible. */
+export type PushPermission = 'granted' | 'denied' | 'undetermined' | 'unavailable';
+
+export async function getPushPermission(): Promise<PushPermission> {
+  if (!pushAvailable()) return 'unavailable';
+  const { status } = await Notifications.getPermissionsAsync();
+  return status === 'granted' || status === 'denied' ? status : 'undetermined';
+}
+
 /**
  * This phone's Expo push token, or null if push is not available or not allowed. With `ask`,
  * asks for permission if it was never asked.
