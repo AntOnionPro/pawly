@@ -8,14 +8,14 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 2, Mascotas y publicaciones (en progreso).** Última release: `v0.2.0` (etapa 1). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 2, Mascotas y publicaciones (terminada, falta la release `v0.3.0` a `main`).** La etapa 3 empieza cuando esa release esté mergeada. Última release: `v0.2.0` (etapa 1). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
 | – | Repositorio, CI, flujo de trabajo y alcance funcional | Hecho |
 | 0 | Cimientos | Hecho |
 | 1 | Cuentas | Hecho |
-| 2 | Mascotas y publicaciones | En progreso |
+| 2 | Mascotas y publicaciones | Hecho |
 | 3 | Interacción social | Sin empezar |
 | 4 | Mensajes y notificaciones | Sin empezar |
 | 5 | Adopción | Sin empezar |
@@ -26,7 +26,7 @@ Etapa actual: **etapa 2, Mascotas y publicaciones (en progreso).** Última relea
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 2: perfiles de mascota ([#21](https://github.com/AntOnionPro/pawly/issues/21), hecho), publicaciones en el servidor ([#22](https://github.com/AntOnionPro/pawly/issues/22), hecho), crear publicaciones en la app ([#23](https://github.com/AntOnionPro/pawly/issues/23), hecho) y feed y perfiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
+Entregado en la etapa 2: perfiles de mascota ([#21](https://github.com/AntOnionPro/pawly/issues/21)), publicaciones en el servidor ([#22](https://github.com/AntOnionPro/pawly/issues/22)), crear publicaciones en la app ([#23](https://github.com/AntOnionPro/pawly/issues/23)) y feed y perfiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
 
 ## Funcionalidades
 

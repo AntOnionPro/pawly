@@ -81,6 +81,40 @@ export function mediaUrl(
 
 export const POST_EXPAND = 'author,pets';
 
+/** Which posts to list: all (feed), by author or by tagged pet. */
+export type PostFilter = { all: true } | { authorId: string } | { petId: string };
+
+export interface PostPage {
+  items: Post[];
+  page: number;
+  hasMore: boolean;
+}
+
+export const POSTS_PER_PAGE = 12;
+
+function filterExpression(client: PocketBase, filter: PostFilter): string {
+  if ('authorId' in filter) return client.filter('author = {:id}', { id: filter.authorId });
+  if ('petId' in filter) return client.filter('pets ~ {:id}', { id: filter.petId });
+  return '';
+}
+
+/** One page of posts, newest first. */
+export async function listPosts(
+  client: PocketBase,
+  filter: PostFilter,
+  page: number,
+  perPage: number = POSTS_PER_PAGE,
+): Promise<PostPage> {
+  const result = await client.collection(POSTS).getList(page, perPage, {
+    filter: filterExpression(client, filter),
+    sort: '-created,-id',
+    expand: POST_EXPAND,
+    // Counting every post is slow; a full page means there may be more.
+    skipTotal: true,
+  });
+  return { items: result.items.map(toPost), page, hasMore: result.items.length === perPage };
+}
+
 export async function getPost(client: PocketBase, id: string): Promise<Post> {
   return toPost(await client.collection(POSTS).getOne(id, { expand: POST_EXPAND }));
 }

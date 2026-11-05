@@ -83,6 +83,7 @@ function RootNavigator() {
         <Stack.Screen name="pet/[id]/edit" options={{ title: t('pets.edit') }} />
         <Stack.Screen name="post/[id]/index" options={{ title: t('posts.title') }} />
         <Stack.Screen name="post/[id]/edit" options={{ title: t('posts.edit') }} />
+        <Stack.Screen name="user/[id]" options={{ title: '' }} />
       </Stack>
     </ThemeProvider>
   );

@@ -12,7 +12,6 @@ const en = {
   },
   home: {
     title: 'Pawly',
-    description: 'Your pets’ feed will appear here.',
   },
   adoption: {
     title: 'Adoption',
@@ -88,6 +87,23 @@ const en = {
     delete: 'Delete post',
     deleteConfirmTitle: 'Delete this post?',
     deleteConfirmMessage: 'Its photos and videos will be deleted too. This cannot be undone.',
+    open: 'Open post from {{date}}',
+    loadMore: 'Show more',
+    textOnly: 'Text post',
+  },
+  time: {
+    now: 'now',
+    minutes: '{{count}} min',
+    hours: '{{count}} h',
+    days: '{{count}} d',
+  },
+  feed: {
+    empty: 'There are no posts yet. Be the first to share your pet.',
+    end: 'You are all caught up.',
+  },
+  user: {
+    posts: 'Posts',
+    noPosts: 'No posts yet.',
   },
   pets: {
     title: 'Pets',

@@ -7,6 +7,7 @@ import { Icon } from '@/components/Icon';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
+import { parseServerDate, relativeTime } from '@/utils/time';
 
 import type { Post } from './api';
 import { MediaCarousel } from './MediaCarousel';
@@ -14,6 +15,9 @@ import { MediaCarousel } from './MediaCarousel';
 interface PostCardProps {
   post: Post;
   onPressPet?: (petId: string) => void;
+  onPressAuthor?: (authorId: string) => void;
+  /** Opens the post page (from the feed). */
+  onOpen?: () => void;
   /** Author actions; shown only when given. */
   onEdit?: () => void;
   onDelete?: () => void;
@@ -41,30 +45,68 @@ function IconButton({
   );
 }
 
-/** Author, date, photos and videos, text and tagged pets of a post. */
-export function PostCard({ post, onPressPet, onEdit, onDelete }: PostCardProps) {
+/** "2 h", "3 d"… or the date after a week. */
+function usePostDate(created: string): string {
   const { t, i18n } = useTranslation();
+  const date = parseServerDate(created);
+  if (!date) return '';
+  const relative = relativeTime(date);
+  switch (relative.unit) {
+    case 'now':
+      return t('time.now');
+    case 'minutes':
+    case 'hours':
+    case 'days':
+      return t(`time.${relative.unit}`, { count: relative.count });
+    default:
+      return relative.date.toLocaleDateString(i18n.language, { dateStyle: 'medium' });
+  }
+}
+
+/** Author, date, photos and videos, text and tagged pets of a post. */
+export function PostCard({
+  post,
+  onPressPet,
+  onPressAuthor,
+  onOpen,
+  onEdit,
+  onDelete,
+}: PostCardProps) {
+  const { t } = useTranslation();
   const { client } = useAuth();
   const colors = useThemeColors();
   const author = post.author;
-  const date = post.created
-    ? new Date(post.created.replace(' ', 'T')).toLocaleDateString(i18n.language, {
-        dateStyle: 'medium',
-      })
-    : '';
+  const date = usePostDate(post.created);
 
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        {author ? (
-          <Avatar uri={avatarUrl(client, author, '100x100')} username={author.username} size={40} />
-        ) : null}
-        <View style={styles.headerText}>
+        <Pressable
+          accessibilityRole={onPressAuthor ? 'link' : undefined}
+          accessibilityLabel={author ? `@${author.username}` : undefined}
+          disabled={!onPressAuthor || !author}
+          onPress={() => author && onPressAuthor?.(author.id)}
+          style={({ pressed }) => [styles.author, pressed && styles.pressed]}>
+          {author ? (
+            <Avatar
+              uri={avatarUrl(client, author, '100x100')}
+              username={author.username}
+              size={40}
+            />
+          ) : null}
           {author ? <ThemedText style={styles.username}>@{author.username}</ThemedText> : null}
+        </Pressable>
+        <Pressable
+          accessibilityRole={onOpen ? 'link' : undefined}
+          accessibilityLabel={onOpen ? t('posts.open', { date }) : date}
+          disabled={!onOpen}
+          hitSlop={8}
+          onPress={onOpen}
+          style={({ pressed }) => [styles.date, pressed && styles.pressed]}>
           <ThemedText variant="caption" color="textSecondary">
             {date}
           </ThemedText>
-        </View>
+        </Pressable>
         {onEdit ? <IconButton icon="edit" label={t('posts.edit')} onPress={onEdit} /> : null}
         {onDelete ? (
           <IconButton icon="delete" label={t('posts.delete')} onPress={onDelete} />
@@ -100,7 +142,8 @@ export function PostCard({ post, onPressPet, onEdit, onDelete }: PostCardProps) 
 const styles = StyleSheet.create({
   card: { gap: spacing.sm },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  headerText: { flex: 1 },
+  author: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  date: { paddingVertical: spacing.xs },
   username: { fontWeight: '600' },
   iconButton: { padding: spacing.xs },
   pets: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },

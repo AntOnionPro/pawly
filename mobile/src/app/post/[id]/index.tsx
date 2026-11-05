@@ -50,6 +50,9 @@ export default function PostDetailScreen() {
         <PostCard
           post={post}
           onPressPet={(petId) => router.push({ pathname: '/pet/[id]', params: { id: petId } })}
+          onPressAuthor={(authorId) =>
+            router.push({ pathname: '/user/[id]', params: { id: authorId } })
+          }
           onEdit={
             isAuthor
               ? () => router.push({ pathname: '/post/[id]/edit', params: { id: post.id } })
