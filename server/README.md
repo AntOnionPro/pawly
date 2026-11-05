@@ -104,6 +104,12 @@ The `posts` collection holds posts (stage 2):
 
 A post needs text or at least one file. Anyone can see and list posts; only the author edits and deletes them. The rules that the collection cannot express live in `pb_hooks/posts.pb.js` and `pb_hooks/lib/posts.js`; field errors use the codes `post_empty`, `photo_too_large` and `pet_not_owned`. Video length (60 seconds) is limited in the app, because the server cannot read video durations without extra tools.
 
+## Paw prints and counters
+
+The `paws` collection holds paw prints (stage 3): one per `user` and `post`. Anyone can see them; only the user adds or removes their own. They are deleted with the post or the account.
+
+Each post has a `pawCount`. Counters like this one are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.
+
 ## How to change the database
 
 1. Change the collections in the admin panel while `npm run dev` is running.

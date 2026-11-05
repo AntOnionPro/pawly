@@ -7,6 +7,7 @@ import { FieldError } from '@/components/FieldError';
 import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
 import { useDeletePost, usePost } from '@/features/posts/hooks';
+import { usePawAction } from '@/features/posts/paws';
 import { PostCard } from '@/features/posts/PostCard';
 import { confirm } from '@/utils/confirm';
 
@@ -17,6 +18,7 @@ export default function PostDetailScreen() {
   const { user } = useAuth();
   const { data: post, error, refetch, isPending } = usePost(id);
   const remove = useDeletePost();
+  const paw = usePawAction();
   const isAuthor = Boolean(post && user?.id === post.authorId);
 
   async function deletePost() {
@@ -49,6 +51,7 @@ export default function PostDetailScreen() {
       {post ? (
         <PostCard
           post={post}
+          onPaw={() => paw(post)}
           onPressPet={(petId) => router.push({ pathname: '/pet/[id]', params: { id: petId } })}
           onPressAuthor={(authorId) =>
             router.push({ pathname: '/user/[id]', params: { id: authorId } })

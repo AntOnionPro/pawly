@@ -93,6 +93,13 @@ const es: Resources = {
     open: 'Abrir la publicación del {{date}}',
     loadMore: 'Ver más',
     textOnly: 'Publicación de texto',
+    paw: {
+      add: 'Dar huella',
+      remove: 'Quitar tu huella',
+      count_one: '{{count}} huella',
+      count_other: '{{count}} huellas',
+      failed: 'No se pudo guardar tu huella.',
+    },
   },
   time: {
     now: 'ahora',

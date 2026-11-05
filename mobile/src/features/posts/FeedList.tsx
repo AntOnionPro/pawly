@@ -11,6 +11,7 @@ import { spacing } from '@/theme/typography';
 
 import type { Post } from './api';
 import { usePostList } from './hooks';
+import { usePawAction } from './paws';
 import { PostCard } from './PostCard';
 
 const FEED = { all: true } as const;
@@ -20,6 +21,7 @@ export function FeedList() {
   const { t } = useTranslation();
   const router = useRouter();
   const colors = useThemeColors();
+  const paw = usePawAction();
   const {
     data,
     error,
@@ -77,6 +79,7 @@ export function FeedList() {
           <PostCard
             post={item}
             onOpen={() => router.push({ pathname: '/post/[id]', params: { id: item.id } })}
+            onPaw={() => paw(item)}
             onPressAuthor={(id) => router.push({ pathname: '/user/[id]', params: { id } })}
             onPressPet={(id) => router.push({ pathname: '/pet/[id]', params: { id } })}
           />

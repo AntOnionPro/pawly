@@ -11,6 +11,7 @@ import { parseServerDate, relativeTime } from '@/utils/time';
 
 import type { Post } from './api';
 import { MediaCarousel } from './MediaCarousel';
+import { PawButton } from './PawButton';
 
 interface PostCardProps {
   post: Post;
@@ -18,6 +19,8 @@ interface PostCardProps {
   onPressAuthor?: (authorId: string) => void;
   /** Opens the post page (from the feed). */
   onOpen?: () => void;
+  /** Adds or removes the paw print. Without it the count is shown read-only. */
+  onPaw?: () => void;
   /** Author actions; shown only when given. */
   onEdit?: () => void;
   onDelete?: () => void;
@@ -69,6 +72,7 @@ export function PostCard({
   onPressPet,
   onPressAuthor,
   onOpen,
+  onPaw,
   onEdit,
   onDelete,
 }: PostCardProps) {
@@ -113,6 +117,9 @@ export function PostCard({
         ) : null}
       </View>
       <MediaCarousel post={post} />
+      <View style={styles.actions}>
+        <PawButton count={post.pawCount} pawed={post.pawedByMe} onPress={onPaw} />
+      </View>
       {post.text ? <ThemedText>{post.text}</ThemedText> : null}
       {post.pets.length > 0 ? (
         <View style={styles.pets}>
@@ -146,6 +153,7 @@ const styles = StyleSheet.create({
   date: { paddingVertical: spacing.xs },
   username: { fontWeight: '600' },
   iconButton: { padding: spacing.xs },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   pets: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   pet: {
     flexDirection: 'row',

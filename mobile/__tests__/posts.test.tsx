@@ -54,6 +54,9 @@ const POST: api.Post = {
   petIds: ['p1'],
   pets: [LUNA],
   created: '2026-11-05 10:00:00.000Z',
+  pawCount: 3,
+  pawedByMe: false,
+  myPawId: null,
 };
 
 function asset(overrides: Partial<ImagePicker.ImagePickerAsset>): ImagePicker.ImagePickerAsset {
