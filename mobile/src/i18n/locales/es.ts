@@ -222,6 +222,17 @@ const es: Resources = {
     reportConfirmMessage: 'En la siguiente pantalla eliges el motivo.',
     blocked: 'Bloqueaste a @{{username}}. No pueden escribirse.',
   },
+  notifications: {
+    title: 'Notificaciones',
+    unread_one: '{{count}} sin leer',
+    unread_other: '{{count}} sin leer',
+    new: 'Nueva',
+    empty: 'Aún no tienes notificaciones.',
+    paw: '@{{username}} dejó una huella en tu publicación.',
+    comment: '@{{username}} comentó: “{{text}}”',
+    follow: '@{{username}} empezó a seguirte.',
+    repost: '@{{username}} republicó tu publicación.',
+  },
   time: {
     now: 'ahora',
     minutes: '{{count}} min',

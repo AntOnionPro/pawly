@@ -219,6 +219,17 @@ const en = {
     reportConfirmMessage: 'You will choose the reason on the next screen.',
     blocked: 'You blocked @{{username}}. You cannot write to each other.',
   },
+  notifications: {
+    title: 'Notifications',
+    unread_one: '{{count}} unread',
+    unread_other: '{{count}} unread',
+    new: 'New',
+    empty: 'You have no notifications yet.',
+    paw: '@{{username}} left a paw print on your post.',
+    comment: '@{{username}} commented: “{{text}}”',
+    follow: '@{{username}} started following you.',
+    repost: '@{{username}} reposted your post.',
+  },
   time: {
     now: 'now',
     minutes: '{{count}} min',

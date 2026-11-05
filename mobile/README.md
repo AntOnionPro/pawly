@@ -111,7 +111,7 @@ mobile/
 - **Translations:** every text goes in `src/i18n/locales/es.ts` and `en.ts`. TypeScript fails if a key is missing in either language.
 - **Instant updates:** for quick actions such as a paw print, change the cached post everywhere at once with `updateCachedPost` (`src/features/posts/cache.ts`) and roll back if the request fails.
 - **Bars above the keyboard:** put a bar that must stay visible while typing (such as the comment field) in the `footer` of `Screen`. It stays under the scrolling content and above the keyboard.
-- **Live updates:** listen to PocketBase realtime with the `useRealtime` pattern of `src/features/messages/hooks.ts` (subscribe in an effect, unsubscribe on cleanup). iOS and Android have no `EventSource`, so `src/api/eventSource.native.ts` installs `react-native-sse`, which works in Expo Go.
+- **Live updates:** listen to PocketBase realtime with `useRealtime` (`src/api/useRealtime.ts`). iOS and Android have no `EventSource`, so `src/api/eventSource.native.ts` installs `react-native-sse`, which works in Expo Go.
 - **Uploads:** add picked files to a form with `appendFile` (`src/utils/upload.ts`). It uploads `{ uri, name, type }` on iOS and Android and a real `File` on the web.
 - **Native modules:** stage 0 only uses modules included in Expo Go. A library with its own native code needs a development build.
 - **Expo version:** the app uses Expo SDK 58. Before using an Expo API, check the docs for that version (see `AGENTS.md`).
