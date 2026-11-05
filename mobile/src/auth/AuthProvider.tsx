@@ -11,6 +11,7 @@ import {
 } from 'react';
 
 import { getClient, restoreSession } from '@/api/client';
+import type { PickedImage } from '@/utils/pickPhoto';
 
 import { normalizeUsername, type SignUpValues } from './validation';
 
@@ -40,13 +41,6 @@ export interface AuthContextValue {
   changePassword: (oldPassword: string, password: string, passwordConfirm: string) => Promise<void>;
   /** Checks the password again, deletes the account and signs out. */
   deleteAccount: (password: string) => Promise<void>;
-}
-
-/** A photo picked on the phone, ready to upload. */
-export interface PickedImage {
-  uri: string;
-  name: string;
-  type: string;
 }
 
 export interface ProfileChanges {

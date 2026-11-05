@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { AuthPrompt } from '@/features/auth/AuthPrompt';
+import { PetList } from '@/features/pets/PetList';
 import { ProfileHeader } from '@/features/profile/ProfileHeader';
 
 export default function ProfileScreen() {
@@ -23,6 +24,7 @@ export default function ProfileScreen() {
             label={t('profile.editButton')}
             onPress={() => router.push('/edit-profile')}
           />
+          <PetList ownerId={user.id} canAdd />
         </>
       ) : (
         <AuthPrompt icon="profile" message={t('auth.prompt.profile')} />

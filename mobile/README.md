@@ -83,10 +83,10 @@ mobile/
 │   ├── app/            Screens and navigation (Expo Router: one file per route)
 │   │   ├── (tabs)/     Bottom bar: Home, Adoption, Post, Rescue, Profile
 │   │   └── settings.tsx
-│   ├── api/            PocketBase client, server URL and error messages
+│   ├── api/            PocketBase client, server URL, error messages and React Query cache
 │   ├── auth/           Session (AuthProvider) and form validation
 │   ├── components/     Reusable UI (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Screen content grouped by feature (auth, profile, account, legal, settings)
+│   ├── features/       Screen content grouped by feature (auth, profile, account, pets, legal, settings)
 │   ├── i18n/           Translations (Spanish and English)
 │   ├── preferences/    Theme and language chosen by the user, saved on the phone
 │   ├── theme/          Colors, icons, typography and contrast helpers
@@ -101,6 +101,7 @@ mobile/
 - **Colors:** never write a color in a screen. Use `useThemeColors()`; the tokens live in `src/theme/colors.ts` and a test checks their contrast.
 - **Text:** use `ThemedText`. Small text uses `text` or `textSecondary`, never the accent color.
 - **Icons:** only through `Icon` and `src/theme/icons.ts` (SF Symbols on iOS, Material Symbols on Android and web). No emojis in the interface.
+- **Server data:** read and change it with React Query hooks per feature (for example `src/features/pets/hooks.ts`), so screens share the cache and refresh after changes.
 - **Translations:** every text goes in `src/i18n/locales/es.ts` and `en.ts`. TypeScript fails if a key is missing in either language.
 - **Native modules:** stage 0 only uses modules included in Expo Go. A library with its own native code needs a development build.
 - **Expo version:** the app uses Expo SDK 58. Before using an Expo API, check the docs for that version (see `AGENTS.md`).

@@ -54,6 +54,7 @@ function codeToKey(field: string, code: string): ErrorKey {
     case 'birthdate_required':
       return 'errors.dateRequired';
     case 'birthdate_invalid':
+    case 'birthdate_future':
       return 'errors.dateInvalid';
     case 'too_young':
       return 'errors.tooYoung';

@@ -8,28 +8,7 @@ import { PREFERENCES_KEY } from '@/preferences/storage';
 
 import { authValue, renderWith, serverError } from '../test-utils/render';
 
-// The native date picker cannot be driven in tests: a text field stands in for it.
-jest.mock('@/components/DateField', () => {
-  const { Text, TextInput, View } = jest.requireActual('react-native');
-  return {
-    DateField: ({
-      label,
-      value,
-      onChange,
-      error,
-    }: {
-      label: string;
-      value: string;
-      onChange: (v: string) => void;
-      error?: string | null;
-    }) => (
-      <View>
-        <TextInput accessibilityLabel={label} value={value} onChangeText={onChange} />
-        {error ? <Text>{error}</Text> : null}
-      </View>
-    ),
-  };
-});
+jest.mock('@/components/DateField', () => require('../test-utils/mocks/DateField'));
 
 jest.mock('expo-localization', () => ({
   getLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],

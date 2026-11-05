@@ -8,14 +8,14 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 1, Accounts (done, pending the `v0.2.0` release to `main`).** Stage 2 starts after that release is merged. Latest release: `v0.1.0` (stage 0). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 2, Pets and posts (in progress).** Latest release: `v0.2.0` (stage 1). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
 | – | Repository, CI, workflow and functional scope | Done |
 | 0 | Foundations | Done |
 | 1 | Accounts | Done |
-| 2 | Pets and posts | Not started |
+| 2 | Pets and posts | In progress |
 | 3 | Social interaction | Not started |
 | 4 | Messages and notifications | Not started |
 | 5 | Adoption | Not started |
@@ -26,7 +26,7 @@ Current stage: **Stage 1, Accounts (done, pending the `v0.2.0` release to `main`
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 1 delivered: server accounts ([#12](https://github.com/AntOnionPro/pawly/issues/12)), session and sign-up in the app ([#13](https://github.com/AntOnionPro/pawly/issues/13)) and profile and account ([#14](https://github.com/AntOnionPro/pawly/issues/14)).
+Stage 2 issues: pet profiles ([#21](https://github.com/AntOnionPro/pawly/issues/21), done), posts on the server ([#22](https://github.com/AntOnionPro/pawly/issues/22)), creating posts in the app ([#23](https://github.com/AntOnionPro/pawly/issues/23)) and feed and profiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
 
 ## Features
 

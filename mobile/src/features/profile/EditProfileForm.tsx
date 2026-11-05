@@ -1,16 +1,16 @@
-import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { requestErrorKey, requestErrorKind, toFieldErrors, type FieldErrors } from '@/api/errors';
-import { avatarUrl, useAuth, type PickedImage, type User } from '@/auth/AuthProvider';
+import { avatarUrl, useAuth, type User } from '@/auth/AuthProvider';
 import { BIO_MAX_LENGTH, normalizeUsername, validateUsername } from '@/auth/validation';
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
 import { TextField } from '@/components/TextField';
 import { spacing } from '@/theme/typography';
+import { pickSquarePhoto, type PickedImage } from '@/utils/pickPhoto';
 
 interface EditProfileFormProps {
   user: User;
@@ -19,22 +19,6 @@ interface EditProfileFormProps {
 
 /** Photo: undefined = unchanged, null = removed, PickedImage = new one. */
 type PhotoChange = PickedImage | null | undefined;
-
-export async function pickProfilePhoto(): Promise<PickedImage | null> {
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['images'],
-    allowsEditing: true,
-    aspect: [1, 1],
-    quality: 0.8,
-  });
-  const asset = result.canceled ? undefined : result.assets[0];
-  if (!asset) return null;
-  return {
-    uri: asset.uri,
-    name: asset.fileName ?? 'avatar.jpg',
-    type: asset.mimeType ?? 'image/jpeg',
-  };
-}
 
 export function EditProfileForm({ user, onSaved }: EditProfileFormProps) {
   const { t } = useTranslation();
@@ -54,7 +38,7 @@ export function EditProfileForm({ user, onSaved }: EditProfileFormProps) {
   };
 
   async function choosePhoto() {
-    const picked = await pickProfilePhoto();
+    const picked = await pickSquarePhoto();
     if (picked) setPhoto(picked);
   }
 
