@@ -14,7 +14,6 @@ const es: Resources = {
   },
   home: {
     title: 'Pawly',
-    description: 'Aquí aparecerá el feed de tus mascotas.',
   },
   adoption: {
     title: 'Adopción',
@@ -91,6 +90,23 @@ const es: Resources = {
     delete: 'Eliminar publicación',
     deleteConfirmTitle: '¿Eliminar esta publicación?',
     deleteConfirmMessage: 'También se borrarán sus fotos y videos. No se puede deshacer.',
+    open: 'Abrir la publicación del {{date}}',
+    loadMore: 'Ver más',
+    textOnly: 'Publicación de texto',
+  },
+  time: {
+    now: 'ahora',
+    minutes: '{{count}} min',
+    hours: '{{count}} h',
+    days: '{{count}} d',
+  },
+  feed: {
+    empty: 'Aún no hay publicaciones. Sé el primero en compartir a tu mascota.',
+    end: 'Ya viste todo.',
+  },
+  user: {
+    posts: 'Publicaciones',
+    noPosts: 'Aún no hay publicaciones.',
   },
   pets: {
     title: 'Mascotas',

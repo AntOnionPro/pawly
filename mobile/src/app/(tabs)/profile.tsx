@@ -6,6 +6,7 @@ import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { AuthPrompt } from '@/features/auth/AuthPrompt';
 import { PetList } from '@/features/pets/PetList';
+import { PostGrid } from '@/features/posts/PostGrid';
 import { ProfileHeader } from '@/features/profile/ProfileHeader';
 
 export default function ProfileScreen() {
@@ -25,6 +26,11 @@ export default function ProfileScreen() {
             onPress={() => router.push('/edit-profile')}
           />
           <PetList ownerId={user.id} canAdd />
+          <PostGrid
+            filter={{ authorId: user.id }}
+            title={t('user.posts')}
+            empty={t('user.noPosts')}
+          />
         </>
       ) : (
         <AuthPrompt icon="profile" message={t('auth.prompt.profile')} />

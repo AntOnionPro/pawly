@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
@@ -15,10 +15,12 @@ interface PetProfileProps {
   pet: Pet;
   /** Shown only to the owner. */
   onEdit?: () => void;
+  /** Opens the owner's profile. */
+  onPressOwner?: (ownerId: string) => void;
 }
 
 /** Photo, name, species, breed, age and owner of a pet. */
-export function PetProfile({ pet, onEdit }: PetProfileProps) {
+export function PetProfile({ pet, onEdit, onPressOwner }: PetProfileProps) {
   const { t } = useTranslation();
   const { client } = useAuth();
   const colors = useThemeColors();
@@ -51,9 +53,15 @@ export function PetProfile({ pet, onEdit }: PetProfileProps) {
         </ThemedText>
       ) : null}
       {pet.ownerUsername ? (
-        <ThemedText color="textSecondary">
-          {t('pets.owner', { username: pet.ownerUsername })}
-        </ThemedText>
+        <Pressable
+          accessibilityRole={onPressOwner ? 'link' : undefined}
+          disabled={!onPressOwner}
+          onPress={() => onPressOwner?.(pet.ownerId)}
+          style={({ pressed }) => pressed && styles.pressed}>
+          <ThemedText color="textSecondary">
+            {t('pets.owner', { username: pet.ownerUsername })}
+          </ThemedText>
+        </Pressable>
       ) : null}
       {onEdit ? (
         <View style={styles.actions}>
@@ -79,4 +87,5 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   actions: { alignSelf: 'stretch', marginTop: spacing.md },
+  pressed: { opacity: 0.6 },
 });

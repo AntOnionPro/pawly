@@ -209,6 +209,13 @@ describe('PetProfile', () => {
     expect(screen.queryByRole('button', { name: 'Editar mascota' })).toBeNull();
   });
 
+  it("opens the owner's profile", async () => {
+    const onPressOwner = jest.fn();
+    await renderWith(<PetProfile pet={LUNA} onPressOwner={onPressOwner} />, signedIn());
+    await fireEvent.press(await screen.findByRole('link', { name: 'Dueño: @luna' }));
+    expect(onPressOwner).toHaveBeenCalledWith('u1');
+  });
+
   it('lets the owner edit it', async () => {
     const onEdit = jest.fn();
     await renderWith(<PetProfile pet={LUNA} onEdit={onEdit} />, signedIn());
