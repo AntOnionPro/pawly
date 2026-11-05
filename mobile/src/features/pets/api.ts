@@ -2,7 +2,7 @@ import type PocketBase from 'pocketbase';
 import type { RecordModel } from 'pocketbase';
 
 import type { PickedImage } from '@/utils/pickPhoto';
-import { appendFile } from '@/utils/upload';
+import { appendFile, uploadFetch } from '@/utils/upload';
 
 export const PETS = 'pets';
 
@@ -106,11 +106,15 @@ export async function createPet(
   ownerId: string,
   values: PetValues,
 ): Promise<Pet> {
-  return toPet(await client.collection(PETS).create(await toFormData(values, ownerId)));
+  return toPet(
+    await client.collection(PETS).create(await toFormData(values, ownerId), { fetch: uploadFetch }),
+  );
 }
 
 export async function updatePet(client: PocketBase, id: string, values: PetValues): Promise<Pet> {
-  return toPet(await client.collection(PETS).update(id, await toFormData(values)));
+  return toPet(
+    await client.collection(PETS).update(id, await toFormData(values), { fetch: uploadFetch }),
+  );
 }
 
 export async function deletePet(client: PocketBase, id: string): Promise<void> {

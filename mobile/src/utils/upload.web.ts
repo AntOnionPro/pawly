@@ -5,3 +5,6 @@ export async function appendFile(form: FormData, field: string, file: UploadFile
   const blob = await (await fetch(file.uri)).blob();
   form.append(field, new File([blob], file.name, { type: file.type || blob.type }));
 }
+
+/** Web: the browser's `fetch` uploads files, so nothing special is needed. */
+export const uploadFetch = undefined;
