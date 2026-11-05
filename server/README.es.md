@@ -140,11 +140,11 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow` o `repost`), la publicación y el comentario relacionados (`post`, `comment`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Se borran con cualquiera de las dos cuentas y con la publicación o el comentario relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted` o `request_rejected`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, y aceptarla o rechazarla avisa al solicitante. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 
-`push_tokens` guarda los tokens de Expo Push de los dispositivos de cada usuario (etapa 4), con el idioma de la app (`language`) para el texto. Solo su dueño los ve, guarda y borra, y guardar un token que pertenece a otra cuenta lo mueve (una cuenta por dispositivo). Después de cada notificación dentro de la app y de cada mensaje directo, el servidor envía un push a todos los dispositivos del destinatario con Expo Push Service (`pb_hooks/push.pb.js`); los tokens que Expo marca como no registrados se borran, y un push fallido nunca hace fallar la acción. `notification_prefs` guarda qué push quiere cada usuario (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): un registro por usuario, solo su dueño lo ve y lo cambia, y sin él todos los tipos están encendidos. Un tipo apagado no envía push, pero la notificación dentro de la app se crea igual. `PAWLY_PUSH_URL` cambia la dirección del servicio: las pruebas apuntan a uno falso y nunca llaman a Expo.
+`push_tokens` guarda los tokens de Expo Push de los dispositivos de cada usuario (etapa 4), con el idioma de la app (`language`) para el texto. Solo su dueño los ve, guarda y borra, y guardar un token que pertenece a otra cuenta lo mueve (una cuenta por dispositivo). Después de cada notificación dentro de la app y de cada mensaje directo, el servidor envía un push a todos los dispositivos del destinatario con Expo Push Service (`pb_hooks/push.pb.js`); los tokens que Expo marca como no registrados se borran, y un push fallido nunca hace fallar la acción. `notification_prefs` guarda qué push quiere cada usuario (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`, y `adoptionOff` para todos los avisos de adopción): un registro por usuario, solo su dueño lo ve y lo cambia, y sin él todos los tipos están encendidos. Un tipo apagado no envía push, pero la notificación dentro de la app se crea igual. `PAWLY_PUSH_URL` cambia la dirección del servicio: las pruebas apuntan a uno falso y nunca llaman a Expo.
 
 ## Fichas de adopción
 
@@ -166,6 +166,15 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 | `status`       | `available` o `adopted`. Lo pone el servidor: una ficha nueva siempre está `available`. |
 
 Cualquiera las ve y las lista; solo quien publica las edita y las borra, y al editar no se puede cambiar la mascota ni el estado. Una mascota tiene a lo más una ficha `available`. Los textos se recortan. Las reglas están en `pb_hooks/adoptions.pb.js`; los errores de campo usan los códigos `pet_not_owned`, `pet_already_listed` y `photo_too_large`.
+
+## Solicitudes de adopción
+
+`adoption_requests` guarda las solicitudes para adoptar (etapa 5): quien solicita (`applicant`) pide la mascota de una ficha (`adoption`) con un mensaje de presentación (`message`, obligatorio, hasta 1,000 caracteres). Solo el solicitante y quien publica ven una solicitud, y nadie la borra. El servidor pone el estado (`status`) y revisa cada cambio (`pb_hooks/adoption_requests.pb.js`):
+
+- Una solicitud nueva queda `pending`. Nadie solicita su propia ficha (`own_adoption`), una que ya no está disponible (`adoption_closed`), con un bloqueo de por medio (`blocked`) ni dos veces la misma ficha (`already_requested`).
+- Después solo cambia el estado, y solo mientras la ficha está disponible. El solicitante retira una solicitud `pending` o `accepted` (`withdrawn`, definitivo); quien publica acepta (`accepted`) o rechaza (`rejected`) cualquier solicitud que no se haya retirado. Lo demás falla con `invalid_status`.
+
+Aceptar una solicitud no traspasa la mascota: eso pasa cuando quien publica la marca como adoptada. Las solicitudes se borran con la ficha y con la cuenta del solicitante.
 
 ## Contadores
 

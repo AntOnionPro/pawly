@@ -5,6 +5,7 @@ import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
 import { AdoptionDetail } from '@/features/adoption/AdoptionDetail';
 import { useAdoption } from '@/features/adoption/hooks';
+import { RequestSection } from '@/features/adoption/RequestSection';
 
 export default function AdoptionScreen() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function AdoptionScreen() {
       {adoption ? (
         <AdoptionDetail
           adoption={adoption}
+          action={<RequestSection adoption={adoption} />}
           onPressPet={(petId) => router.push({ pathname: '/pet/[id]', params: { id: petId } })}
           onPressPublisher={(userId) =>
             router.push({ pathname: '/user/[id]', params: { id: userId } })

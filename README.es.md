@@ -26,7 +26,7 @@ Etapa actual: **etapa 5, Adopción (en progreso).** Última release: `v0.5.0` (e
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 5: fichas de adopción y pestaña Adopción ([#56](https://github.com/AntOnionPro/pawly/issues/56), hecho), solicitudes de adopción ([#57](https://github.com/AntOnionPro/pawly/issues/57)), marcar como adoptada y traspasar el perfil ([#58](https://github.com/AntOnionPro/pawly/issues/58)) y seguimiento posadopción ([#59](https://github.com/AntOnionPro/pawly/issues/59)).
+Issues de la etapa 5: fichas de adopción y pestaña Adopción ([#56](https://github.com/AntOnionPro/pawly/issues/56), hecho), solicitudes de adopción ([#57](https://github.com/AntOnionPro/pawly/issues/57), hecho), marcar como adoptada y traspasar el perfil ([#58](https://github.com/AntOnionPro/pawly/issues/58)) y seguimiento posadopción ([#59](https://github.com/AntOnionPro/pawly/issues/59)).
 
 Entregado en la etapa 4: mensajes directos ([#43](https://github.com/AntOnionPro/pawly/issues/43)), enviar publicaciones por mensaje ([#44](https://github.com/AntOnionPro/pawly/issues/44)), notificaciones dentro de la app ([#45](https://github.com/AntOnionPro/pawly/issues/45)), notificaciones push ([#46](https://github.com/AntOnionPro/pawly/issues/46)) y preferencias de notificaciones ([#47](https://github.com/AntOnionPro/pawly/issues/47)). El push en Android necesita un build de desarrollo (etapa 8).
 

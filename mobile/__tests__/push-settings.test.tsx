@@ -33,6 +33,7 @@ const ALL_ON: api.PushPrefs = {
   follow: true,
   repost: true,
   message: true,
+  adoption: true,
 };
 
 beforeEach(async () => {
@@ -90,6 +91,7 @@ describe('preferences API helpers', () => {
       followOff: true,
       repostOff: false,
       messageOff: false,
+      adoptionOff: false,
     });
     await actual.savePushPrefs(client, 'u1', { id: 'old', prefs });
     expect(update).toHaveBeenCalledWith('old', expect.objectContaining({ followOff: true }));
@@ -111,7 +113,13 @@ describe('notification settings', () => {
   it('shows a switch per type and saves a change at once', async () => {
     await renderWith(<NotificationSettings />, signedIn());
     const paw = await screen.findByLabelText('Huellas');
-    for (const label of ['Comentarios', 'Nuevos seguidores', 'Republicaciones', 'Mensajes']) {
+    for (const label of [
+      'Comentarios',
+      'Nuevos seguidores',
+      'Republicaciones',
+      'Mensajes',
+      'Adopciones',
+    ]) {
       expect(screen.getByLabelText(label).props.value).toBe(true);
     }
     await fireEvent(paw, 'valueChange', false);

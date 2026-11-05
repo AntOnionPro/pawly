@@ -49,6 +49,8 @@ const TOKENS = '/api/collections/push_tokens/records';
 const POSTS = '/api/collections/posts/records';
 const CONVERSATIONS = '/api/collections/conversations/records';
 const MESSAGES = '/api/collections/messages/records';
+const ADOPTIONS = '/api/collections/adoptions/records';
+const REQUESTS = '/api/collections/adoption_requests/records';
 let counter = 0;
 
 async function device(user, language = 'es') {
@@ -133,6 +135,64 @@ describe('sending', () => {
         sound: 'default',
       },
     ]);
+  });
+
+  test('adoption requests and answers reach both sides and open the listing', async () => {
+    const sol = await verifiedUser();
+    const luna = await verifiedUser();
+    const solDevice = await device(sol, 'es');
+    const lunaDevice = await device(luna, 'en');
+    const { body: pet } = await create('/api/collections/pets/records', sol, {
+      owner: sol.record.id,
+      name: 'Firulais',
+      species: 'dog',
+    });
+    const { body: adoption } = await create(ADOPTIONS, sol, {
+      publisher: sol.record.id,
+      pet: pet.id,
+      sex: 'male',
+      size: 'medium',
+      vaccines: 'complete',
+      zone: 'Coyoacán',
+    });
+    const { body: request } = await create(REQUESTS, luna, {
+      adoption: adoption.id,
+      applicant: luna.record.id,
+      message: 'Hola',
+    });
+    await pb.api(`${REQUESTS}/${request.id}`, {
+      method: 'PATCH',
+      token: sol.token,
+      body: { status: 'accepted' },
+    });
+    assert.deepEqual(
+      received.map((message) => [message.to, message.body, message.data]),
+      [
+        [
+          solDevice.token,
+          `@${luna.record.username} quiere adoptar a Firulais.`,
+          { type: 'adoption_request', adoptionId: adoption.id, actorId: luna.record.id },
+        ],
+        [
+          lunaDevice.token,
+          `@${sol.record.username} accepted your request to adopt Firulais.`,
+          { type: 'request_accepted', adoptionId: adoption.id, actorId: sol.record.id },
+        ],
+      ],
+    );
+
+    // One preference turns off every adoption push.
+    received = [];
+    await create('/api/collections/notification_prefs/records', luna, {
+      user: luna.record.id,
+      adoptionOff: true,
+    });
+    await pb.api(`${REQUESTS}/${request.id}`, {
+      method: 'PATCH',
+      token: sol.token,
+      body: { status: 'rejected' },
+    });
+    assert.deepEqual(received, []);
   });
 
   test('tokens Expo no longer recognizes are deleted', async () => {

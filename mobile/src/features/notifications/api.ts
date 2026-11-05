@@ -2,12 +2,20 @@ import type PocketBase from 'pocketbase';
 import type { RecordModel } from 'pocketbase';
 
 import { toUser, type User } from '@/auth/AuthProvider';
+import { toAdoption, type Adoption } from '@/features/adoption/api';
 import { toPost, type Post } from '@/features/posts/api';
 
 export const NOTIFICATIONS = 'notifications';
 export const NOTIFICATIONS_PER_PAGE = 30;
 
-export type NotificationType = 'paw' | 'comment' | 'follow' | 'repost';
+export type NotificationType =
+  | 'paw'
+  | 'comment'
+  | 'follow'
+  | 'repost'
+  | 'adoption_request'
+  | 'request_accepted'
+  | 'request_rejected';
 
 /** Named so it does not clash with the browser's `Notification`. */
 export interface AppNotification {
@@ -19,6 +27,9 @@ export interface AppNotification {
   post?: Post;
   /** Text of the comment, for comment notifications. */
   commentText: string;
+  /** The listing, for adoption notifications (with its pet when expanded). */
+  adoptionId: string;
+  adoption?: Adoption;
   read: boolean;
   created: string;
 }
@@ -29,13 +40,22 @@ export interface NotificationPage {
   hasMore: boolean;
 }
 
-const TYPES: readonly NotificationType[] = ['paw', 'comment', 'follow', 'repost'];
+const TYPES: readonly NotificationType[] = [
+  'paw',
+  'comment',
+  'follow',
+  'repost',
+  'adoption_request',
+  'request_accepted',
+  'request_rejected',
+];
 
 export function toNotification(record: RecordModel): AppNotification {
   const expand = (record.expand ?? {}) as {
     actor?: RecordModel;
     post?: RecordModel;
     comment?: RecordModel;
+    adoption?: RecordModel;
   };
   const type = TYPES.find((value) => value === record.type) ?? 'paw';
   return {
@@ -46,6 +66,8 @@ export function toNotification(record: RecordModel): AppNotification {
     postId: String(record.post ?? ''),
     post: expand.post ? toPost(expand.post) : undefined,
     commentText: String(expand.comment?.text ?? ''),
+    adoptionId: String(record.adoption ?? ''),
+    adoption: expand.adoption ? toAdoption(expand.adoption) : undefined,
     read: Boolean(record.read),
     created: String(record.created ?? ''),
   };
@@ -61,7 +83,7 @@ export async function listNotifications(
   const result = await client.collection(NOTIFICATIONS).getList(page, perPage, {
     filter: client.filter('recipient = {:me}', { me }),
     sort: '-created,-id',
-    expand: 'actor,post,comment',
+    expand: 'actor,post,comment,adoption.pet',
     skipTotal: true,
   });
   return {

@@ -140,11 +140,11 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notifications
 
-`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow` or `repost`), the related `post` and `comment`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. They are deleted with either account and with the related post or comment.
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted` or `request_rejected`), the related `post`, `comment` or `adoption`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, and accepting or rejecting it notifies the applicant. They are deleted with either account and with the related post, comment or listing.
 
 ## Push notifications
 
-`push_tokens` holds the Expo push tokens of each user's devices (stage 4), with the app `language` for the text. Only the owner sees, saves and deletes theirs, and saving a token that belongs to another account moves it (one account per device). After each in-app notification and each direct message, the server sends a push to every device of the recipient with Expo Push Service (`pb_hooks/push.pb.js`); tokens Expo reports as no longer registered are deleted, and a failed push never makes the action fail. `notification_prefs` holds which pushes each user wants (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): one record per user, only the owner sees and changes it, and without it every type is on. A type turned off sends no push, but the in-app notification is still created. `PAWLY_PUSH_URL` changes the address of the service: the tests point it to a fake one and never call Expo.
+`push_tokens` holds the Expo push tokens of each user's devices (stage 4), with the app `language` for the text. Only the owner sees, saves and deletes theirs, and saving a token that belongs to another account moves it (one account per device). After each in-app notification and each direct message, the server sends a push to every device of the recipient with Expo Push Service (`pb_hooks/push.pb.js`); tokens Expo reports as no longer registered are deleted, and a failed push never makes the action fail. `notification_prefs` holds which pushes each user wants (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`, and `adoptionOff` for every adoption notification): one record per user, only the owner sees and changes it, and without it every type is on. A type turned off sends no push, but the in-app notification is still created. `PAWLY_PUSH_URL` changes the address of the service: the tests point it to a fake one and never call Expo.
 
 ## Adoption listings
 
@@ -166,6 +166,15 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 | `status`       | `available` or `adopted`. Set by the server: a new listing is always `available`.      |
 
 Anyone can see and list them; only the publisher edits and deletes them, and editing cannot change the pet or the status. A pet has at most one `available` listing. Texts are trimmed. The rules live in `pb_hooks/adoptions.pb.js`; field errors use the codes `pet_not_owned`, `pet_already_listed` and `photo_too_large`.
+
+## Adoption requests
+
+`adoption_requests` holds the requests to adopt (stage 5): the `applicant` asks for the pet of an `adoption` listing with a presentation `message` (required, up to 1,000 characters). Only the applicant and the publisher see a request, and nobody deletes it. The server sets the `status` and checks every change (`pb_hooks/adoption_requests.pb.js`):
+
+- A new request is `pending`. Nobody asks for their own listing (`own_adoption`), for one that is no longer available (`adoption_closed`), across a block (`blocked`) or twice for the same listing (`already_requested`).
+- Only the status changes afterwards, and only while the listing is available. The applicant withdraws a `pending` or `accepted` request (`withdrawn`, final); the publisher accepts (`accepted`) or rejects (`rejected`) any request that was not withdrawn. Anything else fails with `invalid_status`.
+
+Accepting a request does not move the pet: that happens when the publisher marks it as adopted. Requests are deleted with the listing and with the applicant's account.
 
 ## Counters
 

@@ -29,6 +29,9 @@ export type ErrorKey =
   | 'errors.fileTooLarge'
   | 'errors.petNotOwned'
   | 'errors.petAlreadyListed'
+  | 'errors.alreadyRequested'
+  | 'errors.ownAdoption'
+  | 'errors.adoptionClosed'
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
   | 'errors.blocked';
@@ -81,6 +84,12 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.petNotOwned';
     case 'pet_already_listed':
       return 'errors.petAlreadyListed';
+    case 'already_requested':
+      return 'errors.alreadyRequested';
+    case 'own_adoption':
+      return 'errors.ownAdoption';
+    case 'adoption_closed':
+      return 'errors.adoptionClosed';
     case 'blocked':
       return 'errors.blocked';
     case 'validation_too_many_files':

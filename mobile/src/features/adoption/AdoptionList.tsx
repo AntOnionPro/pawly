@@ -60,6 +60,14 @@ export function AdoptionList() {
               <ThemedText variant="title" accessibilityRole="header" style={styles.title}>
                 {t('adoption.title')}
               </ThemedText>
+              {status === 'signedIn' ? (
+                <IconButton
+                  icon="requests"
+                  size={26}
+                  label={t('adoptionRequests.sentTitle')}
+                  onPress={() => router.push('/adoption/requests')}
+                />
+              ) : null}
               <IconButton
                 icon="add"
                 size={26}

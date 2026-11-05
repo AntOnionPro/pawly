@@ -77,6 +77,10 @@ export const icons = {
     sf: { default: 'mappin.and.ellipse', selected: 'mappin.and.ellipse' },
     md: 'location_on',
   },
+  requests: {
+    sf: { default: 'list.bullet.clipboard', selected: 'list.bullet.clipboard.fill' },
+    md: 'assignment',
+  },
   gallery: {
     sf: { default: 'photo.on.rectangle', selected: 'photo.on.rectangle' },
     md: 'photo_library',

@@ -70,6 +70,7 @@ export interface PushTarget {
   postId?: string;
   actorId?: string;
   conversationId?: string;
+  adoptionId?: string;
 }
 
 /**
