@@ -90,6 +90,13 @@ const en = {
     open: 'Open post from {{date}}',
     loadMore: 'Show more',
     textOnly: 'Text post',
+    paw: {
+      add: 'Leave a paw print',
+      remove: 'Remove your paw print',
+      count_one: '{{count}} paw print',
+      count_other: '{{count}} paw prints',
+      failed: 'Your paw print could not be saved.',
+    },
   },
   time: {
     now: 'now',

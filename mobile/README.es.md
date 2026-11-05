@@ -103,6 +103,7 @@ mobile/
 - **Íconos:** solo con `Icon` y `src/theme/icons.ts` (SF Symbols en iOS, Material Symbols en Android y web). Sin emojis en la interfaz.
 - **Datos del servidor:** se leen y cambian con hooks de React Query por funcionalidad (por ejemplo `src/features/pets/hooks.ts`), así las pantallas comparten la caché y se actualizan después de cada cambio.
 - **Traducciones:** todo texto va en `src/i18n/locales/es.ts` y `en.ts`. TypeScript falla si falta una clave en cualquiera de los dos idiomas.
+- **Cambios al instante:** para acciones rápidas como una huella, cambia la publicación en todas las pantallas a la vez con `updateCachedPost` (`src/features/posts/cache.ts`) y deshazlo si la petición falla.
 - **Subidas:** agrega los archivos elegidos a un formulario con `appendFile` (`src/utils/upload.ts`). En iOS y Android sube `{ uri, name, type }` y en la web un `File` real.
 - **Módulos nativos:** la etapa 0 solo usa módulos incluidos en Expo Go. Una librería con código nativo propio necesita una build de desarrollo.
 - **Versión de Expo:** la app usa Expo SDK 58. Antes de usar una API de Expo, revisa la documentación de esa versión (ver `AGENTS.md`).

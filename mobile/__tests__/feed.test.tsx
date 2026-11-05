@@ -54,6 +54,9 @@ function post(id: string, overrides: Partial<api.Post> = {}): api.Post {
     petIds: [],
     pets: [],
     created: new Date(Date.now() - 2 * 3600_000).toISOString(),
+    pawCount: 0,
+    pawedByMe: false,
+    myPawId: null,
     ...overrides,
   };
 }

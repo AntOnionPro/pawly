@@ -27,6 +27,10 @@ export interface Post {
   /** Present when the pets were expanded. */
   pets: Pet[];
   created: string;
+  pawCount: number;
+  /** Whether the signed-in user left a paw print, and its id (to remove it). */
+  pawedByMe: boolean;
+  myPawId: string | null;
 }
 
 export interface NewPost {
@@ -59,6 +63,9 @@ export function toPost(record: RecordModel): Post {
     petIds: Array.isArray(record.pets) ? record.pets.map(String) : [],
     pets: (expand.pets ?? []).map(toPet),
     created: String(record.created ?? ''),
+    pawCount: Number(record.pawCount ?? 0),
+    pawedByMe: false,
+    myPawId: null,
   };
 }
 
@@ -80,6 +87,51 @@ export function mediaUrl(
 }
 
 export const POST_EXPAND = 'author,pets';
+
+export const PAWS = 'paws';
+
+/** Marks the posts the signed-in user left a paw print on (one request for the whole list). */
+export async function withMyPaws(client: PocketBase, posts: Post[]): Promise<Post[]> {
+  const userId = client.authStore?.isValid ? client.authStore.record?.id : undefined;
+  if (!userId || posts.length === 0) return posts;
+  const postFilter = posts
+    .map((post, index) => client.filter(`post = {:p${index}}`, { [`p${index}`]: post.id }))
+    .join(' || ');
+  const paws = await client.collection(PAWS).getFullList({
+    filter: `${client.filter('user = {:user}', { user: userId })} && (${postFilter})`,
+    fields: 'id,post',
+  });
+  const byPost = new Map(paws.map((paw) => [String(paw.post), paw.id]));
+  return posts.map((post) => {
+    const pawId = byPost.get(post.id) ?? null;
+    return { ...post, pawedByMe: pawId !== null, myPawId: pawId };
+  });
+}
+
+/** Leaves a paw print. Returns its id. */
+export async function addPaw(client: PocketBase, userId: string, postId: string): Promise<string> {
+  const paw = await client.collection(PAWS).create({ user: userId, post: postId });
+  return paw.id;
+}
+
+/** Removes the user's paw print from a post (looks it up if the id is not known yet). */
+export async function removePaw(
+  client: PocketBase,
+  userId: string,
+  postId: string,
+  pawId: string | null,
+): Promise<void> {
+  const id =
+    pawId ??
+    (
+      await client
+        .collection(PAWS)
+        .getFirstListItem(
+          client.filter('user = {:user} && post = {:post}', { user: userId, post: postId }),
+        )
+    ).id;
+  await client.collection(PAWS).delete(id);
+}
 
 /** Which posts to list: all (feed), by author or by tagged pet. */
 export type PostFilter = { all: true } | { authorId: string } | { petId: string };
@@ -112,11 +164,15 @@ export async function listPosts(
     // Counting every post is slow; a full page means there may be more.
     skipTotal: true,
   });
-  return { items: result.items.map(toPost), page, hasMore: result.items.length === perPage };
+  const items = await withMyPaws(client, result.items.map(toPost));
+  return { items, page, hasMore: result.items.length === perPage };
 }
 
 export async function getPost(client: PocketBase, id: string): Promise<Post> {
-  return toPost(await client.collection(POSTS).getOne(id, { expand: POST_EXPAND }));
+  const [post] = await withMyPaws(client, [
+    toPost(await client.collection(POSTS).getOne(id, { expand: POST_EXPAND })),
+  ]);
+  return post as Post;
 }
 
 export async function createPost(
