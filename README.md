@@ -26,7 +26,7 @@ Current stage: **Stage 4, Messages and notifications (in progress).** Latest rel
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 4 issues: direct messages ([#43](https://github.com/AntOnionPro/pawly/issues/43), done), sending posts by message ([#44](https://github.com/AntOnionPro/pawly/issues/44), done), in-app notifications ([#45](https://github.com/AntOnionPro/pawly/issues/45), done), push notifications ([#46](https://github.com/AntOnionPro/pawly/issues/46)) and notification preferences ([#47](https://github.com/AntOnionPro/pawly/issues/47)).
+Stage 4 issues: direct messages ([#43](https://github.com/AntOnionPro/pawly/issues/43), done), sending posts by message ([#44](https://github.com/AntOnionPro/pawly/issues/44), done), in-app notifications ([#45](https://github.com/AntOnionPro/pawly/issues/45), done), push notifications ([#46](https://github.com/AntOnionPro/pawly/issues/46), done) and notification preferences ([#47](https://github.com/AntOnionPro/pawly/issues/47)).
 
 ## Features
 
