@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 
@@ -20,6 +21,8 @@ interface AdoptionDetailProps {
   onPressPublisher: (userId: string) => void;
   /** Shown only to the publisher. */
   onEdit?: () => void;
+  /** Shown under the name and zone: asking to adopt, or the requests (publisher). */
+  action?: ReactNode;
 }
 
 function Fact({ label, value, divider }: { label: string; value: string; divider: boolean }) {
@@ -56,6 +59,7 @@ export function AdoptionDetail({
   onPressPet,
   onPressPublisher,
   onEdit,
+  action,
 }: AdoptionDetailProps) {
   const { t } = useTranslation();
   const { client } = useAuth();
@@ -104,6 +108,7 @@ export function AdoptionDetail({
         <Icon name="location" size={18} color={colors.textSecondary} />
         <ThemedText color="textSecondary">{adoption.zone}</ThemedText>
       </View>
+      {action}
 
       <View style={[styles.facts, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         {facts.map((fact, index) => (

@@ -11,6 +11,9 @@ const TEXTS = {
     comment: (u, text) => `@${u} comentó: “${text}”`,
     follow: (u) => `@${u} empezó a seguirte.`,
     repost: (u) => `@${u} republicó tu publicación.`,
+    adoption_request: (u, _, pet) => `@${u} quiere adoptar a ${pet}.`,
+    request_accepted: (u, _, pet) => `@${u} aceptó tu solicitud para adoptar a ${pet}.`,
+    request_rejected: (u, _, pet) => `@${u} no aceptó tu solicitud para adoptar a ${pet}.`,
     sharedPost: 'Compartió una publicación',
   },
   en: {
@@ -18,6 +21,9 @@ const TEXTS = {
     comment: (u, text) => `@${u} commented: “${text}”`,
     follow: (u) => `@${u} started following you.`,
     repost: (u) => `@${u} reposted your post.`,
+    adoption_request: (u, _, pet) => `@${u} wants to adopt ${pet}.`,
+    request_accepted: (u, _, pet) => `@${u} accepted your request to adopt ${pet}.`,
+    request_rejected: (u, _, pet) => `@${u} declined your request to adopt ${pet}.`,
     sharedPost: 'Shared a post',
   },
 };
@@ -30,13 +36,20 @@ function texts(language) {
   return TEXTS[language] || TEXTS.es;
 }
 
-/** Whether `userId` wants pushes of `type` (paw, comment, follow, repost or message). */
+/** Push types that share one preference: every adoption notification is "adoption". */
+const PREFERENCE = {
+  adoption_request: 'adoption',
+  request_accepted: 'adoption',
+  request_rejected: 'adoption',
+};
+
+/** Whether `userId` wants pushes of `type` (paw, comment, follow, repost, message, adoption…). */
 function wantsPush(app, userId, type) {
   try {
     const prefs = app.findFirstRecordByFilter('notification_prefs', 'user = {:user}', {
       user: userId,
     });
-    return !prefs.getBool(`${type}Off`);
+    return !prefs.getBool(`${PREFERENCE[type] || type}Off`);
   } catch {
     // No preferences saved yet: everything is on.
     return true;

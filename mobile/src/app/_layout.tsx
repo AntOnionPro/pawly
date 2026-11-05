@@ -99,6 +99,18 @@ function RootNavigator() {
         <Stack.Screen name="adoption/new" options={{ title: t('adoption.give') }} />
         <Stack.Screen name="adoption/[id]/index" options={{ title: t('adoption.detailTitle') }} />
         <Stack.Screen name="adoption/[id]/edit" options={{ title: t('adoption.edit') }} />
+        <Stack.Screen
+          name="adoption/[id]/request"
+          options={{ title: t('adoptionRequests.title') }}
+        />
+        <Stack.Screen
+          name="adoption/[id]/requests"
+          options={{ title: t('adoptionRequests.listTitle') }}
+        />
+        <Stack.Screen
+          name="adoption/requests"
+          options={{ title: t('adoptionRequests.sentTitle') }}
+        />
         <Stack.Screen name="post/[id]/index" options={{ title: t('posts.title') }} />
         <Stack.Screen name="post/[id]/edit" options={{ title: t('posts.edit') }} />
         <Stack.Screen name="post/[id]/repost" options={{ title: t('reposts.title') }} />

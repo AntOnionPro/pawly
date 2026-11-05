@@ -53,11 +53,19 @@ onRecordAfterCreateSuccess((e) => {
         .findRecordById('comments', notification.getString('comment'))
         .getString('text');
     }
+    const adoptionId = notification.getString('adoption');
+    let pet = '';
+    if (adoptionId) {
+      const adoption = e.app.findRecordById('adoptions', adoptionId);
+      pet = e.app.findRecordById('pets', adoption.getString('pet')).getString('name');
+    }
     sendPush(
       e.app,
       notification.getString('recipient'),
-      (t) => ({ title: 'Pawly', body: t[type](username, comment) }),
-      { type, postId: notification.getString('post'), actorId: actor },
+      (t) => ({ title: 'Pawly', body: t[type](username, comment, pet) }),
+      adoptionId
+        ? { type, adoptionId, actorId: actor }
+        : { type, postId: notification.getString('post'), actorId: actor },
     );
   } catch (error) {
     console.log(`[pawly-push] notification: ${error}`);
