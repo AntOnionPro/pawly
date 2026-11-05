@@ -7,6 +7,7 @@ import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
+import { isHiddenPost, useBlockedIds } from '@/features/moderation/hooks';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
 
@@ -76,7 +77,10 @@ export function PostGrid({ filter, title, empty }: PostGridProps) {
   const router = useRouter();
   const { data, error, isPending, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePostList(filter);
-  const posts = data?.pages.flatMap((page) => page.items) ?? [];
+  const blocked = useBlockedIds();
+  const posts = (data?.pages.flatMap((page) => page.items) ?? []).filter(
+    (post) => !isHiddenPost(post, blocked),
+  );
 
   return (
     <View style={styles.section}>

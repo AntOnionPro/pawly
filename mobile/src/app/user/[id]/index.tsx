@@ -5,6 +5,8 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
 import { FollowButton } from '@/features/follows/FollowButton';
+import { useBlockedIds } from '@/features/moderation/hooks';
+import { BlockedProfile, ProfileModeration } from '@/features/moderation/ProfileModeration';
 import { PetList } from '@/features/pets/PetList';
 import { PostGrid } from '@/features/posts/PostGrid';
 import { ProfileHeader } from '@/features/profile/ProfileHeader';
@@ -15,6 +17,7 @@ export default function UserScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user: me } = useAuth();
   const { data: user, error, refetch, isPending } = useUser(id);
+  const blocked = useBlockedIds();
 
   if (me && id === me.id) {
     return <Redirect href="/profile" />;
@@ -24,10 +27,16 @@ export default function UserScreen() {
     <Screen edges={['bottom']}>
       {isPending ? <Loading /> : null}
       {error ? <LoadError error={error} onRetry={() => void refetch()} /> : null}
-      {user ? (
+      {user && blocked.has(user.id) ? (
+        <>
+          <ProfileHeader user={user} />
+          <BlockedProfile user={user} />
+        </>
+      ) : user ? (
         <>
           <ProfileHeader user={user} />
           <FollowButton userId={user.id} />
+          <ProfileModeration user={user} />
           <PetList ownerId={user.id} />
           <PostGrid
             filter={{ authorId: user.id }}

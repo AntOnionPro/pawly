@@ -24,10 +24,18 @@ interface CommentItemProps {
   /** The author of the post can delete any comment on it. */
   isPostAuthor: boolean;
   onPressAuthor?: (authorId: string) => void;
+  /** Reports the comment (for comments by someone else). */
+  onReport?: () => void;
 }
 
 /** A comment with its author and date. Its author can edit it in place. */
-export function CommentItem({ comment, isMine, isPostAuthor, onPressAuthor }: CommentItemProps) {
+export function CommentItem({
+  comment,
+  isMine,
+  isPostAuthor,
+  onPressAuthor,
+  onReport,
+}: CommentItemProps) {
   const { t } = useTranslation();
   const { client } = useAuth();
   const colors = useThemeColors();
@@ -106,6 +114,9 @@ export function CommentItem({ comment, isMine, isPostAuthor, onPressAuthor }: Co
               label={t('comments.delete')}
               onPress={() => void deleteComment()}
             />
+          ) : null}
+          {onReport && !isMine ? (
+            <IconButton icon="flag" size={18} label={t('report.comment')} onPress={onReport} />
           ) : null}
         </View>
         {editing ? (

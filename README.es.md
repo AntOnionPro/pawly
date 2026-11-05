@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 3, Interacción social (en progreso).** Última release: `v0.3.0` (etapa 2). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 3, Interacción social (terminada, falta la release `v0.4.0` a `main`).** La etapa 4 empieza cuando esa release esté mergeada. Última release: `v0.3.0` (etapa 2). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ Etapa actual: **etapa 3, Interacción social (en progreso).** Última release: `
 | 0 | Cimientos | Hecho |
 | 1 | Cuentas | Hecho |
 | 2 | Mascotas y publicaciones | Hecho |
-| 3 | Interacción social | En progreso |
+| 3 | Interacción social | Hecho |
 | 4 | Mensajes y notificaciones | Sin empezar |
 | 5 | Adopción | Sin empezar |
 | 6 | Rescate | Sin empezar |
@@ -26,7 +26,7 @@ Etapa actual: **etapa 3, Interacción social (en progreso).** Última release: `
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues/30), hecho), comentarios ([#31](https://github.com/AntOnionPro/pawly/issues/31), hecho), seguir ([#32](https://github.com/AntOnionPro/pawly/issues/32), hecho), compartir ([#33](https://github.com/AntOnionPro/pawly/issues/33), hecho), búsqueda ([#34](https://github.com/AntOnionPro/pawly/issues/34), hecho) y reportar y bloquear ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
+Entregado en la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues/30)), comentarios ([#31](https://github.com/AntOnionPro/pawly/issues/31)), seguir y las pestañas Siguiendo / Descubrir ([#32](https://github.com/AntOnionPro/pawly/issues/32)), compartir y republicar ([#33](https://github.com/AntOnionPro/pawly/issues/33)), búsqueda ([#34](https://github.com/AntOnionPro/pawly/issues/34)) y reportar y bloquear ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
 
 ## Funcionalidades
 

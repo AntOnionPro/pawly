@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 3, Social interaction (in progress).** Latest release: `v0.3.0` (stage 2). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 3, Social interaction (done, pending the `v0.4.0` release to `main`).** Stage 4 starts after that release is merged. Latest release: `v0.3.0` (stage 2). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ Current stage: **Stage 3, Social interaction (in progress).** Latest release: `v
 | 0 | Foundations | Done |
 | 1 | Accounts | Done |
 | 2 | Pets and posts | Done |
-| 3 | Social interaction | In progress |
+| 3 | Social interaction | Done |
 | 4 | Messages and notifications | Not started |
 | 5 | Adoption | Not started |
 | 6 | Rescue | Not started |
@@ -26,7 +26,7 @@ Current stage: **Stage 3, Social interaction (in progress).** Latest release: `v
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 3 issues: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30), done), comments ([#31](https://github.com/AntOnionPro/pawly/issues/31), done), follows ([#32](https://github.com/AntOnionPro/pawly/issues/32), done), sharing ([#33](https://github.com/AntOnionPro/pawly/issues/33), done), search ([#34](https://github.com/AntOnionPro/pawly/issues/34), done) and report and block ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
+Stage 3 delivered: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30)), comments ([#31](https://github.com/AntOnionPro/pawly/issues/31)), follows and the Following / Discover tabs ([#32](https://github.com/AntOnionPro/pawly/issues/32)), sharing and reposts ([#33](https://github.com/AntOnionPro/pawly/issues/33)), search ([#34](https://github.com/AntOnionPro/pawly/issues/34)) and report and block ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
 
 ## Features
 

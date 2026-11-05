@@ -8,6 +8,7 @@ import { IconButton } from '@/components/IconButton';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
+import { useReportAction } from '@/features/moderation/hooks';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
 import type { Post } from './api';
@@ -18,6 +19,8 @@ import { useRepostAction, useShareAction, useUndoRepostAction } from './reposts'
 /** A post with every action of a list (feed): open, paw, comments, repost, share, links. */
 function ListPostCard({ post }: { post: Post }) {
   const router = useRouter();
+  const { user } = useAuth();
+  const report = useReportAction();
   const paw = usePawAction();
   const repost = useRepostAction();
   const share = useShareAction();
@@ -30,6 +33,9 @@ function ListPostCard({ post }: { post: Post }) {
       onComments={open}
       onRepost={() => repost(post)}
       onShare={() => share(post)}
+      onReport={
+        user?.id === post.authorId ? undefined : () => report({ kind: 'post', id: post.id })
+      }
       onPressAuthor={(id) => router.push({ pathname: '/user/[id]', params: { id } })}
       onPressPet={(id) => router.push({ pathname: '/pet/[id]', params: { id } })}
     />

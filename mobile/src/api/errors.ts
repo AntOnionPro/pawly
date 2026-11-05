@@ -28,7 +28,9 @@ export type ErrorKey =
   | 'errors.fileType'
   | 'errors.fileTooLarge'
   | 'errors.petNotOwned'
-  | 'errors.alreadyReposted';
+  | 'errors.alreadyReposted'
+  | 'errors.alreadyReported'
+  | 'errors.blocked';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
@@ -76,6 +78,8 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.photoTooLarge';
     case 'pet_not_owned':
       return 'errors.petNotOwned';
+    case 'blocked':
+      return 'errors.blocked';
     case 'validation_too_many_files':
       return 'errors.tooManyFiles';
     case 'validation_invalid_mime_type':

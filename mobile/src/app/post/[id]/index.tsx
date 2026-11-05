@@ -10,6 +10,7 @@ import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
 import { CommentComposer } from '@/features/comments/CommentComposer';
 import { CommentList } from '@/features/comments/CommentList';
+import { useReportAction } from '@/features/moderation/hooks';
 import { useDeletePost, usePost } from '@/features/posts/hooks';
 import { usePawAction } from '@/features/posts/paws';
 import { PostCard } from '@/features/posts/PostCard';
@@ -26,6 +27,7 @@ export default function PostDetailScreen() {
   const paw = usePawAction();
   const repost = useRepostAction();
   const share = useShareAction();
+  const report = useReportAction();
   const commentInput = useRef<TextInputInstance>(null);
   const scroll = useRef<ScrollViewInstance>(null);
   // After sending a comment, scroll to it once it is on the screen.
@@ -105,6 +107,7 @@ export default function PostDetailScreen() {
                 : undefined
             }
             onDelete={isAuthor ? deletePost : undefined}
+            onReport={isAuthor ? undefined : () => report({ kind: 'post', id: post.id })}
           />
           <FieldError message={deleteError} />
           <CommentList postId={post.id} postAuthorId={post.authorId} onPressAuthor={openUser} />

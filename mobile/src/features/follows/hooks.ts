@@ -2,7 +2,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { requestErrorKey, requestErrorKind } from '@/api/errors';
+import { requestErrorKey, requestErrorKind, toFieldErrors } from '@/api/errors';
 import { useAuth, type User } from '@/auth/AuthProvider';
 import { postKeys } from '@/features/posts/hooks';
 import { userKeys } from '@/features/users/hooks';
@@ -119,7 +119,10 @@ export function useFollowAction(targetId: string) {
       if (toggle.isPending || followId === undefined) return;
       toggle.mutate(followId || null, {
         onError: (error) => {
-          const key = requestErrorKey(requestErrorKind(error)) ?? 'errors.generic';
+          const key =
+            Object.values(toFieldErrors(error))[0] ??
+            requestErrorKey(requestErrorKind(error)) ??
+            'errors.generic';
           notify(`${t('follows.failed')} ${t(key)}`);
         },
       });
