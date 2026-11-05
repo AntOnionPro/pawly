@@ -1,9 +1,11 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { createQueryClient } from '@/api/queryClient';
 import { AuthProvider, useAuth } from '@/auth/AuthProvider';
 import {
   PreferencesProvider,
@@ -15,10 +17,13 @@ import {
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [queryClient] = useState(createQueryClient);
   return (
     <PreferencesProvider>
       <AuthProvider>
-        <RootNavigator />
+        <QueryClientProvider client={queryClient}>
+          <RootNavigator />
+        </QueryClientProvider>
       </AuthProvider>
     </PreferencesProvider>
   );
@@ -73,6 +78,12 @@ function RootNavigator() {
         <Stack.Screen name="edit-profile" options={{ title: t('profile.edit.title') }} />
         <Stack.Screen name="change-password" options={{ title: t('account.password.title') }} />
         <Stack.Screen name="delete-account" options={{ title: t('account.delete.label') }} />
+        <Stack.Screen name="pet/new" options={{ title: t('pets.new') }} />
+        <Stack.Screen name="pet/[id]/index" options={{ title: '' }} />
+        <Stack.Screen name="pet/[id]/edit" options={{ title: t('pets.edit') }} />
+        <Stack.Screen name="post/[id]/index" options={{ title: t('posts.title') }} />
+        <Stack.Screen name="post/[id]/edit" options={{ title: t('posts.edit') }} />
+        <Stack.Screen name="user/[id]" options={{ title: '' }} />
       </Stack>
     </ThemeProvider>
   );

@@ -8,8 +8,8 @@ Pawly is built in stages. Each stage ends with something that can be tried on a 
 
 1. **Start.** A stage starts only after the previous one is merged. Before starting, pull the latest `development`.
 2. **Issues.** At the start of the stage, open one issue per feature using the templates, with acceptance criteria and an estimate.
-3. **Work.** Each issue gets its own branch from `development` (`<type>/<issue#>-<description>`) and a pull request to `development` with tests.
-4. **Release.** At the end of the stage, open a `development → main` pull request and tag the version `v0.N.0`, where N is the stage number. Mark the stage as done in the README.
+3. **Work, one issue at a time.** Right before starting an issue, pull the latest `development` and create its branch from it (`<type>/<issue#>-<description>`). Open a pull request to `development` with tests. The next issue starts only after that pull request is merged, so no pull request ever needs "Update branch".
+4. **Release.** At the end of the stage, mark it as done in the README and open a `development → main` pull request. After merging it, publish the release `v0.N.0` (N is the stage number) from GitHub's *Releases* page targeting `main`; that also creates the tag.
 
 ## Phase 1
 

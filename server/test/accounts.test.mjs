@@ -3,10 +3,10 @@
 import assert from 'node:assert/strict';
 import { after, before, describe, test } from 'node:test';
 
+import { accountHelpers, PASSWORD, USERS } from './helpers/accounts.mjs';
 import { startPocketBase } from './helpers/pocketbase.mjs';
 
 let pb;
-let counter = 0;
 
 before(async () => {
   pb = await startPocketBase();
@@ -14,49 +14,9 @@ before(async () => {
 
 after(() => pb?.stop());
 
-const USERS = '/api/collections/users';
-const PASSWORD = 'una-clave-segura-123';
-
-function newAccount(overrides = {}) {
-  counter += 1;
-  return {
-    username: `perro.${counter}`,
-    email: `persona${counter}@pawly.test`,
-    password: PASSWORD,
-    passwordConfirm: PASSWORD,
-    dateOfBirth: '2000-05-20 00:00:00.000Z',
-    acceptTerms: true,
-    ...overrides,
-  };
-}
-
-function signUp(account) {
-  return pb.api(`${USERS}/records`, { method: 'POST', body: account });
-}
-
-function signIn(email, password = PASSWORD) {
-  return pb.api(`${USERS}/auth-with-password`, {
-    method: 'POST',
-    body: { identity: email, password },
-  });
-}
-
-async function verify(email) {
-  const link = await pb.waitForMailLink(email, 'confirm-verification');
-  const token = link.split('/').pop();
-  return pb.api(`${USERS}/confirm-verification`, { method: 'POST', body: { token } });
-}
-
-/** Signs up, verifies and signs in. Returns the record and the auth token. */
-async function verifiedUser(overrides) {
-  const account = newAccount(overrides);
-  const created = await signUp(account);
-  assert.equal(created.status, 200, JSON.stringify(created.body));
-  await verify(account.email);
-  const auth = await signIn(account.email);
-  assert.equal(auth.status, 200, JSON.stringify(auth.body));
-  return { account, record: auth.body.record, token: auth.body.token };
-}
+const { newAccount, signUp, signIn, verify, verifiedUser, superuserToken } = accountHelpers(
+  () => pb,
+);
 
 describe('sign-up', () => {
   test('creates the account without exposing private data', async () => {
@@ -115,9 +75,9 @@ describe('sign-up', () => {
   });
 
   test('usernames are unique regardless of case', async () => {
-    const first = newAccount({ username: 'firulais' });
+    const first = newAccount({ username: `firulais${process.pid}` });
     assert.equal((await signUp(first)).status, 200);
-    const { status, body } = await signUp(newAccount({ username: 'firulais' }));
+    const { status, body } = await signUp(newAccount({ username: `firulais${process.pid}` }));
     assert.equal(status, 400);
     assert.equal(body.data.username.code, 'validation_not_unique');
   });
@@ -227,11 +187,9 @@ describe('profiles', () => {
       token,
       body: { birthdate: '2020-01-01 00:00:00.000Z' },
     });
-    const admin = await pb.api('/api/collections/_superusers/auth-with-password', {
-      method: 'POST',
-      body: { identity: 'superuser@pawly.test', password: 'superuser-password-123' },
+    const { body } = await pb.api(`${USERS}/records/${record.id}`, {
+      token: await superuserToken(),
     });
-    const { body } = await pb.api(`${USERS}/records/${record.id}`, { token: admin.body.token });
     assert.equal(body.birthdate, account.dateOfBirth);
     assert.ok(body.termsAcceptedAt, 'the server recorded when the terms were accepted');
   });

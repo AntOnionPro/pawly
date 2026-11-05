@@ -48,6 +48,13 @@ export const icons = {
   delete: { sf: { default: 'trash', selected: 'trash' }, md: 'delete' },
   edit: { sf: { default: 'pencil', selected: 'pencil' }, md: 'edit' },
   camera: { sf: { default: 'camera', selected: 'camera' }, md: 'photo_camera' },
+  add: { sf: { default: 'plus', selected: 'plus' }, md: 'add' },
+  remove: { sf: { default: 'xmark.circle.fill', selected: 'xmark.circle.fill' }, md: 'cancel' },
+  video: { sf: { default: 'video', selected: 'video.fill' }, md: 'videocam' },
+  gallery: {
+    sf: { default: 'photo.on.rectangle', selected: 'photo.on.rectangle' },
+    md: 'photo_library',
+  },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconName = keyof typeof icons;

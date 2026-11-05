@@ -1,4 +1,5 @@
 // Shared helpers for screen tests: providers with Spanish preferences and a fake session.
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react-native';
 import type PocketBase from 'pocketbase';
 import { ClientResponseError } from 'pocketbase';
@@ -45,10 +46,15 @@ function ReadyGate({ children }: { children: ReactNode }) {
 
 /** Renders inside the preferences and the given session. Set the saved language before. */
 export async function renderWith(ui: ReactNode, auth: AuthContextValue = authValue()) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: Infinity }, mutations: { retry: false } },
+  });
   return render(
     <PreferencesProvider>
       <AuthContext.Provider value={auth}>
-        <ReadyGate>{ui}</ReadyGate>
+        <QueryClientProvider client={queryClient}>
+          <ReadyGate>{ui}</ReadyGate>
+        </QueryClientProvider>
       </AuthContext.Provider>
     </PreferencesProvider>,
   );

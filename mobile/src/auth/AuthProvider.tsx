@@ -11,6 +11,8 @@ import {
 } from 'react';
 
 import { getClient, restoreSession } from '@/api/client';
+import type { PickedImage } from '@/utils/pickPhoto';
+import { appendFile } from '@/utils/upload';
 
 import { normalizeUsername, type SignUpValues } from './validation';
 
@@ -40,13 +42,6 @@ export interface AuthContextValue {
   changePassword: (oldPassword: string, password: string, passwordConfirm: string) => Promise<void>;
   /** Checks the password again, deletes the account and signs out. */
   deleteAccount: (password: string) => Promise<void>;
-}
-
-/** A photo picked on the phone, ready to upload. */
-export interface PickedImage {
-  uri: string;
-  name: string;
-  type: string;
 }
 
 export interface ProfileChanges {
@@ -175,8 +170,7 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
       if (avatar === null) {
         data.append('avatar', '');
       } else if (avatar) {
-        // React Native uploads a local file from { uri, name, type }.
-        data.append('avatar', avatar as unknown as Blob);
+        await appendFile(data, 'avatar', avatar);
       }
       // The SDK updates the saved session with the new profile.
       await client.collection(USERS).update(id, data);
