@@ -26,7 +26,7 @@ Etapa actual: **etapa 2, Mascotas y publicaciones (en progreso).** Última relea
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 2: perfiles de mascota ([#21](https://github.com/AntOnionPro/pawly/issues/21), hecho), publicaciones en el servidor ([#22](https://github.com/AntOnionPro/pawly/issues/22)), crear publicaciones en la app ([#23](https://github.com/AntOnionPro/pawly/issues/23)) y feed y perfiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
+Issues de la etapa 2: perfiles de mascota ([#21](https://github.com/AntOnionPro/pawly/issues/21), hecho), publicaciones en el servidor ([#22](https://github.com/AntOnionPro/pawly/issues/22), hecho), crear publicaciones en la app ([#23](https://github.com/AntOnionPro/pawly/issues/23)) y feed y perfiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
 
 ## Funcionalidades
 

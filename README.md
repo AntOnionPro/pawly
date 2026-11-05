@@ -26,7 +26,7 @@ Current stage: **Stage 2, Pets and posts (in progress).** Latest release: `v0.2.
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 2 issues: pet profiles ([#21](https://github.com/AntOnionPro/pawly/issues/21), done), posts on the server ([#22](https://github.com/AntOnionPro/pawly/issues/22)), creating posts in the app ([#23](https://github.com/AntOnionPro/pawly/issues/23)) and feed and profiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
+Stage 2 issues: pet profiles ([#21](https://github.com/AntOnionPro/pawly/issues/21), done), posts on the server ([#22](https://github.com/AntOnionPro/pawly/issues/22), done), creating posts in the app ([#23](https://github.com/AntOnionPro/pawly/issues/23)) and feed and profiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
 
 ## Features
 
