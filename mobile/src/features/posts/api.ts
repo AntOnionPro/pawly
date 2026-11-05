@@ -3,7 +3,7 @@ import type { RecordModel } from 'pocketbase';
 
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toPet, type Pet } from '@/features/pets/api';
-import { appendFile } from '@/utils/upload';
+import { appendFile, uploadFetch } from '@/utils/upload';
 
 import type { ComposerMedia } from './media';
 
@@ -263,7 +263,9 @@ export async function createPost(
   for (const file of post.media) {
     await appendFile(data, 'media', file);
   }
-  return toPost(await client.collection(POSTS).create(data, { expand: POST_EXPAND }));
+  return toPost(
+    await client.collection(POSTS).create(data, { expand: POST_EXPAND, fetch: uploadFetch }),
+  );
 }
 
 export async function updatePost(
