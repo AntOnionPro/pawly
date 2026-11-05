@@ -56,6 +56,12 @@ La app lo encuentra sola: usa la misma IP que Expo, en el puerto 8090. Para usar
 EXPO_PUBLIC_API_URL=http://192.168.1.20:8090
 ```
 
+Los enlaces para compartir apuntan a la versión web (`/post/[id]`). Durante el desarrollo usan el servidor de desarrollo de Expo, que también sirve la versión web. Para otra dirección (el dominio real a partir de la etapa 8), define `EXPO_PUBLIC_WEB_URL`:
+
+```bash
+EXPO_PUBLIC_WEB_URL=https://pawly.example
+```
+
 Durante el desarrollo, los correos de verificación y de contraseña aparecen en la consola del servidor; abre el enlace en la computadora (ver `server/README.es.md`).
 
 Si usas `ufw`, abre también el puerto del servidor con `sudo ufw allow 8090/tcp`.

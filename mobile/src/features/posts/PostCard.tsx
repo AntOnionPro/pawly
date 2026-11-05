@@ -14,6 +14,7 @@ import { useRelativeDate } from '@/utils/useRelativeDate';
 import type { Post } from './api';
 import { MediaCarousel } from './MediaCarousel';
 import { PawButton } from './PawButton';
+import { RepostButton } from './RepostButton';
 
 interface PostCardProps {
   post: Post;
@@ -25,6 +26,10 @@ interface PostCardProps {
   onPaw?: () => void;
   /** Opens or focuses the comments. Without it the count is shown read-only. */
   onComments?: () => void;
+  /** Reposts the post or undoes the repost. Without it the count is shown read-only. */
+  onRepost?: () => void;
+  /** Shares the link outside the app. Without it there is no share button. */
+  onShare?: () => void;
   /** Author actions; shown only when given. */
   onEdit?: () => void;
   onDelete?: () => void;
@@ -38,6 +43,8 @@ export function PostCard({
   onOpen,
   onPaw,
   onComments,
+  onRepost,
+  onShare,
   onEdit,
   onDelete,
 }: PostCardProps) {
@@ -85,6 +92,12 @@ export function PostCard({
       <View style={styles.actions}>
         <PawButton count={post.pawCount} pawed={post.pawedByMe} onPress={onPaw} />
         <CommentButton count={post.commentCount} onPress={onComments} />
+        <RepostButton count={post.repostCount} reposted={post.repostedByMe} onPress={onRepost} />
+        {onShare ? (
+          <View style={styles.share}>
+            <IconButton icon="share" label={t('share.label')} onPress={onShare} />
+          </View>
+        ) : null}
       </View>
       {post.text ? <ThemedText>{post.text}</ThemedText> : null}
       {post.pets.length > 0 ? (
@@ -119,6 +132,7 @@ const styles = StyleSheet.create({
   date: { paddingVertical: spacing.xs },
   username: { fontWeight: '600' },
   actions: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  share: { marginLeft: 'auto' },
   pets: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   pet: {
     flexDirection: 'row',

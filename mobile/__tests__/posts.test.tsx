@@ -58,6 +58,10 @@ const POST: api.Post = {
   commentCount: 1,
   pawedByMe: false,
   myPawId: null,
+  repostCount: 0,
+  repostOfId: null,
+  repostedByMe: false,
+  myRepostId: null,
 };
 
 function asset(overrides: Partial<ImagePicker.ImagePickerAsset>): ImagePicker.ImagePickerAsset {

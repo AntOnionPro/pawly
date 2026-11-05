@@ -112,6 +112,10 @@ The `paws` collection holds paw prints (stage 3): one per `user` and `post`. Any
 
 The `comments` collection holds comments on posts (stage 3): `post`, `author` and `text` (1 to 500 characters, stored without surrounding spaces). Anyone can see them. Only the author edits a comment, and it cannot move to another post. The author of the comment or the author of the post can delete it. They are deleted with the post or the account.
 
+## Reposts
+
+A repost is a post whose `repostOf` points to the original post (stage 3). Its `text` is an optional comment, and it cannot have files or pets. Reposting a repost reposts its original, each user reposts a post once, and a repost always keeps pointing to the same post. Deleting the repost undoes it; deleting the original deletes its reposts.
+
 ## Follows
 
 The `follows` collection holds who follows whom (stage 3): `follower` follows `following`, once per pair, and nobody follows themselves. Anyone can see them; only the follower creates or deletes theirs. They are deleted with either account.
@@ -120,7 +124,7 @@ The "Following" feed lists posts with the filter `author.follows_via_following.f
 
 ## Counters
 
-Each post has a `pawCount` and a `commentCount`, and each user a `followerCount` and a `followingCount`. Counters like these are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.
+Each post has a `pawCount`, a `commentCount` and a `repostCount`, and each user a `followerCount` and a `followingCount`. Counters like these are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.
 
 ## How to change the database
 

@@ -1,6 +1,7 @@
 /// <reference path="../pb_data/types.d.ts" />
 
-// Counters stored on records: paw prints and comments per post, followers and follows per user.
+// Counters stored on records: paw prints, comments and reposts per post, followers and
+// follows per user.
 // Only the server writes them: users cannot set them in their requests, and they are
 // recalculated from the source table after every change, so they never drift.
 // (Each handler runs on its own, so code outside a handler is not shared between them.)
@@ -10,6 +11,7 @@ onRecordCreateRequest((e) => {
   if (!e.hasSuperuserAuth()) {
     e.record.set('pawCount', 0);
     e.record.set('commentCount', 0);
+    e.record.set('repostCount', 0);
   }
   e.next();
 }, 'posts');
@@ -19,6 +21,7 @@ onRecordUpdateRequest((e) => {
     const original = e.record.original();
     e.record.set('pawCount', original.getInt('pawCount'));
     e.record.set('commentCount', original.getInt('commentCount'));
+    e.record.set('repostCount', original.getInt('repostCount'));
   }
   e.next();
 }, 'posts');
@@ -83,9 +86,25 @@ function recountFollows(e) {
     .execute();
 }
 
+// Recount the reposts of the original post after a repost is created or deleted.
+function recountReposts(e) {
+  e.next();
+  const original = e.record.getString('repostOf');
+  if (!original) return;
+  e.app
+    .db()
+    .newQuery(
+      'UPDATE posts SET repostCount = (SELECT COUNT(*) FROM posts WHERE repostOf = {:id}) WHERE id = {:id}',
+    )
+    .bind({ id: original })
+    .execute();
+}
+
 onRecordAfterCreateSuccess(recountPaws, 'paws');
 onRecordAfterDeleteSuccess(recountPaws, 'paws');
 onRecordAfterCreateSuccess(recountComments, 'comments');
 onRecordAfterDeleteSuccess(recountComments, 'comments');
 onRecordAfterCreateSuccess(recountFollows, 'follows');
 onRecordAfterDeleteSuccess(recountFollows, 'follows');
+onRecordAfterCreateSuccess(recountReposts, 'posts');
+onRecordAfterDeleteSuccess(recountReposts, 'posts');

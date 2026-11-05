@@ -10,15 +10,19 @@ import { ThemedText } from '@/components/ThemedText';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
 
-import { mediaKind, mediaUrl, type Post, type PostFilter } from './api';
+import { mediaKind, mediaUrl, targetPost, type Post, type PostFilter } from './api';
 import { usePostList } from './hooks';
 
-function Tile({ post, onPress }: { post: Post; onPress: () => void }) {
+/** Square tile of a post. A repost shows its original with a repost mark. */
+function Tile({ post: item, onPress }: { post: Post; onPress: () => void }) {
   const { t } = useTranslation();
   const { client } = useAuth();
   const colors = useThemeColors();
+  const post = targetPost(item);
+  const isRepost = item.repostOfId !== null;
   const first = post.media[0];
-  const label = post.text || t('posts.textOnly');
+  const text = post.text || t('posts.textOnly');
+  const label = isRepost ? t('reposts.tile', { text }) : text;
   return (
     <Pressable
       accessibilityRole="link"
@@ -48,6 +52,11 @@ function Tile({ post, onPress }: { post: Post; onPress: () => void }) {
       {post.media.length > 1 ? (
         <View style={styles.badge}>
           <Icon name="gallery" size={14} color={colors.text} />
+        </View>
+      ) : null}
+      {isRepost ? (
+        <View style={[styles.repostBadge, { backgroundColor: colors.surface }]}>
+          <Icon name="repost" size={14} color={colors.text} />
         </View>
       ) : null}
     </Pressable>
@@ -83,7 +92,9 @@ export function PostGrid({ filter, title, empty }: PostGridProps) {
           <Tile
             key={post.id}
             post={post}
-            onPress={() => router.push({ pathname: '/post/[id]', params: { id: post.id } })}
+            onPress={() =>
+              router.push({ pathname: '/post/[id]', params: { id: targetPost(post).id } })
+            }
           />
         ))}
       </View>
@@ -113,5 +124,12 @@ const styles = StyleSheet.create({
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xs },
   text: { textAlign: 'center' },
   badge: { position: 'absolute', top: spacing.xs, right: spacing.xs },
+  repostBadge: {
+    position: 'absolute',
+    top: spacing.xs,
+    left: spacing.xs,
+    borderRadius: 10,
+    padding: 2,
+  },
   pressed: { opacity: 0.6 },
 });
