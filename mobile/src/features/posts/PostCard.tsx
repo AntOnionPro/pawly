@@ -4,10 +4,12 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { avatarUrl, useAuth } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
 import { Icon } from '@/components/Icon';
+import { IconButton } from '@/components/IconButton';
 import { ThemedText } from '@/components/ThemedText';
+import { CommentButton } from '@/features/comments/CommentButton';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
-import { parseServerDate, relativeTime } from '@/utils/time';
+import { useRelativeDate } from '@/utils/useRelativeDate';
 
 import type { Post } from './api';
 import { MediaCarousel } from './MediaCarousel';
@@ -21,49 +23,11 @@ interface PostCardProps {
   onOpen?: () => void;
   /** Adds or removes the paw print. Without it the count is shown read-only. */
   onPaw?: () => void;
+  /** Opens or focuses the comments. Without it the count is shown read-only. */
+  onComments?: () => void;
   /** Author actions; shown only when given. */
   onEdit?: () => void;
   onDelete?: () => void;
-}
-
-function IconButton({
-  icon,
-  label,
-  onPress,
-}: {
-  icon: 'edit' | 'delete';
-  label: string;
-  onPress: () => void;
-}) {
-  const colors = useThemeColors();
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      hitSlop={8}
-      onPress={onPress}
-      style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}>
-      <Icon name={icon} size={22} color={colors.text} />
-    </Pressable>
-  );
-}
-
-/** "2 h", "3 d"… or the date after a week. */
-function usePostDate(created: string): string {
-  const { t, i18n } = useTranslation();
-  const date = parseServerDate(created);
-  if (!date) return '';
-  const relative = relativeTime(date);
-  switch (relative.unit) {
-    case 'now':
-      return t('time.now');
-    case 'minutes':
-    case 'hours':
-    case 'days':
-      return t(`time.${relative.unit}`, { count: relative.count });
-    default:
-      return relative.date.toLocaleDateString(i18n.language, { dateStyle: 'medium' });
-  }
 }
 
 /** Author, date, photos and videos, text and tagged pets of a post. */
@@ -73,6 +37,7 @@ export function PostCard({
   onPressAuthor,
   onOpen,
   onPaw,
+  onComments,
   onEdit,
   onDelete,
 }: PostCardProps) {
@@ -80,7 +45,7 @@ export function PostCard({
   const { client } = useAuth();
   const colors = useThemeColors();
   const author = post.author;
-  const date = usePostDate(post.created);
+  const date = useRelativeDate(post.created);
 
   return (
     <View style={styles.card}>
@@ -119,6 +84,7 @@ export function PostCard({
       <MediaCarousel post={post} />
       <View style={styles.actions}>
         <PawButton count={post.pawCount} pawed={post.pawedByMe} onPress={onPaw} />
+        <CommentButton count={post.commentCount} onPress={onComments} />
       </View>
       {post.text ? <ThemedText>{post.text}</ThemedText> : null}
       {post.pets.length > 0 ? (
@@ -152,7 +118,6 @@ const styles = StyleSheet.create({
   author: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   date: { paddingVertical: spacing.xs },
   username: { fontWeight: '600' },
-  iconButton: { padding: spacing.xs },
   actions: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   pets: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   pet: {

@@ -23,6 +23,8 @@ export const icons = {
   },
   settings: { sf: { default: 'gearshape', selected: 'gearshape.fill' }, md: 'settings' },
   paw: { sf: { default: 'pawprint', selected: 'pawprint.fill' }, md: 'pets' },
+  comment: { sf: { default: 'bubble.right', selected: 'bubble.right.fill' }, md: 'chat_bubble' },
+  send: { sf: { default: 'paperplane.fill', selected: 'paperplane.fill' }, md: 'send' },
   check: { sf: { default: 'checkmark', selected: 'checkmark' }, md: 'check' },
   mail: { sf: { default: 'envelope', selected: 'envelope.fill' }, md: 'mail' },
   chevron: { sf: { default: 'chevron.right', selected: 'chevron.right' }, md: 'chevron_right' },

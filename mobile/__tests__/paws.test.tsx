@@ -37,6 +37,7 @@ const POST: api.Post = {
   pets: [],
   created: new Date().toISOString(),
   pawCount: 4,
+  commentCount: 2,
   pawedByMe: false,
   myPawId: null,
 };

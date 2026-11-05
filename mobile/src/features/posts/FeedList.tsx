@@ -80,6 +80,7 @@ export function FeedList() {
             post={item}
             onOpen={() => router.push({ pathname: '/post/[id]', params: { id: item.id } })}
             onPaw={() => paw(item)}
+            onComments={() => router.push({ pathname: '/post/[id]', params: { id: item.id } })}
             onPressAuthor={(id) => router.push({ pathname: '/user/[id]', params: { id } })}
             onPressPet={(id) => router.push({ pathname: '/pet/[id]', params: { id } })}
           />

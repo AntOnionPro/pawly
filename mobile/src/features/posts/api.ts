@@ -28,6 +28,7 @@ export interface Post {
   pets: Pet[];
   created: string;
   pawCount: number;
+  commentCount: number;
   /** Whether the signed-in user left a paw print, and its id (to remove it). */
   pawedByMe: boolean;
   myPawId: string | null;
@@ -64,6 +65,7 @@ export function toPost(record: RecordModel): Post {
     pets: (expand.pets ?? []).map(toPet),
     created: String(record.created ?? ''),
     pawCount: Number(record.pawCount ?? 0),
+    commentCount: Number(record.commentCount ?? 0),
     pawedByMe: false,
     myPawId: null,
   };

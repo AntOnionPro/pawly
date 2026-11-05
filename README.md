@@ -26,7 +26,7 @@ Current stage: **Stage 3, Social interaction (in progress).** Latest release: `v
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 3 issues: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30), done), comments ([#31](https://github.com/AntOnionPro/pawly/issues/31)), follows ([#32](https://github.com/AntOnionPro/pawly/issues/32)), sharing ([#33](https://github.com/AntOnionPro/pawly/issues/33)), search ([#34](https://github.com/AntOnionPro/pawly/issues/34)) and report and block ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
+Stage 3 issues: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30), done), comments ([#31](https://github.com/AntOnionPro/pawly/issues/31), done), follows ([#32](https://github.com/AntOnionPro/pawly/issues/32)), sharing ([#33](https://github.com/AntOnionPro/pawly/issues/33)), search ([#34](https://github.com/AntOnionPro/pawly/issues/34)) and report and block ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
 
 ## Features
 
