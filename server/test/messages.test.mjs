@@ -240,3 +240,79 @@ describe('blocks and reports', () => {
     assert.equal((await view(luna, conversation.id)).status, 404);
   });
 });
+
+describe('sharing posts by message', () => {
+  const POSTS = '/api/collections/posts/records';
+
+  async function newPost(user, text = 'Firulais busca casa') {
+    const { body } = await pb.api(POSTS, {
+      method: 'POST',
+      token: user.token,
+      body: { author: user.record.id, text },
+    });
+    return body;
+  }
+
+  function share(user, conversationId, postId, text = '') {
+    return pb.api(MESSAGES, {
+      method: 'POST',
+      token: user.token,
+      body: { conversation: conversationId, sender: user.record.id, post: postId, text },
+    });
+  }
+
+  test('a message can carry a post, with or without text', async () => {
+    const sol = await verifiedUser();
+    const luna = await verifiedUser();
+    const rocco = await verifiedUser();
+    const post = await newPost(rocco);
+    const { body: conversation } = await startConversation(sol, luna);
+
+    const alone = await share(sol, conversation.id, post.id);
+    assert.equal(alone.status, 200, JSON.stringify(alone.body));
+    assert.equal(alone.body.post, post.id);
+    assert.equal(alone.body.hasPost, true);
+    assert.equal(alone.body.text, '');
+    const withText = await share(sol, conversation.id, post.id, ' ¡Mira! ');
+    assert.equal(withText.body.text, '¡Mira!');
+
+    const { body: updated } = await view(luna, conversation.id);
+    assert.equal(updated.lastMessageText, '¡Mira!');
+    const filter = encodeURIComponent(`conversation = "${conversation.id}"`);
+    const list = await pb.api(`${MESSAGES}?filter=${filter}&sort=created&expand=post.author`, {
+      token: luna.token,
+    });
+    assert.equal(list.body.items[0].expand.post.text, 'Firulais busca casa');
+    assert.equal(list.body.items[0].expand.post.expand.author.username, rocco.record.username);
+  });
+
+  test('without a post the text is required; the post must exist; hasPost is not forged', async () => {
+    const sol = await verifiedUser();
+    const luna = await verifiedUser();
+    const { body: conversation } = await startConversation(sol, luna);
+    const empty = await send(sol, conversation.id, '  ');
+    assert.equal(empty.status, 400);
+    assert.equal(empty.body.data.text.code, 'message_empty');
+    assert.equal((await share(sol, conversation.id, 'doesnotexist123')).status, 400);
+    const forged = await pb.api(MESSAGES, {
+      method: 'POST',
+      token: sol.token,
+      body: { conversation: conversation.id, sender: sol.record.id, text: 'Hola', hasPost: true },
+    });
+    assert.equal(forged.body.hasPost, false);
+  });
+
+  test('deleting the post keeps the message and says it had one', async () => {
+    const sol = await verifiedUser();
+    const luna = await verifiedUser();
+    const post = await newPost(sol);
+    const { body: conversation } = await startConversation(sol, luna);
+    const { body: message } = await share(sol, conversation.id, post.id, 'Mira');
+    await pb.api(`${POSTS}/${post.id}`, { method: 'DELETE', token: sol.token });
+    const { status, body } = await pb.api(`${MESSAGES}/${message.id}`, { token: luna.token });
+    assert.equal(status, 200);
+    assert.equal(body.post, '');
+    assert.equal(body.hasPost, true);
+    assert.equal(body.text, 'Mira');
+  });
+});

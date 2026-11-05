@@ -2,6 +2,7 @@ import type PocketBase from 'pocketbase';
 import { ClientResponseError, type RecordModel } from 'pocketbase';
 
 import { toUser, type User } from '@/auth/AuthProvider';
+import { toPost, type Post } from '@/features/posts/api';
 import { parseServerDate } from '@/utils/time';
 
 export const CONVERSATIONS = 'conversations';
@@ -27,9 +28,16 @@ export interface Message {
   id: string;
   conversationId: string;
   senderId: string;
+  /** May be empty when the message shares a post. */
   text: string;
   created: string;
+  /** Whether it shared a post; `post` is missing if that post was deleted. */
+  hasPost: boolean;
+  post?: Post;
 }
+
+/** Expands the shared post and its author. */
+export const MESSAGE_EXPAND = 'post,post.author';
 
 export interface ConversationPage {
   items: Conversation[];
@@ -69,12 +77,15 @@ export function toConversation(record: RecordModel, me: string): Conversation {
 }
 
 export function toMessage(record: RecordModel): Message {
+  const post = (record.expand as { post?: RecordModel } | undefined)?.post;
   return {
     id: record.id,
     conversationId: String(record.conversation ?? ''),
     senderId: String(record.sender ?? ''),
     text: String(record.text ?? ''),
     created: String(record.created ?? ''),
+    hasPost: Boolean(record.hasPost),
+    post: post ? toPost(post) : undefined,
   };
 }
 
@@ -181,6 +192,7 @@ export async function listMessages(
   const result = await client.collection(MESSAGES).getList(1, perPage, {
     filter: filters.join(' && '),
     sort: '-created,-id',
+    expand: MESSAGE_EXPAND,
     skipTotal: true,
   });
   const items = result.items.map(toMessage);
@@ -191,16 +203,21 @@ export async function listMessages(
   };
 }
 
+/** Sends a message; `postId` shares a post (then the text is optional). */
 export async function sendMessage(
   client: PocketBase,
   me: string,
   conversationId: string,
   text: string,
+  postId?: string,
 ): Promise<Message> {
   return toMessage(
     await client
       .collection(MESSAGES)
-      .create({ conversation: conversationId, sender: me, text: text.trim() }),
+      .create(
+        { conversation: conversationId, sender: me, text: text.trim(), post: postId ?? '' },
+        { expand: MESSAGE_EXPAND },
+      ),
   );
 }
 

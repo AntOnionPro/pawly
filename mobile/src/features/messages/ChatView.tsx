@@ -28,6 +28,7 @@ import { parseServerDate } from '@/utils/time';
 
 import { MESSAGE_TEXT_MAX, type Message } from './api';
 import { messageErrorKey, useConversation, useMessages, useSendMessage } from './hooks';
+import { SharedPost } from './SharedPost';
 
 /** The other participant, with "Report" and "Block". */
 function ChatHeader({ other }: { other: User }) {
@@ -82,7 +83,9 @@ function Bubble({ message, mine }: { message: Message; mine: boolean }) {
   return (
     <View style={[styles.bubbleRow, mine ? styles.mineRow : styles.theirsRow]}>
       <Pressable
-        accessibilityLabel={`${message.text}, ${time}`}
+        accessibilityLabel={[message.hasPost ? t('messages.sharedPost') : '', message.text, time]
+          .filter(Boolean)
+          .join(', ')}
         accessibilityActions={mine ? undefined : [{ name: 'report', label: t('report.message') }]}
         onAccessibilityAction={() => void askToReport()}
         onLongPress={mine ? undefined : () => void askToReport()}
@@ -92,7 +95,8 @@ function Bubble({ message, mine }: { message: Message; mine: boolean }) {
             ? { backgroundColor: colors.tabIndicator }
             : { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
         ]}>
-        <ThemedText>{message.text}</ThemedText>
+        {message.hasPost ? <SharedPost post={message.post} /> : null}
+        {message.text ? <ThemedText>{message.text}</ThemedText> : null}
         <ThemedText variant="caption" color="textSecondary" style={styles.time}>
           {time}
         </ThemedText>

@@ -21,6 +21,7 @@ import {
   listConversations,
   listMessages,
   markRead,
+  MESSAGE_EXPAND,
   MESSAGES,
   openConversation,
   sendMessage,
@@ -47,10 +48,11 @@ type MessageData = InfiniteData<MessagePage, MessageCursor | null>;
  */
 function useRealtime(
   collection: string,
-  filter: string,
+  options: { filter: string; expand?: string },
   enabled: boolean,
   onEvent: (event: RecordSubscription) => void,
 ) {
+  const { filter, expand } = options;
   const { client } = useAuth();
   const handle = useEffectEvent(onEvent);
   useEffect(() => {
@@ -60,7 +62,7 @@ function useRealtime(
     try {
       client
         .collection(collection)
-        .subscribe('*', (event) => handle(event), { filter })
+        .subscribe('*', (event) => handle(event), { filter, expand })
         .then((stop) => {
           if (active) unsubscribe = stop;
           else void stop();
@@ -73,7 +75,7 @@ function useRealtime(
       active = false;
       void unsubscribe?.().catch(() => undefined);
     };
-  }, [client, collection, filter, enabled]);
+  }, [client, collection, filter, expand, enabled]);
 }
 
 /** Pages of the user's conversations, the most recent first. Updates live. */
@@ -82,7 +84,7 @@ export function useConversations() {
   const me = user?.id ?? '';
   const queryClient = useQueryClient();
   const enabled = status === 'signedIn' && Boolean(me);
-  useRealtime(CONVERSATIONS, '', enabled, () => {
+  useRealtime(CONVERSATIONS, { filter: '' }, enabled, () => {
     void queryClient.invalidateQueries({ queryKey: messageKeys.conversations(me) });
   });
   return useInfiniteQuery({
@@ -100,7 +102,7 @@ export function useUnreadConversations() {
   const me = user?.id ?? '';
   const queryClient = useQueryClient();
   const enabled = status === 'signedIn' && Boolean(me);
-  useRealtime(CONVERSATIONS, '', enabled, () => {
+  useRealtime(CONVERSATIONS, { filter: '' }, enabled, () => {
     void queryClient.invalidateQueries({ queryKey: messageKeys.unread(me) });
   });
   return useQuery({
@@ -161,7 +163,10 @@ export function useMessages(conversationId: string) {
 
   useRealtime(
     MESSAGES,
-    client.filter ? client.filter('conversation = {:id}', { id: conversationId }) : '',
+    {
+      filter: client.filter ? client.filter('conversation = {:id}', { id: conversationId }) : '',
+      expand: MESSAGE_EXPAND,
+    },
     Boolean(conversationId && me),
     (event) => {
       if (event.action !== 'create') return;
@@ -186,6 +191,35 @@ export function useSendMessage(conversationId: string) {
   return useMutation({
     mutationFn: (text: string) => sendMessage(client, me, conversationId, text),
     onSuccess: (message) => {
+      addToCache(queryClient, message);
+      void queryClient.invalidateQueries({ queryKey: messageKeys.conversations(me) });
+    },
+  });
+}
+
+/**
+ * Sends a post to a user by direct message (opening the conversation if needed), with an
+ * optional note. Returns the conversation id.
+ */
+export function useSharePost() {
+  const { client, user } = useAuth();
+  const me = user?.id ?? '';
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      postId,
+      note,
+    }: {
+      userId: string;
+      postId: string;
+      note: string;
+    }) => {
+      const conversationId = await openConversation(client, me, userId);
+      const message = await sendMessage(client, me, conversationId, note, postId);
+      return { conversationId, message };
+    },
+    onSuccess: ({ message }) => {
       addToCache(queryClient, message);
       void queryClient.invalidateQueries({ queryKey: messageKeys.conversations(me) });
     },

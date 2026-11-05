@@ -109,8 +109,8 @@ export function useRepostAction(): (post: Post) => void {
   };
 }
 
-/** Opens the share sheet with the link to a post in the web version. */
-export function useShareAction(): (post: Post) => void {
+/** Opens the system share sheet with the link to a post in the web version. */
+export function useShareOutside(): (post: Post) => void {
   const { t } = useTranslation();
   return (post) => {
     shareLink({ message: t('share.message'), url: postUrl(post.id) })
@@ -118,5 +118,22 @@ export function useShareAction(): (post: Post) => void {
         if (result === 'copied') notify(t('share.copied'));
       })
       .catch(() => notify(t('share.failed')));
+  };
+}
+
+/**
+ * What the share button does: users choose between sending it by message or sharing it
+ * outside Pawly; visitors (who have no messages) share it outside directly.
+ */
+export function useShareAction(): (post: Post) => void {
+  const router = useRouter();
+  const { status } = useAuth();
+  const shareOutside = useShareOutside();
+  return (post) => {
+    if (status !== 'signedIn') {
+      shareOutside(post);
+      return;
+    }
+    router.push({ pathname: '/post/[id]/send', params: { id: post.id } });
   };
 }

@@ -130,7 +130,7 @@ La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo 
 
 ## Mensajes directos
 
-`conversations` guarda una conversación por par de usuarios (etapa 4), en orden (`userA` < `userB`). Solo sus dos participantes la ven. El servidor guarda una vista previa del último mensaje (`lastMessageText`, `lastMessageAt`, `lastSender`) y una fecha de "leído hasta" para cada participante (`readA`, `readB`): un participante la marca como leída con una actualización vacía, y ningún otro campo puede cambiar. `messages` guarda los mensajes: de 1 a 1000 caracteres, solo los participantes los leen y escriben, y nadie escribe si hay un bloqueo (`pb_hooks/messages.pb.js`). Ambos se borran con la cuenta. Los reportes también pueden ser de un mensaje (`message`).
+`conversations` guarda una conversación por par de usuarios (etapa 4), en orden (`userA` < `userB`). Solo sus dos participantes la ven. El servidor guarda una vista previa del último mensaje (`lastMessageText`, `lastMessageAt`, `lastSender`) y una fecha de "leído hasta" para cada participante (`readA`, `readB`): un participante la marca como leída con una actualización vacía, y ningún otro campo puede cambiar. `messages` guarda los mensajes: hasta 1000 caracteres y, opcionalmente, una publicación compartida (`post`); hace falta texto o publicación. Solo los participantes los leen y escriben, y nadie escribe si hay un bloqueo (`pb_hooks/messages.pb.js`). Si se borra una publicación compartida, `post` queda vacío y `hasPost` (lo pone el servidor) sigue en verdadero. Ambos se borran con la cuenta. Los reportes también pueden ser de un mensaje (`message`).
 
 La app cuenta las conversaciones sin leer con este filtro:
 

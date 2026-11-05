@@ -58,11 +58,19 @@ onRecordUpdateRequest((e) => {
   e.next();
 }, 'conversations');
 
-// A message: trimmed text, written by a participant, and not across a block.
+// A message: trimmed text or a post (or both), written by a participant, and not across a
+// block. `hasPost` is set here, never by the app.
 onRecordCreateRequest((e) => {
   const { hasBlock } = require(`${__hooks}/lib/moderation.js`);
   const record = e.record;
   record.set('text', record.getString('text').trim());
+  const hasPost = record.getString('post') !== '';
+  record.set('hasPost', hasPost);
+  if (!hasPost && !record.getString('text')) {
+    throw new BadRequestError('Invalid message.', {
+      text: new ValidationError('message_empty', 'Write a message or share a post.'),
+    });
+  }
   let conversation = null;
   try {
     conversation = e.app.findRecordById('conversations', record.getString('conversation'));
