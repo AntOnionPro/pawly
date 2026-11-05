@@ -122,6 +122,12 @@ La colección `follows` guarda quién sigue a quién (etapa 3): `follower` sigue
 
 El feed "Siguiendo" lista las publicaciones con el filtro `author.follows_via_following.follower ?= "<id del usuario>"`.
 
+## Reportes y bloqueos
+
+La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`) o un usuario (`user`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale` u `other`) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración; su revisión llega en la etapa 7. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
+
+La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
+
 ## Contadores
 
 Cada publicación tiene un `pawCount`, un `commentCount` y un `repostCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.

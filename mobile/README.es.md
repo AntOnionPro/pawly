@@ -92,7 +92,7 @@ mobile/
 │   ├── api/            Cliente de PocketBase, URL del servidor, mensajes de error y caché de React Query
 │   ├── auth/           Sesión (AuthProvider) y validación de formularios
 │   ├── components/     Interfaz reutilizable (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, users, legal, settings)
+│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, moderation, users, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
 │   ├── theme/          Colores, íconos, tipografía y utilidades de contraste

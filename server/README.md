@@ -122,6 +122,12 @@ The `follows` collection holds who follows whom (stage 3): `follower` follows `f
 
 The "Following" feed lists posts with the filter `author.follows_via_following.follower ?= "<user id>"`.
 
+## Reports and blocks
+
+The `reports` collection holds reports (stage 3): the `reporter` reports exactly one `post`, `comment` or `user`, with a `reason` (`spam`, `offensive`, `animal_abuse`, `animal_sale` or `other`) and optional `details`. Only superusers see them, in the admin panel; reviewing them comes in stage 7. Each user reports the same thing once, and nobody reports themselves or their own content.
+
+The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
+
 ## Counters
 
 Each post has a `pawCount`, a `commentCount` and a `repostCount`, and each user a `followerCount` and a `followingCount`. Counters like these are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.

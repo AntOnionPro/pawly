@@ -33,6 +33,8 @@ interface PostCardProps {
   /** Author actions; shown only when given. */
   onEdit?: () => void;
   onDelete?: () => void;
+  /** Reports the post (for posts by someone else). */
+  onReport?: () => void;
 }
 
 /** Author, date, photos and videos, text and tagged pets of a post. */
@@ -47,6 +49,7 @@ export function PostCard({
   onShare,
   onEdit,
   onDelete,
+  onReport,
 }: PostCardProps) {
   const { t } = useTranslation();
   const { client } = useAuth();
@@ -86,6 +89,9 @@ export function PostCard({
         {onEdit ? <IconButton icon="edit" label={t('posts.edit')} onPress={onEdit} /> : null}
         {onDelete ? (
           <IconButton icon="delete" label={t('posts.delete')} onPress={onDelete} />
+        ) : null}
+        {onReport ? (
+          <IconButton icon="flag" size={20} label={t('report.post')} onPress={onReport} />
         ) : null}
       </View>
       <MediaCarousel post={post} />

@@ -103,9 +103,10 @@ export function useDeleteComment(postId: string) {
   });
 }
 
-/** Message for a failed comment request: the text field error, or why it failed. */
+/** Message for a failed comment request: the field error (text, block…), or why it failed. */
 export function commentErrorKey(error: unknown): ErrorKey {
-  const fieldError = toFieldErrors(error).text;
+  const fields = toFieldErrors(error);
+  const fieldError = fields.text ?? Object.values(fields)[0];
   if (fieldError) return fieldError;
   return requestErrorKind(error) === 'network' ? 'errors.network' : 'errors.generic';
 }

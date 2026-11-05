@@ -10,6 +10,7 @@ import { Icon } from '@/components/Icon';
 import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
+import { isHiddenPost, useBlockedIds } from '@/features/moderation/hooks';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
 
@@ -43,7 +44,11 @@ export function FeedList() {
     hasNextPage,
     isFetchingNextPage,
   } = usePostList(filter);
-  const posts: Post[] = data?.pages.flatMap((page) => page.items) ?? [];
+  const blocked = useBlockedIds();
+  // Posts by blocked users (or reposting them) are hidden.
+  const posts: Post[] = (data?.pages.flatMap((page) => page.items) ?? []).filter(
+    (post) => !isHiddenPost(post, blocked),
+  );
 
   return (
     <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: colors.background }]}>

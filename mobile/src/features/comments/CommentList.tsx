@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
+import { useBlockedIds, useReportAction } from '@/features/moderation/hooks';
 import { spacing } from '@/theme/typography';
 
 import { flattenComments } from './api';
@@ -23,7 +24,12 @@ export function CommentList({ postId, postAuthorId, onPressAuthor }: CommentList
   const { user } = useAuth();
   const { data, error, isPending, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useComments(postId);
-  const comments = flattenComments(data?.pages ?? []);
+  const blocked = useBlockedIds();
+  const report = useReportAction();
+  // Comments by blocked users are hidden.
+  const comments = flattenComments(data?.pages ?? []).filter(
+    (comment) => !blocked.has(comment.authorId),
+  );
 
   return (
     <View style={styles.section}>
@@ -42,6 +48,7 @@ export function CommentList({ postId, postAuthorId, onPressAuthor }: CommentList
           isMine={Boolean(user && comment.authorId === user.id)}
           isPostAuthor={Boolean(user && postAuthorId === user.id)}
           onPressAuthor={onPressAuthor}
+          onReport={() => report({ kind: 'comment', id: comment.id })}
         />
       ))}
       {hasNextPage ? (

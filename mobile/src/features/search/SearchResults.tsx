@@ -8,6 +8,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
+import { useBlockedIds } from '@/features/moderation/hooks';
 import { PetRow } from '@/features/pets/PetRow';
 import { PostGrid } from '@/features/posts/PostGrid';
 import { UserRow } from '@/features/users/UserRow';
@@ -31,15 +32,18 @@ function Results<T extends { id: string }>({
   query,
   search,
   renderItem,
+  hidden,
 }: {
   query: string;
   search: UseInfiniteQueryResult<InfiniteData<SearchPage<T>>>;
   renderItem: (item: T) => ReactNode;
+  /** Results to leave out (for example by blocked users). */
+  hidden: (item: T) => boolean;
 }) {
   const { t } = useTranslation();
   const { data, error, isPending, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     search;
-  const items = data?.pages.flatMap((page) => page.items) ?? [];
+  const items = (data?.pages.flatMap((page) => page.items) ?? []).filter((item) => !hidden(item));
   if (isPending) return <Loading />;
   if (error) return <LoadError error={error} onRetry={() => void refetch()} />;
   if (items.length === 0) return <Message>{t('search.noResults', { query })}</Message>;
@@ -63,10 +67,12 @@ function Results<T extends { id: string }>({
 function UserResults({ query }: { query: string }) {
   const router = useRouter();
   const search = useUserSearch(query);
+  const blocked = useBlockedIds();
   return (
     <Results
       query={query}
       search={search}
+      hidden={(user) => blocked.has(user.id)}
       renderItem={(user) => (
         <UserRow
           user={user}
@@ -80,10 +86,12 @@ function UserResults({ query }: { query: string }) {
 function PetResults({ query }: { query: string }) {
   const router = useRouter();
   const search = usePetSearch(query);
+  const blocked = useBlockedIds();
   return (
     <Results
       query={query}
       search={search}
+      hidden={(pet) => blocked.has(pet.ownerId)}
       renderItem={(pet) => (
         <PetRow
           pet={pet}
