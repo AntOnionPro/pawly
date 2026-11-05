@@ -31,7 +31,11 @@ function freePort() {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export async function startPocketBase() {
+/**
+ * Starts PocketBase. `env` adds environment variables; by default push notifications go to an
+ * address where nothing listens, so tests never call Expo.
+ */
+export async function startPocketBase({ env = {} } = {}) {
   if (!existsSync(binary)) {
     throw new Error('PocketBase is not installed. Run ./scripts/download.sh first.');
   }
@@ -50,6 +54,7 @@ export async function startPocketBase() {
   let output = '';
   const proc = spawn(binary, ['serve', `--http=127.0.0.1:${port}`, '--hooksWatch=false', ...dirs], {
     stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env, PAWLY_PUSH_URL: 'http://127.0.0.1:9/push', ...env },
   });
   proc.stdout.on('data', (chunk) => (output += chunk));
   proc.stderr.on('data', (chunk) => (output += chunk));

@@ -26,7 +26,7 @@ Etapa actual: **etapa 4, Mensajes y notificaciones (en progreso).** Última rele
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 4: mensajes directos ([#43](https://github.com/AntOnionPro/pawly/issues/43), hecho), enviar publicaciones por mensaje ([#44](https://github.com/AntOnionPro/pawly/issues/44), hecho), notificaciones dentro de la app ([#45](https://github.com/AntOnionPro/pawly/issues/45), hecho), notificaciones push ([#46](https://github.com/AntOnionPro/pawly/issues/46)) y preferencias de notificaciones ([#47](https://github.com/AntOnionPro/pawly/issues/47)).
+Issues de la etapa 4: mensajes directos ([#43](https://github.com/AntOnionPro/pawly/issues/43), hecho), enviar publicaciones por mensaje ([#44](https://github.com/AntOnionPro/pawly/issues/44), hecho), notificaciones dentro de la app ([#45](https://github.com/AntOnionPro/pawly/issues/45), hecho), notificaciones push ([#46](https://github.com/AntOnionPro/pawly/issues/46), hecho) y preferencias de notificaciones ([#47](https://github.com/AntOnionPro/pawly/issues/47)).
 
 ## Funcionalidades
 

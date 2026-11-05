@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { createQueryClient } from '@/api/queryClient';
 import { AuthProvider, useAuth } from '@/auth/AuthProvider';
+import { usePushRegistration, usePushTaps } from '@/features/push/hooks';
 import {
   PreferencesProvider,
   useColorSchemeName,
@@ -27,6 +28,13 @@ export default function RootLayout() {
       </AuthProvider>
     </PreferencesProvider>
   );
+}
+
+/** Keeps this phone registered for push and opens what a tapped push is about. */
+function PushHandlers() {
+  usePushRegistration();
+  usePushTaps();
+  return null;
 }
 
 function RootNavigator() {
@@ -95,6 +103,7 @@ function RootNavigator() {
         <Stack.Screen name="user/[id]/followers" options={{ title: t('follows.followersTitle') }} />
         <Stack.Screen name="user/[id]/following" options={{ title: t('follows.followingTitle') }} />
       </Stack>
+      <PushHandlers />
     </ThemeProvider>
   );
 }

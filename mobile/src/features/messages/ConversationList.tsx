@@ -8,6 +8,7 @@ import { Avatar } from '@/components/Avatar';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
 import { useBlockedIds } from '@/features/moderation/hooks';
+import { useAskForPushOnce } from '@/features/push/hooks';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
 import { useRelativeDate } from '@/utils/useRelativeDate';
@@ -70,6 +71,8 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
 
 /** The user's conversations, the most recent first. */
 export function ConversationList() {
+  // A good moment to ask for the notification permission (only the first time).
+  useAskForPushOnce();
   const { t } = useTranslation();
   const colors = useThemeColors();
   const blocked = useBlockedIds();

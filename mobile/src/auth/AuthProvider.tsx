@@ -11,6 +11,7 @@ import {
 } from 'react';
 
 import { getClient, restoreSession } from '@/api/client';
+import { forgetPushToken } from '@/features/push/api';
 import type { PickedImage } from '@/utils/pickPhoto';
 import { appendFile } from '@/utils/upload';
 
@@ -149,7 +150,12 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
     [client],
   );
 
-  const signOut = useCallback(() => client.authStore.clear(), [client]);
+  const signOut = useCallback(() => {
+    // Stop pushes to this phone with the session that is ending.
+    const authToken = client.authStore.token;
+    client.authStore.clear();
+    void forgetPushToken(client, authToken);
+  }, [client]);
 
   const requestVerification = useCallback(
     async (email: string) => {

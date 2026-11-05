@@ -66,7 +66,26 @@ During development, verification and password emails are printed in the server c
 
 If you use `ufw`, also allow the server port with `sudo ufw allow 8090/tcp`.
 
-## Scripts
+## Push notifications
+
+The app asks for the notification permission the first time you open messages or notifications, and saves the phone's Expo push token on the server. Expo push tokens need an EAS project, linked to your Expo account (the same one you use in Expo Go). Once, in `mobile/`:
+
+```bash
+npx eas-cli@latest login
+```
+
+```bash
+npx eas-cli@latest init
+```
+
+`init` adds `extra.eas.projectId` to `app.json`; commit it in a pull request. To try it before that, put the id in `mobile/.env.local`:
+
+```bash
+EXPO_PUBLIC_EAS_PROJECT_ID=your-project-id
+```
+
+- **iPhone:** works in Expo Go.
+- **Android:** Expo Go cannot receive push since SDK 53; it needs a development build (EAS Build) with Firebase (FCM) credentials. Until then the app works the same without push on Android.
 
 | Command                | What it does                                           |
 | ---------------------- | ------------------------------------------------------ |

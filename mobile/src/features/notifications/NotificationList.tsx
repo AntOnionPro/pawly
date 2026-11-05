@@ -9,6 +9,7 @@ import { Avatar } from '@/components/Avatar';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
 import { useBlockedIds } from '@/features/moderation/hooks';
+import { useAskForPushOnce } from '@/features/push/hooks';
 import { mediaKind, mediaUrl } from '@/features/posts/api';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
@@ -87,6 +88,8 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
 
 /** The user's notifications, newest first. Opening it marks them as read. */
 export function NotificationList() {
+  // A good moment to ask for the notification permission (only the first time).
+  useAskForPushOnce();
   const { t } = useTranslation();
   const colors = useThemeColors();
   const blocked = useBlockedIds();
