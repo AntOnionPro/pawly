@@ -146,6 +146,27 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 `push_tokens` guarda los tokens de Expo Push de los dispositivos de cada usuario (etapa 4), con el idioma de la app (`language`) para el texto. Solo su dueño los ve, guarda y borra, y guardar un token que pertenece a otra cuenta lo mueve (una cuenta por dispositivo). Después de cada notificación dentro de la app y de cada mensaje directo, el servidor envía un push a todos los dispositivos del destinatario con Expo Push Service (`pb_hooks/push.pb.js`); los tokens que Expo marca como no registrados se borran, y un push fallido nunca hace fallar la acción. `notification_prefs` guarda qué push quiere cada usuario (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): un registro por usuario, solo su dueño lo ve y lo cambia, y sin él todos los tipos están encendidos. Un tipo apagado no envía push, pero la notificación dentro de la app se crea igual. `PAWLY_PUSH_URL` cambia la dirección del servicio: las pruebas apuntan a uno falso y nunca llaman a Expo.
 
+## Fichas de adopción
+
+`adoptions` guarda las fichas de adopción (etapa 5). Cada una pone en adopción una mascota (`pet`) de quien publica (`publisher`); la especie, la raza y la edad salen del perfil de la mascota.
+
+| Campo          | Reglas                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------- |
+| `publisher`    | El usuario con sesión; no se puede cambiar. Borrar la cuenta borra sus fichas.          |
+| `pet`          | Una mascota de quien publica; no se puede cambiar. Borrar la mascota borra sus fichas.  |
+| `sex`          | `female` o `male`. Obligatorio.                                                         |
+| `size`         | `small`, `medium` o `large`. Obligatorio.                                               |
+| `vaccines`     | `complete`, `partial` o `none`. Obligatorio.                                            |
+| `sterilized`   | Si la mascota está esterilizada.                                                        |
+| `health`       | Hasta 500 caracteres.                                                                   |
+| `zone`         | Zona aproximada en texto, como "Coyoacán, CDMX", hasta 80 caracteres. Obligatorio.      |
+| `requirements` | Hasta 1,000 caracteres.                                                                 |
+| `description`  | Hasta 2,200 caracteres.                                                                 |
+| `media`        | Hasta 10 fotos o videos, con los mismos límites y miniaturas que las publicaciones.     |
+| `status`       | `available` o `adopted`. Lo pone el servidor: una ficha nueva siempre está `available`. |
+
+Cualquiera las ve y las lista; solo quien publica las edita y las borra, y al editar no se puede cambiar la mascota ni el estado. Una mascota tiene a lo más una ficha `available`. Los textos se recortan. Las reglas están en `pb_hooks/adoptions.pb.js`; los errores de campo usan los códigos `pet_not_owned`, `pet_already_listed` y `photo_too_large`.
+
 ## Contadores
 
 Cada publicación tiene un `pawCount`, un `commentCount` y un `repostCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.

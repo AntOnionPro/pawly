@@ -4,6 +4,9 @@ import { useAuth } from '@/auth/AuthProvider';
 
 import { createPet, deletePet, getPet, listPets, updatePet, type Pet, type PetValues } from './api';
 
+/** Listings show the pet's name, photo and age, and are deleted with it. */
+const ADOPTIONS_KEY = ['adoptions'] as const;
+
 export const petKeys = {
   all: ['pets'] as const,
   byOwner: (ownerId: string) => ['pets', 'owner', ownerId] as const,
@@ -35,7 +38,10 @@ export function useSavePet() {
   return useMutation({
     mutationFn: ({ id, values }: { id?: string; values: PetValues }): Promise<Pet> =>
       id ? updatePet(client, id, values) : createPet(client, user?.id ?? '', values),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: petKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: petKeys.all });
+      await queryClient.invalidateQueries({ queryKey: ADOPTIONS_KEY });
+    },
   });
 }
 
@@ -44,6 +50,9 @@ export function useDeletePet() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deletePet(client, id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: petKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: petKeys.all });
+      await queryClient.invalidateQueries({ queryKey: ADOPTIONS_KEY });
+    },
   });
 }

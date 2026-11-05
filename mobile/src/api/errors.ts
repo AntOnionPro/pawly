@@ -28,6 +28,7 @@ export type ErrorKey =
   | 'errors.fileType'
   | 'errors.fileTooLarge'
   | 'errors.petNotOwned'
+  | 'errors.petAlreadyListed'
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
   | 'errors.blocked';
@@ -78,6 +79,8 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.photoTooLarge';
     case 'pet_not_owned':
       return 'errors.petNotOwned';
+    case 'pet_already_listed':
+      return 'errors.petAlreadyListed';
     case 'blocked':
       return 'errors.blocked';
     case 'validation_too_many_files':

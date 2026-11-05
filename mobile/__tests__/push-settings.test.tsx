@@ -115,7 +115,8 @@ describe('notification settings', () => {
       expect(screen.getByLabelText(label).props.value).toBe(true);
     }
     await fireEvent(paw, 'valueChange', false);
-    expect(screen.getByLabelText('Huellas').props.value).toBe(false);
+    // The cached preferences change in onMutate, and React Query redraws on a timer.
+    await waitFor(() => expect(screen.getByLabelText('Huellas').props.value).toBe(false));
     await waitFor(() =>
       expect(api.savePushPrefs).toHaveBeenCalledWith(expect.anything(), 'u1', {
         id: null,

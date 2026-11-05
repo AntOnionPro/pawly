@@ -94,7 +94,7 @@ export function PostCard({
           <IconButton icon="flag" size={20} label={t('report.post')} onPress={onReport} />
         ) : null}
       </View>
-      <MediaCarousel post={post} />
+      <MediaCarousel record={post} />
       <View style={styles.actions}>
         <PawButton count={post.pawCount} pawed={post.pawedByMe} onPress={onPaw} />
         <CommentButton count={post.commentCount} onPress={onComments} />
