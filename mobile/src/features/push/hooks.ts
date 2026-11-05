@@ -1,13 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 
 import { useAuth } from '@/auth/AuthProvider';
 
-import { savePushToken, type PushLanguage, type PushPlatform } from './api';
-import { getPushToken, listenToPushTaps, type PushTarget } from './device';
+import {
+  getPushPrefs,
+  savePushPrefs,
+  savePushToken,
+  type PushLanguage,
+  type PushPlatform,
+  type SavedPushPrefs,
+} from './api';
+import { getPushPermission, getPushToken, listenToPushTaps, type PushTarget } from './device';
 
 /** Set once the app asked for the notification permission, so it asks only once. */
 export const PUSH_ASKED_KEY = 'pawly:pushAsked';
@@ -25,6 +33,68 @@ function usePushSaver() {
     } catch {
       // Push is a bonus: the app works the same without it.
     }
+  };
+}
+
+export const pushKeys = {
+  prefs: (userId: string) => ['pushPrefs', userId] as const,
+  permission: ['pushPermission'] as const,
+};
+
+/** The user's push preferences (all on until they change something). */
+export function usePushPrefs() {
+  const { client, user, status } = useAuth();
+  const userId = user?.id ?? '';
+  return useQuery({
+    queryKey: pushKeys.prefs(userId),
+    queryFn: () => getPushPrefs(client, userId),
+    enabled: status === 'signedIn' && Boolean(userId),
+  });
+}
+
+/** Saves the preferences, showing the change at once and undoing it if it fails. */
+export function useSavePushPrefs() {
+  const { client, user } = useAuth();
+  const userId = user?.id ?? '';
+  const queryClient = useQueryClient();
+  const key = pushKeys.prefs(userId);
+  return useMutation({
+    mutationFn: (saved: SavedPushPrefs) => savePushPrefs(client, userId, saved),
+    onMutate: async (saved) => {
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<SavedPushPrefs>(key);
+      queryClient.setQueryData(key, saved);
+      return { previous };
+    },
+    onError: (_error, _saved, context) => {
+      if (context?.previous) queryClient.setQueryData(key, context.previous);
+    },
+    onSuccess: (id, saved) => {
+      queryClient.setQueryData(key, { ...saved, id });
+    },
+  });
+}
+
+/** Whether this phone shows push; checked again when the user comes back from Settings. */
+export function usePushPermission() {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') void queryClient.invalidateQueries({ queryKey: pushKeys.permission });
+    });
+    return () => subscription.remove();
+  }, [queryClient]);
+  return useQuery({ queryKey: pushKeys.permission, queryFn: getPushPermission });
+}
+
+/** Asks for the notification permission now (a button in Settings) and saves the token. */
+export function useEnablePush() {
+  const queryClient = useQueryClient();
+  const save = usePushSaver();
+  return async () => {
+    await AsyncStorage.setItem(PUSH_ASKED_KEY, 'true');
+    await save(true);
+    await queryClient.invalidateQueries({ queryKey: pushKeys.permission });
   };
 }
 

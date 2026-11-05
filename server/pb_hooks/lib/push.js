@@ -30,13 +30,28 @@ function texts(language) {
   return TEXTS[language] || TEXTS.es;
 }
 
+/** Whether `userId` wants pushes of `type` (paw, comment, follow, repost or message). */
+function wantsPush(app, userId, type) {
+  try {
+    const prefs = app.findFirstRecordByFilter('notification_prefs', 'user = {:user}', {
+      user: userId,
+    });
+    return !prefs.getBool(`${type}Off`);
+  } catch {
+    // No preferences saved yet: everything is on.
+    return true;
+  }
+}
+
 /**
- * Sends a push to every device of `userId`. `build(texts)` returns `{ title, body }` in the
- * device's language; `data` tells the app what to open. Tokens Expo reports as no longer
+ * Sends a push to every device of `userId`, unless they turned off pushes of `data.type`.
+ * `build(texts)` returns `{ title, body }` in the device's language; `data` tells the app what
+ * to open. Tokens Expo reports as no longer
  * registered are deleted. Never throws: a push must not make the user's action fail.
  */
 function sendPush(app, userId, build, data) {
   try {
+    if (!wantsPush(app, userId, data.type)) return;
     const tokens = app.findRecordsByFilter('push_tokens', 'user = {:user}', '', 20, 0, {
       user: userId,
     });
@@ -66,4 +81,4 @@ function sendPush(app, userId, build, data) {
   }
 }
 
-module.exports = { sendPush };
+module.exports = { sendPush, wantsPush };

@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 4, Mensajes y notificaciones (en progreso).** Última release: `v0.4.0` (etapa 3). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 4, Mensajes y notificaciones (terminada, falta la release `v0.5.0` a `main`).** La etapa 5 empieza cuando esa release esté mergeada. Última release: `v0.4.0` (etapa 3). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ Etapa actual: **etapa 4, Mensajes y notificaciones (en progreso).** Última rele
 | 1 | Cuentas | Hecho |
 | 2 | Mascotas y publicaciones | Hecho |
 | 3 | Interacción social | Hecho |
-| 4 | Mensajes y notificaciones | En progreso |
+| 4 | Mensajes y notificaciones | Hecho |
 | 5 | Adopción | Sin empezar |
 | 6 | Rescate | Sin empezar |
 | 7 | Moderación | Sin empezar |
@@ -26,7 +26,7 @@ Etapa actual: **etapa 4, Mensajes y notificaciones (en progreso).** Última rele
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 4: mensajes directos ([#43](https://github.com/AntOnionPro/pawly/issues/43), hecho), enviar publicaciones por mensaje ([#44](https://github.com/AntOnionPro/pawly/issues/44), hecho), notificaciones dentro de la app ([#45](https://github.com/AntOnionPro/pawly/issues/45), hecho), notificaciones push ([#46](https://github.com/AntOnionPro/pawly/issues/46), hecho) y preferencias de notificaciones ([#47](https://github.com/AntOnionPro/pawly/issues/47)).
+Entregado en la etapa 4: mensajes directos ([#43](https://github.com/AntOnionPro/pawly/issues/43)), enviar publicaciones por mensaje ([#44](https://github.com/AntOnionPro/pawly/issues/44)), notificaciones dentro de la app ([#45](https://github.com/AntOnionPro/pawly/issues/45)), notificaciones push ([#46](https://github.com/AntOnionPro/pawly/issues/46)) y preferencias de notificaciones ([#47](https://github.com/AntOnionPro/pawly/issues/47)). El push en Android necesita un build de desarrollo (etapa 8).
 
 ## Funcionalidades
 

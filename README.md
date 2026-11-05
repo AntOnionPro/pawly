@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 4, Messages and notifications (in progress).** Latest release: `v0.4.0` (stage 3). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 4, Messages and notifications (done, pending the `v0.5.0` release to `main`).** Stage 5 starts after that release is merged. Latest release: `v0.4.0` (stage 3). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ Current stage: **Stage 4, Messages and notifications (in progress).** Latest rel
 | 1 | Accounts | Done |
 | 2 | Pets and posts | Done |
 | 3 | Social interaction | Done |
-| 4 | Messages and notifications | In progress |
+| 4 | Messages and notifications | Done |
 | 5 | Adoption | Not started |
 | 6 | Rescue | Not started |
 | 7 | Moderation | Not started |
@@ -26,7 +26,7 @@ Current stage: **Stage 4, Messages and notifications (in progress).** Latest rel
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 4 issues: direct messages ([#43](https://github.com/AntOnionPro/pawly/issues/43), done), sending posts by message ([#44](https://github.com/AntOnionPro/pawly/issues/44), done), in-app notifications ([#45](https://github.com/AntOnionPro/pawly/issues/45), done), push notifications ([#46](https://github.com/AntOnionPro/pawly/issues/46), done) and notification preferences ([#47](https://github.com/AntOnionPro/pawly/issues/47)).
+Stage 4 delivered: direct messages ([#43](https://github.com/AntOnionPro/pawly/issues/43)), sending posts by message ([#44](https://github.com/AntOnionPro/pawly/issues/44)), in-app notifications ([#45](https://github.com/AntOnionPro/pawly/issues/45)), push notifications ([#46](https://github.com/AntOnionPro/pawly/issues/46)) and notification preferences ([#47](https://github.com/AntOnionPro/pawly/issues/47)). Push on Android needs a development build (stage 8).
 
 ## Features
 
