@@ -31,6 +31,54 @@ function freePort() {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const ATTEMPTS = 5;
+
+/**
+ * Runs `pocketbase serve` on a free port and waits until it answers. Test files run in
+ * parallel, so another server can take the port between choosing it and binding it: then
+ * this process exits and it tries another port. It only trusts the port once its own output
+ * says it started there (a health check alone could reach another test's server).
+ */
+async function launch(dirs, env) {
+  for (let attempt = 1; ; attempt += 1) {
+    const port = await freePort();
+    const baseUrl = `http://127.0.0.1:${port}`;
+    const log = { text: '' };
+    const proc = spawn(
+      binary,
+      ['serve', `--http=127.0.0.1:${port}`, '--hooksWatch=false', ...dirs],
+      {
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env,
+      },
+    );
+    proc.stdout.on('data', (chunk) => (log.text += chunk));
+    proc.stderr.on('data', (chunk) => (log.text += chunk));
+
+    const deadline = Date.now() + 20_000;
+    for (;;) {
+      if (proc.exitCode !== null) {
+        if (attempt < ATTEMPTS && log.text.includes('address already in use')) break;
+        throw new Error(`PocketBase exited with code ${proc.exitCode}:\n${log.text}`);
+      }
+      if (log.text.includes(`Server started at ${baseUrl}`)) {
+        try {
+          if ((await fetch(`${baseUrl}/api/health`)).ok && proc.exitCode === null) {
+            return { proc, baseUrl, log };
+          }
+        } catch {
+          // Not answering yet.
+        }
+      }
+      if (Date.now() > deadline) {
+        proc.kill();
+        throw new Error(`PocketBase did not start within 20 s:\n${log.text}`);
+      }
+      await sleep(100);
+    }
+  }
+}
+
 /**
  * Starts PocketBase. `env` adds environment variables; by default push notifications go to an
  * address where nothing listens, so tests never call Expo.
@@ -49,15 +97,11 @@ export async function startPocketBase({ env = {} } = {}) {
     stdio: 'ignore',
   });
 
-  const port = await freePort();
-  const baseUrl = `http://127.0.0.1:${port}`;
-  let output = '';
-  const proc = spawn(binary, ['serve', `--http=127.0.0.1:${port}`, '--hooksWatch=false', ...dirs], {
-    stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, PAWLY_PUSH_URL: 'http://127.0.0.1:9/push', ...env },
+  const { proc, baseUrl, log } = await launch(dirs, {
+    ...process.env,
+    PAWLY_PUSH_URL: 'http://127.0.0.1:9/push',
+    ...env,
   });
-  proc.stdout.on('data', (chunk) => (output += chunk));
-  proc.stderr.on('data', (chunk) => (output += chunk));
 
   async function api(urlPath, { method = 'GET', body, token } = {}) {
     const headers = {};
@@ -82,7 +126,7 @@ export async function startPocketBase({ env = {} } = {}) {
   async function waitForMailLink(to, linkPart, timeoutMs = 5000) {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
-      for (const line of output.split('\n')) {
+      for (const line of log.text.split('\n')) {
         if (
           line.includes('[pawly-mail]') &&
           line.includes(`to=${to} `) &&
@@ -93,7 +137,7 @@ export async function startPocketBase({ env = {} } = {}) {
       }
       await sleep(50);
     }
-    throw new Error(`No email to ${to} containing "${linkPart}". Output:\n${output}`);
+    throw new Error(`No email to ${to} containing "${linkPart}". Output:\n${log.text}`);
   }
 
   async function stop() {
@@ -101,21 +145,5 @@ export async function startPocketBase({ env = {} } = {}) {
     rmSync(dataDir, { recursive: true, force: true });
   }
 
-  const deadline = Date.now() + 20_000;
-  for (;;) {
-    if (proc.exitCode !== null) {
-      throw new Error(`PocketBase exited with code ${proc.exitCode}:\n${output}`);
-    }
-    try {
-      if ((await fetch(`${baseUrl}/api/health`)).ok) break;
-    } catch {
-      // Not listening yet.
-    }
-    if (Date.now() > deadline) {
-      throw new Error(`PocketBase did not start within 20 s:\n${output}`);
-    }
-    await sleep(100);
-  }
-
-  return { baseUrl, api, waitForMailLink, stop, logs: () => output };
+  return { baseUrl, api, waitForMailLink, stop, logs: () => log.text };
 }
