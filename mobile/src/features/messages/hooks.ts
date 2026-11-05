@@ -6,11 +6,11 @@ import {
   type InfiniteData,
 } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import type { RecordSubscription } from 'pocketbase';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { requestErrorKey, requestErrorKind, toFieldErrors } from '@/api/errors';
+import { useRealtime } from '@/api/useRealtime';
 import { useAuth } from '@/auth/AuthProvider';
 import { notify } from '@/utils/notify';
 
@@ -41,42 +41,6 @@ export const messageKeys = {
 };
 
 type MessageData = InfiniteData<MessagePage, MessageCursor | null>;
-
-/**
- * Listens to live changes of a collection (PocketBase realtime) while `enabled`. If realtime is
- * not available the screen still works; it just does not update on its own.
- */
-function useRealtime(
-  collection: string,
-  options: { filter: string; expand?: string },
-  enabled: boolean,
-  onEvent: (event: RecordSubscription) => void,
-) {
-  const { filter, expand } = options;
-  const { client } = useAuth();
-  const handle = useEffectEvent(onEvent);
-  useEffect(() => {
-    if (!enabled) return undefined;
-    let unsubscribe: (() => Promise<void>) | null = null;
-    let active = true;
-    try {
-      client
-        .collection(collection)
-        .subscribe('*', (event) => handle(event), { filter, expand })
-        .then((stop) => {
-          if (active) unsubscribe = stop;
-          else void stop();
-        })
-        .catch(() => undefined);
-    } catch {
-      // No realtime connection (for example in tests).
-    }
-    return () => {
-      active = false;
-      void unsubscribe?.().catch(() => undefined);
-    };
-  }, [client, collection, filter, expand, enabled]);
-}
 
 /** Pages of the user's conversations, the most recent first. Updates live. */
 export function useConversations() {

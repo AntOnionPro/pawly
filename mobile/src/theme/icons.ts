@@ -31,6 +31,7 @@ export const icons = {
   share: { sf: { default: 'square.and.arrow.up', selected: 'square.and.arrow.up' }, md: 'share' },
   flag: { sf: { default: 'flag', selected: 'flag.fill' }, md: 'flag' },
   block: { sf: { default: 'hand.raised', selected: 'hand.raised.fill' }, md: 'block' },
+  notifications: { sf: { default: 'bell', selected: 'bell.fill' }, md: 'notifications' },
   messages: {
     sf: { default: 'bubble.left.and.bubble.right', selected: 'bubble.left.and.bubble.right.fill' },
     md: 'forum',
