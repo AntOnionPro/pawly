@@ -6,6 +6,13 @@ import { Text } from 'react-native';
 import { AUTH_STORAGE_KEY, createClient } from '@/api/client';
 import { AuthProvider, useAuth, type AuthContextValue } from '@/auth/AuthProvider';
 
+// Uploads use React Native's XMLHttpRequest on phones (tested in upload.test.ts); here they go
+// through the same mocked fetch as every other request.
+jest.mock('@/utils/upload', () => ({
+  ...jest.requireActual('@/utils/upload'),
+  uploadFetch: (url: string, config: RequestInit) => globalThis.fetch(url, config),
+}));
+
 const RECORD = {
   id: 'u1',
   collectionId: '_pb_users_auth_',

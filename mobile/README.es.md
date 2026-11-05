@@ -66,7 +66,26 @@ Durante el desarrollo, los correos de verificación y de contraseña aparecen en
 
 Si usas `ufw`, abre también el puerto del servidor con `sudo ufw allow 8090/tcp`.
 
-## Scripts
+## Notificaciones push
+
+La app pide el permiso de notificaciones la primera vez que abres los mensajes o las notificaciones, y guarda en el servidor el token de Expo Push del celular. Los tokens de Expo Push necesitan un proyecto de EAS, ligado a tu cuenta de Expo (la misma que usas en Expo Go). Una sola vez, en `mobile/`:
+
+```bash
+npx eas-cli@latest login
+```
+
+```bash
+npx eas-cli@latest init
+```
+
+`init` agrega `extra.eas.projectId` a `app.json`; súbelo en un pull request. Para probar antes, pon el id en `mobile/.env.local`:
+
+```bash
+EXPO_PUBLIC_EAS_PROJECT_ID=tu-id-de-proyecto
+```
+
+- **iPhone:** funciona en Expo Go.
+- **Android:** Expo Go no recibe push desde el SDK 53; hace falta un build de desarrollo (EAS Build) con credenciales de Firebase (FCM). Mientras tanto, la app funciona igual sin push en Android.
 
 | Comando                | Qué hace                                                 |
 | ---------------------- | -------------------------------------------------------- |
@@ -92,7 +111,7 @@ mobile/
 │   ├── api/            Cliente de PocketBase, URL del servidor, mensajes de error y caché de React Query
 │   ├── auth/           Sesión (AuthProvider) y validación de formularios
 │   ├── components/     Interfaz reutilizable (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, moderation, users, legal, settings)
+│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, moderation, messages, users, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
 │   ├── theme/          Colores, íconos, tipografía y utilidades de contraste
@@ -111,6 +130,7 @@ mobile/
 - **Traducciones:** todo texto va en `src/i18n/locales/es.ts` y `en.ts`. TypeScript falla si falta una clave en cualquiera de los dos idiomas.
 - **Cambios al instante:** para acciones rápidas como una huella, cambia la publicación en todas las pantallas a la vez con `updateCachedPost` (`src/features/posts/cache.ts`) y deshazlo si la petición falla.
 - **Barras sobre el teclado:** pon en el `footer` de `Screen` una barra que deba seguir a la vista mientras se escribe (como el campo de comentario). Queda debajo del contenido que se desplaza y encima del teclado.
-- **Subidas:** agrega los archivos elegidos a un formulario con `appendFile` (`src/utils/upload.ts`). En iOS y Android sube `{ uri, name, type }` y en la web un `File` real.
+- **Cambios en vivo:** escucha el tiempo real de PocketBase con `useRealtime` (`src/api/useRealtime.ts`). iOS y Android no tienen `EventSource`, así que `src/api/eventSource.native.ts` instala `react-native-sse`, que funciona en Expo Go.
+- **Subidas:** agrega los archivos elegidos a un formulario con `appendFile` y envíalo con `{ fetch: uploadFetch }` (`src/utils/upload.ts`). En iOS y Android sube `{ uri, name, type }` con el XMLHttpRequest de React Native, porque el `fetch` global de Expo no acepta esos archivos; en la web manda un `File` real con el `fetch` del navegador.
 - **Módulos nativos:** la etapa 0 solo usa módulos incluidos en Expo Go. Una librería con código nativo propio necesita una build de desarrollo.
 - **Versión de Expo:** la app usa Expo SDK 58. Antes de usar una API de Expo, revisa la documentación de esa versión (ver `AGENTS.md`).

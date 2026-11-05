@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { createQueryClient } from '@/api/queryClient';
 import { AuthProvider, useAuth } from '@/auth/AuthProvider';
+import { usePushRegistration, usePushTaps } from '@/features/push/hooks';
 import {
   PreferencesProvider,
   useColorSchemeName,
@@ -27,6 +28,13 @@ export default function RootLayout() {
       </AuthProvider>
     </PreferencesProvider>
   );
+}
+
+/** Keeps this phone registered for push and opens what a tapped push is about. */
+function PushHandlers() {
+  usePushRegistration();
+  usePushTaps();
+  return null;
 }
 
 function RootNavigator() {
@@ -73,6 +81,10 @@ function RootNavigator() {
         <Stack.Screen name="search" options={{ title: t('search.title') }} />
         <Stack.Screen name="report" options={{ title: t('report.title') }} />
         <Stack.Screen name="blocked" options={{ title: t('blocks.title') }} />
+        <Stack.Screen name="notifications" options={{ title: t('notifications.title') }} />
+        <Stack.Screen name="notification-settings" options={{ title: t('pushSettings.title') }} />
+        <Stack.Screen name="messages/index" options={{ title: t('messages.title') }} />
+        <Stack.Screen name="messages/[id]" options={{ title: '' }} />
         <Stack.Screen name="sign-up" options={{ title: t('auth.signUp.title') }} />
         <Stack.Screen name="sign-in" options={{ title: t('auth.signIn.title') }} />
         <Stack.Screen name="check-email" options={{ title: t('auth.checkEmail.title') }} />
@@ -87,10 +99,12 @@ function RootNavigator() {
         <Stack.Screen name="post/[id]/index" options={{ title: t('posts.title') }} />
         <Stack.Screen name="post/[id]/edit" options={{ title: t('posts.edit') }} />
         <Stack.Screen name="post/[id]/repost" options={{ title: t('reposts.title') }} />
+        <Stack.Screen name="post/[id]/send" options={{ title: t('share.title') }} />
         <Stack.Screen name="user/[id]/index" options={{ title: '' }} />
         <Stack.Screen name="user/[id]/followers" options={{ title: t('follows.followersTitle') }} />
         <Stack.Screen name="user/[id]/following" options={{ title: t('follows.followingTitle') }} />
       </Stack>
+      <PushHandlers />
     </ThemeProvider>
   );
 }

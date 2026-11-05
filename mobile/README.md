@@ -66,7 +66,26 @@ During development, verification and password emails are printed in the server c
 
 If you use `ufw`, also allow the server port with `sudo ufw allow 8090/tcp`.
 
-## Scripts
+## Push notifications
+
+The app asks for the notification permission the first time you open messages or notifications, and saves the phone's Expo push token on the server. Expo push tokens need an EAS project, linked to your Expo account (the same one you use in Expo Go). Once, in `mobile/`:
+
+```bash
+npx eas-cli@latest login
+```
+
+```bash
+npx eas-cli@latest init
+```
+
+`init` adds `extra.eas.projectId` to `app.json`; commit it in a pull request. To try it before that, put the id in `mobile/.env.local`:
+
+```bash
+EXPO_PUBLIC_EAS_PROJECT_ID=your-project-id
+```
+
+- **iPhone:** works in Expo Go.
+- **Android:** Expo Go cannot receive push since SDK 53; it needs a development build (EAS Build) with Firebase (FCM) credentials. Until then the app works the same without push on Android.
 
 | Command                | What it does                                           |
 | ---------------------- | ------------------------------------------------------ |
@@ -92,7 +111,7 @@ mobile/
 │   ├── api/            PocketBase client, server URL, error messages and React Query cache
 │   ├── auth/           Session (AuthProvider) and form validation
 │   ├── components/     Reusable UI (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Screen content grouped by feature (auth, profile, account, pets, posts, comments, follows, search, moderation, users, legal, settings)
+│   ├── features/       Screen content grouped by feature (auth, profile, account, pets, posts, comments, follows, search, moderation, messages, users, legal, settings)
 │   ├── i18n/           Translations (Spanish and English)
 │   ├── preferences/    Theme and language chosen by the user, saved on the phone
 │   ├── theme/          Colors, icons, typography and contrast helpers
@@ -111,6 +130,7 @@ mobile/
 - **Translations:** every text goes in `src/i18n/locales/es.ts` and `en.ts`. TypeScript fails if a key is missing in either language.
 - **Instant updates:** for quick actions such as a paw print, change the cached post everywhere at once with `updateCachedPost` (`src/features/posts/cache.ts`) and roll back if the request fails.
 - **Bars above the keyboard:** put a bar that must stay visible while typing (such as the comment field) in the `footer` of `Screen`. It stays under the scrolling content and above the keyboard.
-- **Uploads:** add picked files to a form with `appendFile` (`src/utils/upload.ts`). It uploads `{ uri, name, type }` on iOS and Android and a real `File` on the web.
+- **Live updates:** listen to PocketBase realtime with `useRealtime` (`src/api/useRealtime.ts`). iOS and Android have no `EventSource`, so `src/api/eventSource.native.ts` installs `react-native-sse`, which works in Expo Go.
+- **Uploads:** add picked files to a form with `appendFile` and send it with `{ fetch: uploadFetch }` (`src/utils/upload.ts`). On iOS and Android it uploads `{ uri, name, type }` with React Native's XMLHttpRequest, because Expo's global `fetch` does not accept those files; on the web it sends a real `File` with the browser's `fetch`.
 - **Native modules:** stage 0 only uses modules included in Expo Go. A library with its own native code needs a development build.
 - **Expo version:** the app uses Expo SDK 58. Before using an Expo API, check the docs for that version (see `AGENTS.md`).

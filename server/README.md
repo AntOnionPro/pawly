@@ -128,6 +128,24 @@ The `reports` collection holds reports (stage 3): the `reporter` reports exactly
 
 The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
 
+## Direct messages
+
+`conversations` holds one conversation per pair of users (stage 4), stored in order (`userA` < `userB`). Only its two participants see it. The server keeps a preview of the last message (`lastMessageText`, `lastMessageAt`, `lastSender`) and a "read up to" date for each participant (`readA`, `readB`): a participant marks it as read with an empty update, and no other field can change. `messages` holds the messages: up to 1000 characters and optionally a shared `post` (text or a post is required). Only the participants read and write them, and nobody writes across a block (`pb_hooks/messages.pb.js`). If a shared post is deleted, `post` becomes empty and `hasPost` (set by the server) stays true. Both are deleted with the account. Reports can also be about a `message`.
+
+The app counts unread conversations with this filter:
+
+```text
+lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' || readA < lastMessageAt)) || (userB = "<id>" && (readB = '' || readB < lastMessageAt)))
+```
+
+## Notifications
+
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow` or `repost`), the related `post` and `comment`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. They are deleted with either account and with the related post or comment.
+
+## Push notifications
+
+`push_tokens` holds the Expo push tokens of each user's devices (stage 4), with the app `language` for the text. Only the owner sees, saves and deletes theirs, and saving a token that belongs to another account moves it (one account per device). After each in-app notification and each direct message, the server sends a push to every device of the recipient with Expo Push Service (`pb_hooks/push.pb.js`); tokens Expo reports as no longer registered are deleted, and a failed push never makes the action fail. `notification_prefs` holds which pushes each user wants (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): one record per user, only the owner sees and changes it, and without it every type is on. A type turned off sends no push, but the in-app notification is still created. `PAWLY_PUSH_URL` changes the address of the service: the tests point it to a fake one and never call Expo.
+
 ## Counters
 
 Each post has a `pawCount`, a `commentCount` and a `repostCount`, and each user a `followerCount` and a `followingCount`. Counters like these are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.

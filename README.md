@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 3, Social interaction (done, pending the `v0.4.0` release to `main`).** Stage 4 starts after that release is merged. Latest release: `v0.3.0` (stage 2). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 4, Messages and notifications (done, pending the `v0.5.0` release to `main`).** Stage 5 starts after that release is merged. Latest release: `v0.4.0` (stage 3). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ Current stage: **Stage 3, Social interaction (done, pending the `v0.4.0` release
 | 1 | Accounts | Done |
 | 2 | Pets and posts | Done |
 | 3 | Social interaction | Done |
-| 4 | Messages and notifications | Not started |
+| 4 | Messages and notifications | Done |
 | 5 | Adoption | Not started |
 | 6 | Rescue | Not started |
 | 7 | Moderation | Not started |
@@ -26,7 +26,7 @@ Current stage: **Stage 3, Social interaction (done, pending the `v0.4.0` release
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 3 delivered: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30)), comments ([#31](https://github.com/AntOnionPro/pawly/issues/31)), follows and the Following / Discover tabs ([#32](https://github.com/AntOnionPro/pawly/issues/32)), sharing and reposts ([#33](https://github.com/AntOnionPro/pawly/issues/33)), search ([#34](https://github.com/AntOnionPro/pawly/issues/34)) and report and block ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
+Stage 4 delivered: direct messages ([#43](https://github.com/AntOnionPro/pawly/issues/43)), sending posts by message ([#44](https://github.com/AntOnionPro/pawly/issues/44)), in-app notifications ([#45](https://github.com/AntOnionPro/pawly/issues/45)), push notifications ([#46](https://github.com/AntOnionPro/pawly/issues/46)) and notification preferences ([#47](https://github.com/AntOnionPro/pawly/issues/47)). Push on Android needs a development build (stage 8).
 
 ## Features
 
@@ -56,7 +56,7 @@ Stage 3 delivered: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues
 
 #### Direct messages
 
-- One-to-one chat between users, identified only by username.
+- One-to-one chat between users in real time, identified only by username, from the icon at the top of Home or the "Message" button of a profile. Anyone with an account can write to anyone, except across a block.
 - Block and report from the conversation.
 
 #### Adoption

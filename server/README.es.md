@@ -128,6 +128,24 @@ La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exacta
 
 La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
 
+## Mensajes directos
+
+`conversations` guarda una conversación por par de usuarios (etapa 4), en orden (`userA` < `userB`). Solo sus dos participantes la ven. El servidor guarda una vista previa del último mensaje (`lastMessageText`, `lastMessageAt`, `lastSender`) y una fecha de "leído hasta" para cada participante (`readA`, `readB`): un participante la marca como leída con una actualización vacía, y ningún otro campo puede cambiar. `messages` guarda los mensajes: hasta 1000 caracteres y, opcionalmente, una publicación compartida (`post`); hace falta texto o publicación. Solo los participantes los leen y escriben, y nadie escribe si hay un bloqueo (`pb_hooks/messages.pb.js`). Si se borra una publicación compartida, `post` queda vacío y `hasPost` (lo pone el servidor) sigue en verdadero. Ambos se borran con la cuenta. Los reportes también pueden ser de un mensaje (`message`).
+
+La app cuenta las conversaciones sin leer con este filtro:
+
+```text
+lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' || readA < lastMessageAt)) || (userB = "<id>" && (readB = '' || readB < lastMessageAt)))
+```
+
+## Notificaciones
+
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow` o `repost`), la publicación y el comentario relacionados (`post`, `comment`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Se borran con cualquiera de las dos cuentas y con la publicación o el comentario relacionados.
+
+## Notificaciones push
+
+`push_tokens` guarda los tokens de Expo Push de los dispositivos de cada usuario (etapa 4), con el idioma de la app (`language`) para el texto. Solo su dueño los ve, guarda y borra, y guardar un token que pertenece a otra cuenta lo mueve (una cuenta por dispositivo). Después de cada notificación dentro de la app y de cada mensaje directo, el servidor envía un push a todos los dispositivos del destinatario con Expo Push Service (`pb_hooks/push.pb.js`); los tokens que Expo marca como no registrados se borran, y un push fallido nunca hace fallar la acción. `notification_prefs` guarda qué push quiere cada usuario (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): un registro por usuario, solo su dueño lo ve y lo cambia, y sin él todos los tipos están encendidos. Un tipo apagado no envía push, pero la notificación dentro de la app se crea igual. `PAWLY_PUSH_URL` cambia la dirección del servicio: las pruebas apuntan a uno falso y nunca llaman a Expo.
+
 ## Contadores
 
 Cada publicación tiene un `pawCount`, un `commentCount` y un `repostCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.

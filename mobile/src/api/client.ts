@@ -2,6 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PocketBase, { AsyncAuthStore } from 'pocketbase';
 
 import { API_URL } from './config';
+import { installEventSource } from './eventSource';
+
+// Realtime (live messages) needs EventSource, which React Native does not have.
+installEventSource();
 
 export const AUTH_STORAGE_KEY = 'pawly:auth';
 

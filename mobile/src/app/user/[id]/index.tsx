@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
 import { FollowButton } from '@/features/follows/FollowButton';
+import { MessageButton } from '@/features/messages/MessageButton';
 import { useBlockedIds } from '@/features/moderation/hooks';
 import { BlockedProfile, ProfileModeration } from '@/features/moderation/ProfileModeration';
 import { PetList } from '@/features/pets/PetList';
@@ -36,6 +37,7 @@ export default function UserScreen() {
         <>
           <ProfileHeader user={user} />
           <FollowButton userId={user.id} />
+          <MessageButton userId={user.id} />
           <ProfileModeration user={user} />
           <PetList ownerId={user.id} />
           <PostGrid

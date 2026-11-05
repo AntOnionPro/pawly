@@ -10,7 +10,9 @@ import { Icon } from '@/components/Icon';
 import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
+import { MessagesButton } from '@/features/messages/MessagesButton';
 import { isHiddenPost, useBlockedIds } from '@/features/moderation/hooks';
+import { NotificationsButton } from '@/features/notifications/NotificationsButton';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
 
@@ -73,6 +75,8 @@ export function FeedList() {
                 label={t('search.title')}
                 onPress={() => router.push('/search')}
               />
+              {signedIn ? <NotificationsButton /> : null}
+              {signedIn ? <MessagesButton /> : null}
             </View>
             {signedIn ? <FeedTabs selected={tab} onSelect={setTab} /> : null}
           </View>
