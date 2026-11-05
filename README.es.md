@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 2, Mascotas y publicaciones (terminada, falta la release `v0.3.0` a `main`).** La etapa 3 empieza cuando esa release esté mergeada. Última release: `v0.2.0` (etapa 1). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 3, Interacción social (terminada, falta la release `v0.4.0` a `main`).** La etapa 4 empieza cuando esa release esté mergeada. Última release: `v0.3.0` (etapa 2). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ Etapa actual: **etapa 2, Mascotas y publicaciones (terminada, falta la release `
 | 0 | Cimientos | Hecho |
 | 1 | Cuentas | Hecho |
 | 2 | Mascotas y publicaciones | Hecho |
-| 3 | Interacción social | Sin empezar |
+| 3 | Interacción social | Hecho |
 | 4 | Mensajes y notificaciones | Sin empezar |
 | 5 | Adopción | Sin empezar |
 | 6 | Rescate | Sin empezar |
@@ -26,7 +26,7 @@ Etapa actual: **etapa 2, Mascotas y publicaciones (terminada, falta la release `
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Entregado en la etapa 2: perfiles de mascota ([#21](https://github.com/AntOnionPro/pawly/issues/21)), publicaciones en el servidor ([#22](https://github.com/AntOnionPro/pawly/issues/22)), crear publicaciones en la app ([#23](https://github.com/AntOnionPro/pawly/issues/23)) y feed y perfiles ([#24](https://github.com/AntOnionPro/pawly/issues/24)).
+Entregado en la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues/30)), comentarios ([#31](https://github.com/AntOnionPro/pawly/issues/31)), seguir y las pestañas Siguiendo / Descubrir ([#32](https://github.com/AntOnionPro/pawly/issues/32)), compartir y republicar ([#33](https://github.com/AntOnionPro/pawly/issues/33)), búsqueda ([#34](https://github.com/AntOnionPro/pawly/issues/34)) y reportar y bloquear ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
 
 ## Funcionalidades
 
@@ -51,8 +51,8 @@ Entregado en la etapa 2: perfiles de mascota ([#21](https://github.com/AntOnionP
 - Publicaciones con texto, imágenes y videos, con varios archivos por publicación.
 - Los usuarios reaccionan con una huella (la única reacción) y comentan. Pueden editar y borrar sus propias publicaciones y comentarios.
 - Compartir hacia fuera de la app (menú de compartir del sistema con un enlace a la versión web) y dentro de la app (republicar o enviar por mensaje directo).
-- Los usuarios se siguen entre sí. El inicio mezcla a quienes sigues con contenido para descubrir.
-- Búsqueda de usuarios, mascotas y publicaciones.
+- Los usuarios se siguen entre sí. El inicio tiene dos pestañas: **Siguiendo** (publicaciones de quienes sigues) y **Descubrir** (todas las publicaciones). Sin cuenta solo se ve Descubrir. Las republicaciones aparecen en Siguiendo y en los perfiles, no en Descubrir.
+- Búsqueda de usuarios (con sesión), mascotas (por nombre o raza) y publicaciones (por texto), desde el ícono en la parte superior de Inicio.
 
 #### Mensajes directos
 

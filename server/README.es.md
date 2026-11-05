@@ -104,6 +104,34 @@ La colección `posts` guarda las publicaciones (etapa 2):
 
 Una publicación necesita texto o al menos un archivo. Cualquiera ve y lista publicaciones; solo el autor las edita y borra. Las reglas que la colección no puede expresar están en `pb_hooks/posts.pb.js` y `pb_hooks/lib/posts.js`; los errores por campo usan los códigos `post_empty`, `photo_too_large` y `pet_not_owned`. La duración de los videos (60 segundos) se limita en la app, porque el servidor no puede leer la duración sin herramientas extra.
 
+## Huellas
+
+La colección `paws` guarda las huellas (etapa 3): una por `user` y `post`. Cualquiera las ve; solo el usuario da o quita la suya. Se borran con la publicación o con la cuenta.
+
+## Comentarios
+
+La colección `comments` guarda los comentarios de las publicaciones (etapa 3): `post`, `author` y `text` (de 1 a 500 caracteres, guardado sin espacios al principio ni al final). Cualquiera los ve. Solo el autor edita un comentario, y no puede moverlo a otra publicación. Lo pueden borrar el autor del comentario o el autor de la publicación. Se borran con la publicación o con la cuenta.
+
+## Republicaciones
+
+Una republicación es una publicación cuyo `repostOf` apunta a la original (etapa 3). Su `text` es un comentario opcional y no puede tener archivos ni mascotas. Republicar una republicación republica su original, cada usuario republica una publicación una sola vez y una republicación siempre sigue apuntando a la misma publicación. Borrar la republicación la deshace; borrar la original borra sus republicaciones.
+
+## Seguidores
+
+La colección `follows` guarda quién sigue a quién (etapa 3): `follower` sigue a `following`, una vez por par, y nadie se sigue a sí mismo. Cualquiera los ve; solo el seguidor crea o borra el suyo. Se borran con cualquiera de las dos cuentas.
+
+El feed "Siguiendo" lista las publicaciones con el filtro `author.follows_via_following.follower ?= "<id del usuario>"`.
+
+## Reportes y bloqueos
+
+La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`) o un usuario (`user`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale` u `other`) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración; su revisión llega en la etapa 7. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
+
+La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
+
+## Contadores
+
+Cada publicación tiene un `pawCount`, un `commentCount` y un `repostCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.
+
 ## Cómo cambiar la base de datos
 
 1. Cambia las colecciones en el panel de administración mientras corre `npm run dev`.

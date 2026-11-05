@@ -56,6 +56,12 @@ La app lo encuentra sola: usa la misma IP que Expo, en el puerto 8090. Para usar
 EXPO_PUBLIC_API_URL=http://192.168.1.20:8090
 ```
 
+Los enlaces para compartir apuntan a la versión web (`/post/[id]`). Durante el desarrollo usan el servidor de desarrollo de Expo, que también sirve la versión web. Para otra dirección (el dominio real a partir de la etapa 8), define `EXPO_PUBLIC_WEB_URL`:
+
+```bash
+EXPO_PUBLIC_WEB_URL=https://pawly.example
+```
+
 Durante el desarrollo, los correos de verificación y de contraseña aparecen en la consola del servidor; abre el enlace en la computadora (ver `server/README.es.md`).
 
 Si usas `ufw`, abre también el puerto del servidor con `sudo ufw allow 8090/tcp`.
@@ -86,7 +92,7 @@ mobile/
 │   ├── api/            Cliente de PocketBase, URL del servidor, mensajes de error y caché de React Query
 │   ├── auth/           Sesión (AuthProvider) y validación de formularios
 │   ├── components/     Interfaz reutilizable (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, users, legal, settings)
+│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, moderation, users, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
 │   ├── theme/          Colores, íconos, tipografía y utilidades de contraste
@@ -103,6 +109,8 @@ mobile/
 - **Íconos:** solo con `Icon` y `src/theme/icons.ts` (SF Symbols en iOS, Material Symbols en Android y web). Sin emojis en la interfaz.
 - **Datos del servidor:** se leen y cambian con hooks de React Query por funcionalidad (por ejemplo `src/features/pets/hooks.ts`), así las pantallas comparten la caché y se actualizan después de cada cambio.
 - **Traducciones:** todo texto va en `src/i18n/locales/es.ts` y `en.ts`. TypeScript falla si falta una clave en cualquiera de los dos idiomas.
+- **Cambios al instante:** para acciones rápidas como una huella, cambia la publicación en todas las pantallas a la vez con `updateCachedPost` (`src/features/posts/cache.ts`) y deshazlo si la petición falla.
+- **Barras sobre el teclado:** pon en el `footer` de `Screen` una barra que deba seguir a la vista mientras se escribe (como el campo de comentario). Queda debajo del contenido que se desplaza y encima del teclado.
 - **Subidas:** agrega los archivos elegidos a un formulario con `appendFile` (`src/utils/upload.ts`). En iOS y Android sube `{ uri, name, type }` y en la web un `File` real.
 - **Módulos nativos:** la etapa 0 solo usa módulos incluidos en Expo Go. Una librería con código nativo propio necesita una build de desarrollo.
 - **Versión de Expo:** la app usa Expo SDK 58. Antes de usar una API de Expo, revisa la documentación de esa versión (ver `AGENTS.md`).

@@ -70,6 +70,9 @@ function RootNavigator() {
       <Stack screenOptions={{ headerTintColor: colors.text }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ title: t('settings.title') }} />
+        <Stack.Screen name="search" options={{ title: t('search.title') }} />
+        <Stack.Screen name="report" options={{ title: t('report.title') }} />
+        <Stack.Screen name="blocked" options={{ title: t('blocks.title') }} />
         <Stack.Screen name="sign-up" options={{ title: t('auth.signUp.title') }} />
         <Stack.Screen name="sign-in" options={{ title: t('auth.signIn.title') }} />
         <Stack.Screen name="check-email" options={{ title: t('auth.checkEmail.title') }} />
@@ -83,7 +86,10 @@ function RootNavigator() {
         <Stack.Screen name="pet/[id]/edit" options={{ title: t('pets.edit') }} />
         <Stack.Screen name="post/[id]/index" options={{ title: t('posts.title') }} />
         <Stack.Screen name="post/[id]/edit" options={{ title: t('posts.edit') }} />
-        <Stack.Screen name="user/[id]" options={{ title: '' }} />
+        <Stack.Screen name="post/[id]/repost" options={{ title: t('reposts.title') }} />
+        <Stack.Screen name="user/[id]/index" options={{ title: '' }} />
+        <Stack.Screen name="user/[id]/followers" options={{ title: t('follows.followersTitle') }} />
+        <Stack.Screen name="user/[id]/following" options={{ title: t('follows.followingTitle') }} />
       </Stack>
     </ThemeProvider>
   );

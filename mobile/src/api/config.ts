@@ -25,9 +25,35 @@ export function resolveApiUrl({ envUrl, hostUri, webHostname }: ApiUrlSources): 
   return `http://${host}:${API_PORT}`;
 }
 
+interface WebUrlSources {
+  /** `EXPO_PUBLIC_WEB_URL`, if set. */
+  envUrl?: string;
+  /** Expo dev server address seen by the phone, which also serves the web version. */
+  hostUri?: string | null;
+  /** Page origin when running on the web. */
+  webOrigin?: string;
+}
+
+/**
+ * Address of the web version, used in share links. `EXPO_PUBLIC_WEB_URL` wins (the real
+ * domain from stage 8); otherwise, during development, the Expo dev server that serves it.
+ */
+export function resolveWebUrl({ envUrl, hostUri, webOrigin }: WebUrlSources): string {
+  if (envUrl) return envUrl.replace(/\/+$/, '');
+  if (webOrigin) return webOrigin;
+  return `http://${hostUri || 'localhost:8081'}`;
+}
+
 export const API_URL = resolveApiUrl({
   envUrl: process.env.EXPO_PUBLIC_API_URL,
   hostUri: Constants.expoConfig?.hostUri,
   webHostname:
     Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.hostname : undefined,
+});
+
+export const WEB_URL = resolveWebUrl({
+  envUrl: process.env.EXPO_PUBLIC_WEB_URL,
+  hostUri: Constants.expoConfig?.hostUri,
+  webOrigin:
+    Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.origin : undefined,
 });

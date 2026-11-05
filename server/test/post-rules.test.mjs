@@ -39,3 +39,10 @@ test('recognizes photo extensions', () => {
   for (const name of ['a.jpg', 'b.JPEG', 'c.png', 'd.webp', 'e.heic']) assert.ok(isPhoto(name));
   for (const name of ['a.mp4', 'b.mov', 'c']) assert.ok(!isPhoto(name));
 });
+
+test('a repost may have no text, but no files or pets', () => {
+  const repost = { ...base, text: '', isRepost: true };
+  assert.equal(postError(repost), null);
+  assert.equal(postError({ ...repost, mediaCount: 1 }).code, 'repost_media');
+  assert.equal(postError({ ...repost, petOwners: ['u1'] }).code, 'repost_pets');
+});

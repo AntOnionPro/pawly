@@ -54,6 +54,14 @@ function post(id: string, overrides: Partial<api.Post> = {}): api.Post {
     petIds: [],
     pets: [],
     created: new Date(Date.now() - 2 * 3600_000).toISOString(),
+    pawCount: 0,
+    commentCount: 0,
+    pawedByMe: false,
+    myPawId: null,
+    repostCount: 0,
+    repostOfId: null,
+    repostedByMe: false,
+    myRepostId: null,
     ...overrides,
   };
 }
@@ -96,7 +104,7 @@ describe('listPosts', () => {
     expect(getList).toHaveBeenCalledWith(1, 2, {
       filter: 'author = "u1"',
       sort: '-created,-id',
-      expand: 'author,pets',
+      expand: 'author,pets,repostOf,repostOf.author,repostOf.pets',
       skipTotal: true,
     });
     expect(page.hasMore).toBe(true);
@@ -109,6 +117,12 @@ describe('listPosts', () => {
     );
     const last = await actual.listPosts(client, { all: true }, 1, 5);
     expect(last.hasMore).toBe(false);
+    // Discover shows each post once, without reposts.
+    expect(getList).toHaveBeenLastCalledWith(
+      1,
+      5,
+      expect.objectContaining({ filter: "repostOf = ''" }),
+    );
   });
 });
 
