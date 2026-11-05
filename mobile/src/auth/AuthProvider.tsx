@@ -25,6 +25,9 @@ export interface User {
   bio: string;
   avatar: string;
   verified: boolean;
+  /** Kept by the server (follows). */
+  followerCount: number;
+  followingCount: number;
 }
 
 export type AuthStatus = 'loading' | 'visitor' | 'signedIn';
@@ -75,6 +78,8 @@ export function toUser(record: RecordModel | null | undefined): User | null {
     bio: String(record.bio ?? ''),
     avatar: String(record.avatar ?? ''),
     verified: Boolean(record.verified),
+    followerCount: Number(record.followerCount ?? 0),
+    followingCount: Number(record.followingCount ?? 0),
   };
 }
 

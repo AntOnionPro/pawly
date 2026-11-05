@@ -3,9 +3,10 @@ import { StyleSheet, View } from 'react-native';
 import { avatarUrl, useAuth, type User } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
 import { ThemedText } from '@/components/ThemedText';
+import { FollowCounts } from '@/features/follows/FollowCounts';
 import { spacing } from '@/theme/typography';
 
-/** Photo, @username and bio of a profile. */
+/** Photo, @username, bio and follower counts of a profile. */
 export function ProfileHeader({ user }: { user: User }) {
   const { client } = useAuth();
   return (
@@ -15,6 +16,7 @@ export function ProfileHeader({ user }: { user: User }) {
         @{user.username}
       </ThemedText>
       {user.bio ? <ThemedText style={styles.bio}>{user.bio}</ThemedText> : null}
+      <FollowCounts user={user} />
     </View>
   );
 }

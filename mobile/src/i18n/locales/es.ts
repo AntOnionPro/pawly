@@ -129,6 +129,26 @@ const es: Resources = {
   feed: {
     empty: 'Aún no hay publicaciones. Sé el primero en compartir a tu mascota.',
     end: 'Ya viste todo.',
+    tabs: {
+      following: 'Siguiendo',
+      discover: 'Descubrir',
+    },
+    followingEmpty: 'Aquí verás las publicaciones de las personas que sigues.',
+    goDiscover: 'Ir a Descubrir',
+  },
+  follows: {
+    follow: 'Seguir',
+    following: 'Siguiendo',
+    unfollowHint: 'Toca para dejar de seguir.',
+    followersLabel_one: 'seguidor',
+    followersLabel_other: 'seguidores',
+    followingLabel_one: 'seguido',
+    followingLabel_other: 'seguidos',
+    followersTitle: 'Seguidores',
+    followingTitle: 'Seguidos',
+    noFollowers: 'Todavía no tiene seguidores.',
+    noFollowing: 'Todavía no sigue a nadie.',
+    failed: 'No se pudo guardar el cambio.',
   },
   user: {
     posts: 'Publicaciones',
