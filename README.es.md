@@ -26,7 +26,7 @@ Etapa actual: **etapa 3, Interacción social (en progreso).** Última release: `
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues/30), hecho), comentarios ([#31](https://github.com/AntOnionPro/pawly/issues/31)), seguir ([#32](https://github.com/AntOnionPro/pawly/issues/32)), compartir ([#33](https://github.com/AntOnionPro/pawly/issues/33)), búsqueda ([#34](https://github.com/AntOnionPro/pawly/issues/34)) y reportar y bloquear ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
+Issues de la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues/30), hecho), comentarios ([#31](https://github.com/AntOnionPro/pawly/issues/31), hecho), seguir ([#32](https://github.com/AntOnionPro/pawly/issues/32)), compartir ([#33](https://github.com/AntOnionPro/pawly/issues/33)), búsqueda ([#34](https://github.com/AntOnionPro/pawly/issues/34)) y reportar y bloquear ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
 
 ## Funcionalidades
 

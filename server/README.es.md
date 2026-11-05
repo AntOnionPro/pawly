@@ -104,11 +104,17 @@ La colección `posts` guarda las publicaciones (etapa 2):
 
 Una publicación necesita texto o al menos un archivo. Cualquiera ve y lista publicaciones; solo el autor las edita y borra. Las reglas que la colección no puede expresar están en `pb_hooks/posts.pb.js` y `pb_hooks/lib/posts.js`; los errores por campo usan los códigos `post_empty`, `photo_too_large` y `pet_not_owned`. La duración de los videos (60 segundos) se limita en la app, porque el servidor no puede leer la duración sin herramientas extra.
 
-## Huellas y contadores
+## Huellas
 
 La colección `paws` guarda las huellas (etapa 3): una por `user` y `post`. Cualquiera las ve; solo el usuario da o quita la suya. Se borran con la publicación o con la cuenta.
 
-Cada publicación tiene un `pawCount`. Los contadores como este solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.
+## Comentarios
+
+La colección `comments` guarda los comentarios de las publicaciones (etapa 3): `post`, `author` y `text` (de 1 a 500 caracteres, guardado sin espacios al principio ni al final). Cualquiera los ve. Solo el autor edita un comentario, y no puede moverlo a otra publicación. Lo pueden borrar el autor del comentario o el autor de la publicación. Se borran con la publicación o con la cuenta.
+
+## Contadores
+
+Cada publicación tiene un `pawCount` y un `commentCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.
 
 ## Cómo cambiar la base de datos
 

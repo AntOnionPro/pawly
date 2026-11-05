@@ -55,6 +55,7 @@ const POST: api.Post = {
   pets: [LUNA],
   created: '2026-11-05 10:00:00.000Z',
   pawCount: 3,
+  commentCount: 1,
   pawedByMe: false,
   myPawId: null,
 };
