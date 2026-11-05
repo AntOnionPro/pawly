@@ -128,6 +128,16 @@ La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exacta
 
 La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
 
+## Mensajes directos
+
+`conversations` guarda una conversación por par de usuarios (etapa 4), en orden (`userA` < `userB`). Solo sus dos participantes la ven. El servidor guarda una vista previa del último mensaje (`lastMessageText`, `lastMessageAt`, `lastSender`) y una fecha de "leído hasta" para cada participante (`readA`, `readB`): un participante la marca como leída con una actualización vacía, y ningún otro campo puede cambiar. `messages` guarda los mensajes: de 1 a 1000 caracteres, solo los participantes los leen y escriben, y nadie escribe si hay un bloqueo (`pb_hooks/messages.pb.js`). Ambos se borran con la cuenta. Los reportes también pueden ser de un mensaje (`message`).
+
+La app cuenta las conversaciones sin leer con este filtro:
+
+```text
+lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' || readA < lastMessageAt)) || (userB = "<id>" && (readB = '' || readB < lastMessageAt)))
+```
+
 ## Contadores
 
 Cada publicación tiene un `pawCount`, un `commentCount` y un `repostCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.

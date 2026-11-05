@@ -2,14 +2,16 @@
 
 // Reports and blocks. Each handler runs on its own, so shared code lives in lib/moderation.js.
 
-// A report is about exactly one post, comment or user, and nobody reports themselves or
-// their own content.
+// A report is about exactly one post, comment, user or message, and nobody reports themselves
+// or their own content.
 onRecordCreateRequest((e) => {
   const record = e.record;
-  const targets = ['post', 'comment', 'user'].filter((field) => record.getString(field) !== '');
+  const targets = ['post', 'comment', 'user', 'message'].filter(
+    (field) => record.getString(field) !== '',
+  );
   if (targets.length !== 1) {
     throw new BadRequestError('Invalid report.', {
-      post: new ValidationError('report_target', 'Report one post, comment or user.'),
+      post: new ValidationError('report_target', 'Report one post, comment, user or message.'),
     });
   }
   const target = targets[0];
@@ -21,6 +23,9 @@ onRecordCreateRequest((e) => {
     }
     if (target === 'comment') {
       owner = e.app.findRecordById('comments', record.getString('comment')).getString('author');
+    }
+    if (target === 'message') {
+      owner = e.app.findRecordById('messages', record.getString('message')).getString('sender');
     }
   } catch {
     // A missing target is rejected by its relation field.

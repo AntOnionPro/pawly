@@ -31,6 +31,10 @@ export const icons = {
   share: { sf: { default: 'square.and.arrow.up', selected: 'square.and.arrow.up' }, md: 'share' },
   flag: { sf: { default: 'flag', selected: 'flag.fill' }, md: 'flag' },
   block: { sf: { default: 'hand.raised', selected: 'hand.raised.fill' }, md: 'block' },
+  messages: {
+    sf: { default: 'bubble.left.and.bubble.right', selected: 'bubble.left.and.bubble.right.fill' },
+    md: 'forum',
+  },
   search: { sf: { default: 'magnifyingglass', selected: 'magnifyingglass' }, md: 'search' },
   send: { sf: { default: 'paperplane.fill', selected: 'paperplane.fill' }, md: 'send' },
   check: { sf: { default: 'checkmark', selected: 'checkmark' }, md: 'check' },

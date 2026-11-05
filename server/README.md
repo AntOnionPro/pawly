@@ -128,6 +128,16 @@ The `reports` collection holds reports (stage 3): the `reporter` reports exactly
 
 The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
 
+## Direct messages
+
+`conversations` holds one conversation per pair of users (stage 4), stored in order (`userA` < `userB`). Only its two participants see it. The server keeps a preview of the last message (`lastMessageText`, `lastMessageAt`, `lastSender`) and a "read up to" date for each participant (`readA`, `readB`): a participant marks it as read with an empty update, and no other field can change. `messages` holds the messages: 1 to 1000 characters, only the participants read and write them, and nobody writes across a block (`pb_hooks/messages.pb.js`). Both are deleted with the account. Reports can also be about a `message`.
+
+The app counts unread conversations with this filter:
+
+```text
+lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' || readA < lastMessageAt)) || (userB = "<id>" && (readB = '' || readB < lastMessageAt)))
+```
+
 ## Counters
 
 Each post has a `pawCount`, a `commentCount` and a `repostCount`, and each user a `followerCount` and a `followingCount`. Counters like these are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.
