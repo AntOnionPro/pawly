@@ -22,11 +22,9 @@ export default function AdoptionScreen() {
           adoption={adoption}
           action={<RequestSection adoption={adoption} />}
           onPressPet={(petId) => router.push({ pathname: '/pet/[id]', params: { id: petId } })}
-          onPressPublisher={(userId) =>
-            router.push({ pathname: '/user/[id]', params: { id: userId } })
-          }
+          onPressUser={(userId) => router.push({ pathname: '/user/[id]', params: { id: userId } })}
           onEdit={
-            user?.id === adoption.publisherId
+            user?.id === adoption.publisherId && adoption.status === 'available'
               ? () => router.push({ pathname: '/adoption/[id]/edit', params: { id: adoption.id } })
               : undefined
           }

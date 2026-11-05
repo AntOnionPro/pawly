@@ -55,17 +55,22 @@ onRecordAfterCreateSuccess((e) => {
     }
     const adoptionId = notification.getString('adoption');
     let pet = '';
+    let data = { type, postId: notification.getString('post'), actorId: actor };
     if (adoptionId) {
       const adoption = e.app.findRecordById('adoptions', adoptionId);
-      pet = e.app.findRecordById('pets', adoption.getString('pet')).getString('name');
+      const petId = adoption.getString('pet');
+      pet = e.app.findRecordById('pets', petId).getString('name');
+      // A new family opens the pet's profile; the other adoption pushes open the listing.
+      data =
+        type === 'adopted'
+          ? { type, petId, actorId: actor }
+          : { type, adoptionId, actorId: actor };
     }
     sendPush(
       e.app,
       notification.getString('recipient'),
       (t) => ({ title: 'Pawly', body: t[type](username, comment, pet) }),
-      adoptionId
-        ? { type, adoptionId, actorId: actor }
-        : { type, postId: notification.getString('post'), actorId: actor },
+      data,
     );
   } catch (error) {
     console.log(`[pawly-push] notification: ${error}`);

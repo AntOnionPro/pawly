@@ -89,7 +89,7 @@ Open the link in the computer's browser to verify the account or reset the passw
 
 ## Pets
 
-The `pets` collection holds pet profiles (stage 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (up to 60), an approximate `birthDate` (cannot be in the future) and a `photo` (up to 5 MB, with thumbnails). Anyone can see pets; only the owner creates, edits and deletes them, and cannot change the owner. Deleting an account deletes its pets.
+The `pets` collection holds pet profiles (stage 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (up to 60), an approximate `birthDate` (cannot be in the future) and a `photo` (up to 5 MB, with thumbnails). Anyone can see pets; only the owner creates, edits and deletes them, and cannot change the owner. Deleting an account deletes its pets. A pet adopted in Pawly also has `previousOwner` and `adoptedAt`, set only by the server (see [Completing an adoption](#completing-an-adoption)).
 
 ## Posts
 
@@ -102,7 +102,7 @@ The `posts` collection holds posts (stage 2):
 | `media`  | Up to 10 files: photos (JPEG, PNG, WebP, HEIC) up to 10 MB and videos (MP4, MOV) up to 50 MB. Photos get `300x300` and `1080x0` thumbnails. |
 | `pets`   | Up to 10 of the author's own pets. Deleting a pet removes it from the posts.                                                                |
 
-A post needs text or at least one file. Anyone can see and list posts; only the author edits and deletes them. The rules that the collection cannot express live in `pb_hooks/posts.pb.js` and `pb_hooks/lib/posts.js`; field errors use the codes `post_empty`, `photo_too_large` and `pet_not_owned`. Video length (60 seconds) is limited in the app, because the server cannot read video durations without extra tools.
+A post needs text or at least one file. Anyone can see and list posts; only the author edits and deletes them. The rules that the collection cannot express live in `pb_hooks/posts.pb.js` and `pb_hooks/lib/posts.js`; field errors use the codes `post_empty`, `photo_too_large` and `pet_not_owned` (only newly tagged pets must be the author's, so a post keeps the pets it already tagged). Video length (60 seconds) is limited in the app, because the server cannot read video durations without extra tools.
 
 ## Paw prints
 
@@ -140,7 +140,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notifications
 
-`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted` or `request_rejected`), the related `post`, `comment` or `adoption`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, and accepting or rejecting it notifies the applicant. They are deleted with either account and with the related post, comment or listing.
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected` or `adopted`), the related `post`, `comment` or `adoption`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter. They are deleted with either account and with the related post, comment or listing.
 
 ## Push notifications
 
@@ -165,7 +165,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 | `media`        | Up to 10 photos or videos, with the same limits and thumbnails as posts.               |
 | `status`       | `available` or `adopted`. Set by the server: a new listing is always `available`.      |
 
-Anyone can see and list them; only the publisher edits and deletes them, and editing cannot change the pet or the status. A pet has at most one `available` listing. Texts are trimmed. The rules live in `pb_hooks/adoptions.pb.js`; field errors use the codes `pet_not_owned`, `pet_already_listed` and `photo_too_large`.
+Anyone can see and list them; only the publisher edits and deletes them while they are available, and editing cannot change the pet, the status or the adoption data (`adopter`, `adoptedAt`). A pet has at most one `available` listing. Texts are trimmed. The rules live in `pb_hooks/adoptions.pb.js`; field errors use the codes `pet_not_owned`, `pet_already_listed` and `photo_too_large`.
 
 ## Adoption requests
 
@@ -175,6 +175,16 @@ Anyone can see and list them; only the publisher edits and deletes them, and edi
 - Only the status changes afterwards, and only while the listing is available. The applicant withdraws a `pending` or `accepted` request (`withdrawn`, final); the publisher accepts (`accepted`) or rejects (`rejected`) any request that was not withdrawn. Anything else fails with `invalid_status`.
 
 Accepting a request does not move the pet: that happens when the publisher marks it as adopted. Requests are deleted with the listing and with the applicant's account.
+
+## Completing an adoption
+
+`POST /api/pawly/adoptions/{id}/adopt` with `{ "request": "<id>" }` marks a listing as adopted by someone whose request the publisher accepted (`pb_hooks/adoptions.pb.js`). Only the publisher can do it, and only once; otherwise it fails with `adoption_closed`, `request_not_accepted` or `pet_not_owned`. In one transaction:
+
+- The listing becomes `adopted`, with the `adopter` and the date (`adoptedAt`). An adopted listing can no longer be edited or deleted by the publisher: it is part of the pet's history.
+- The pet moves to the adopter. It keeps who had it before (`previousOwner`) and when it was adopted (`adoptedAt`); only the server sets these two fields.
+- The other `pending` and `accepted` requests are rejected, and their applicants get a `request_rejected` notification.
+
+The adopter gets an `adopted` notification. Earlier posts that tag the pet keep their author and the tag, and their author can still edit them; from then on only the new owner tags the pet in new posts.
 
 ## Counters
 

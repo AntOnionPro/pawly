@@ -63,6 +63,8 @@ const FIRULAIS: Pet = {
   breed: '',
   birthDate: '',
   photo: '',
+  previousOwnerId: '',
+  adoptedAt: '',
 };
 
 const LISTING: Adoption = {
@@ -82,6 +84,8 @@ const LISTING: Adoption = {
   description: '',
   media: [],
   status: 'available',
+  adopterId: '',
+  adoptedAt: '',
   created: new Date().toISOString(),
 };
 

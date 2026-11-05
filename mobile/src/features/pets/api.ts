@@ -27,6 +27,10 @@ export interface Pet {
   ownerId: string;
   /** Present when the owner was expanded. */
   ownerUsername?: string;
+  /** Who had the pet before it was adopted in Pawly ('' if it was never adopted). */
+  previousOwnerId: string;
+  /** When it was adopted in Pawly ('' if never). */
+  adoptedAt: string;
   name: string;
   species: Species;
   breed: string;
@@ -56,6 +60,8 @@ export function toPet(record: RecordModel): Pet {
     collectionId: record.collectionId,
     ownerId: String(record.owner ?? ''),
     ownerUsername: owner ? String(owner.username ?? '') : undefined,
+    previousOwnerId: String(record.previousOwner ?? ''),
+    adoptedAt: String(record.adoptedAt ?? ''),
     name: String(record.name ?? ''),
     species: isSpecies(record.species) ? record.species : 'other',
     breed: String(record.breed ?? ''),

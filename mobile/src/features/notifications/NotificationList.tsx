@@ -45,6 +45,8 @@ function useNotificationText(notification: AppNotification): string {
       return t('notifications.requestAccepted', { username, pet });
     case 'request_rejected':
       return t('notifications.requestRejected', { username, pet });
+    case 'adopted':
+      return t('notifications.adopted', { pet });
   }
 }
 
@@ -66,7 +68,9 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
   const photo = post?.media.find((file) => mediaKind(file) === 'photo');
 
   function open() {
-    if (notification.type === 'adoption_request' && notification.adoptionId) {
+    if (notification.type === 'adopted' && notification.adoption?.petId) {
+      router.push({ pathname: '/pet/[id]', params: { id: notification.adoption.petId } });
+    } else if (notification.type === 'adoption_request' && notification.adoptionId) {
       router.push({
         pathname: '/adoption/[id]/requests',
         params: { id: notification.adoptionId },
