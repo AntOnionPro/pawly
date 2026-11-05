@@ -7,16 +7,16 @@ import { ThemedText } from '@/components/ThemedText';
 import { palette } from '@/theme/colors';
 import { radius, spacing } from '@/theme/typography';
 
-import { mediaKind, mediaUrl, type Post } from './api';
+import { mediaKind, mediaUrl, type MediaRecord } from './api';
 import { VideoItem } from './VideoItem';
 
-/** Swipeable square photos and videos of a post, with a "2/5" counter. */
-export function MediaCarousel({ post }: { post: Post }) {
+/** Swipeable square photos and videos of a post or an adoption listing, with a "2/5" counter. */
+export function MediaCarousel({ record }: { record: MediaRecord }) {
   const { t } = useTranslation();
   const { client } = useAuth();
   const [width, setWidth] = useState(0);
   const [index, setIndex] = useState(0);
-  const count = post.media.length;
+  const count = record.media.length;
   if (count === 0) return null;
 
   return (
@@ -25,7 +25,7 @@ export function MediaCarousel({ post }: { post: Post }) {
       onLayout={(event: LayoutChangeEvent) => setWidth(event.nativeEvent.layout.width)}>
       {width > 0 ? (
         <FlatList
-          data={post.media}
+          data={record.media}
           keyExtractor={(name) => name}
           horizontal
           pagingEnabled
@@ -38,10 +38,10 @@ export function MediaCarousel({ post }: { post: Post }) {
             return (
               <View style={{ width, height: width }}>
                 {mediaKind(item) === 'video' ? (
-                  <VideoItem uri={mediaUrl(client, post, item)} label={label} />
+                  <VideoItem uri={mediaUrl(client, record, item)} label={label} />
                 ) : (
                   <Image
-                    source={{ uri: mediaUrl(client, post, item) }}
+                    source={{ uri: mediaUrl(client, record, item) }}
                     style={StyleSheet.absoluteFill}
                     resizeMode="cover"
                     accessibilityLabel={label}

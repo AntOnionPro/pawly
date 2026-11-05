@@ -146,6 +146,27 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 `push_tokens` holds the Expo push tokens of each user's devices (stage 4), with the app `language` for the text. Only the owner sees, saves and deletes theirs, and saving a token that belongs to another account moves it (one account per device). After each in-app notification and each direct message, the server sends a push to every device of the recipient with Expo Push Service (`pb_hooks/push.pb.js`); tokens Expo reports as no longer registered are deleted, and a failed push never makes the action fail. `notification_prefs` holds which pushes each user wants (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): one record per user, only the owner sees and changes it, and without it every type is on. A type turned off sends no push, but the in-app notification is still created. `PAWLY_PUSH_URL` changes the address of the service: the tests point it to a fake one and never call Expo.
 
+## Adoption listings
+
+`adoptions` holds the adoption listings (stage 5). Each one puts one of the `publisher`'s own `pet`s up for adoption; the pet's species, breed and age come from its profile.
+
+| Field          | Rules                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `publisher`    | The signed-in user; cannot be changed. Deleting the account deletes their listings.    |
+| `pet`          | One of the publisher's pets; cannot be changed. Deleting the pet deletes its listings. |
+| `sex`          | `female` or `male`. Required.                                                          |
+| `size`         | `small`, `medium` or `large`. Required.                                                |
+| `vaccines`     | `complete`, `partial` or `none`. Required.                                             |
+| `sterilized`   | Whether the pet is spayed or neutered.                                                 |
+| `health`       | Up to 500 characters.                                                                  |
+| `zone`         | Approximate area as text, such as "Coyoacán, CDMX", up to 80 characters. Required.     |
+| `requirements` | Up to 1,000 characters.                                                                |
+| `description`  | Up to 2,200 characters.                                                                |
+| `media`        | Up to 10 photos or videos, with the same limits and thumbnails as posts.               |
+| `status`       | `available` or `adopted`. Set by the server: a new listing is always `available`.      |
+
+Anyone can see and list them; only the publisher edits and deletes them, and editing cannot change the pet or the status. A pet has at most one `available` listing. Texts are trimmed. The rules live in `pb_hooks/adoptions.pb.js`; field errors use the codes `pet_not_owned`, `pet_already_listed` and `photo_too_large`.
+
 ## Counters
 
 Each post has a `pawCount`, a `commentCount` and a `repostCount`, and each user a `followerCount` and a `followingCount`. Counters like these are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.
