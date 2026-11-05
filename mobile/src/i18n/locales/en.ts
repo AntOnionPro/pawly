@@ -139,6 +139,19 @@ const en = {
     unavailable: 'This post is no longer available.',
     tile: 'Repost: {{text}}',
   },
+  search: {
+    title: 'Search',
+    placeholder: 'People, pets or posts',
+    tabs: {
+      users: 'Users',
+      pets: 'Pets',
+      posts: 'Posts',
+    },
+    prompt: 'Type to search.',
+    noResults: 'No results for “{{query}}”.',
+    signInForUsers: 'Sign in to search for people.',
+    petOwner: "@{{username}}'s",
+  },
   time: {
     now: 'now',
     minutes: '{{count}} min',

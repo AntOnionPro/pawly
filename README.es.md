@@ -26,7 +26,7 @@ Etapa actual: **etapa 3, Interacción social (en progreso).** Última release: `
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues/30), hecho), comentarios ([#31](https://github.com/AntOnionPro/pawly/issues/31), hecho), seguir ([#32](https://github.com/AntOnionPro/pawly/issues/32), hecho), compartir ([#33](https://github.com/AntOnionPro/pawly/issues/33), hecho), búsqueda ([#34](https://github.com/AntOnionPro/pawly/issues/34)) y reportar y bloquear ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
+Issues de la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues/30), hecho), comentarios ([#31](https://github.com/AntOnionPro/pawly/issues/31), hecho), seguir ([#32](https://github.com/AntOnionPro/pawly/issues/32), hecho), compartir ([#33](https://github.com/AntOnionPro/pawly/issues/33), hecho), búsqueda ([#34](https://github.com/AntOnionPro/pawly/issues/34), hecho) y reportar y bloquear ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
 
 ## Funcionalidades
 
@@ -52,7 +52,7 @@ Issues de la etapa 3: huellas ([#30](https://github.com/AntOnionPro/pawly/issues
 - Los usuarios reaccionan con una huella (la única reacción) y comentan. Pueden editar y borrar sus propias publicaciones y comentarios.
 - Compartir hacia fuera de la app (menú de compartir del sistema con un enlace a la versión web) y dentro de la app (republicar o enviar por mensaje directo).
 - Los usuarios se siguen entre sí. El inicio tiene dos pestañas: **Siguiendo** (publicaciones de quienes sigues) y **Descubrir** (todas las publicaciones). Sin cuenta solo se ve Descubrir. Las republicaciones aparecen en Siguiendo y en los perfiles, no en Descubrir.
-- Búsqueda de usuarios, mascotas y publicaciones.
+- Búsqueda de usuarios (con sesión), mascotas (por nombre o raza) y publicaciones (por texto), desde el ícono en la parte superior de Inicio.
 
 #### Mensajes directos
 

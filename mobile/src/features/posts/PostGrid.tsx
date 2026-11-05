@@ -65,7 +65,8 @@ function Tile({ post: item, onPress }: { post: Post; onPress: () => void }) {
 
 interface PostGridProps {
   filter: PostFilter;
-  title: string;
+  /** Heading above the grid, if any. */
+  title?: string;
   empty: string;
 }
 
@@ -79,9 +80,11 @@ export function PostGrid({ filter, title, empty }: PostGridProps) {
 
   return (
     <View style={styles.section}>
-      <ThemedText variant="label" color="textSecondary">
-        {title}
-      </ThemedText>
+      {title ? (
+        <ThemedText variant="label" color="textSecondary">
+          {title}
+        </ThemedText>
+      ) : null}
       {isPending ? <Loading /> : null}
       {error ? <LoadError error={error} onRetry={() => void refetch()} /> : null}
       {!isPending && !error && posts.length === 0 ? (
