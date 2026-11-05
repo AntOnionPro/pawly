@@ -73,6 +73,8 @@ function RootNavigator() {
         <Stack.Screen name="search" options={{ title: t('search.title') }} />
         <Stack.Screen name="report" options={{ title: t('report.title') }} />
         <Stack.Screen name="blocked" options={{ title: t('blocks.title') }} />
+        <Stack.Screen name="messages/index" options={{ title: t('messages.title') }} />
+        <Stack.Screen name="messages/[id]" options={{ title: '' }} />
         <Stack.Screen name="sign-up" options={{ title: t('auth.signUp.title') }} />
         <Stack.Screen name="sign-in" options={{ title: t('auth.signIn.title') }} />
         <Stack.Screen name="check-email" options={{ title: t('auth.checkEmail.title') }} />
