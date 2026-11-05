@@ -47,6 +47,16 @@ function useNotificationText(notification: AppNotification): string {
       return t('notifications.requestRejected', { username, pet });
     case 'adopted':
       return t('notifications.adopted', { pet });
+    case 'followup_due':
+      return t('notifications.followupDue', {
+        username,
+        pet,
+        when: notification.followupMilestone
+          ? t(`adoption.followups.milestones.${notification.followupMilestone}`)
+          : '',
+      });
+    case 'followup_posted':
+      return t('notifications.followupPosted', { username, pet });
   }
 }
 
@@ -68,7 +78,12 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
   const photo = post?.media.find((file) => mediaKind(file) === 'photo');
 
   function open() {
-    if (notification.type === 'adopted' && notification.adoption?.petId) {
+    if (notification.type === 'followup_due' && notification.adoption?.petId) {
+      // Straight to a new post with the pet tagged.
+      router.push({ pathname: '/post', params: { petId: notification.adoption.petId } });
+    } else if (notification.type === 'followup_posted' && notification.postId) {
+      router.push({ pathname: '/post/[id]', params: { id: notification.postId } });
+    } else if (notification.type === 'adopted' && notification.adoption?.petId) {
       router.push({ pathname: '/pet/[id]', params: { id: notification.adoption.petId } });
     } else if (notification.type === 'adoption_request' && notification.adoptionId) {
       router.push({
@@ -108,7 +123,9 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
       {post && photo ? (
         <Image source={{ uri: mediaUrl(client, post, photo, '300x300') }} style={styles.photo} />
       ) : null}
-      {notification.adoption ? <AdoptionThumb adoption={notification.adoption} /> : null}
+      {notification.adoption && !(post && photo) ? (
+        <AdoptionThumb adoption={notification.adoption} />
+      ) : null}
     </Pressable>
   );
 }

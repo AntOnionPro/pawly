@@ -57,6 +57,20 @@ const en = {
     adopted: 'Adopted',
     adoptedBy: 'Adopted by @{{username}}',
     markAdopted: 'Mark as adopted',
+    followups: {
+      title: 'Follow-up',
+      introAdopter:
+        'Share a photo or video of {{name}} on each date: your post with {{name}} tagged counts as the update.',
+      introPublisher: "You will see @{{username}}'s updates about {{name}} here.",
+      milestones: { week1: '1 week', month1: '1 month', month3: '3 months', month6: '6 months' },
+      status: { upcoming: 'Upcoming', due: 'Pending', done: 'Done', overdue: 'Overdue' },
+      upcomingOn: 'On {{date}}',
+      dueUntil: 'Until {{date}}',
+      overdueOn: 'Overdue since {{date}}',
+      viewPost: 'See the post',
+      share: 'Share an update',
+      report: 'Report missed follow-up',
+    },
     complete: {
       intro: 'Who adopted {{name}}? Choose among the requests you accepted.',
       none: 'First accept the request of the person who will adopt {{name}}.',
@@ -270,6 +284,7 @@ const en = {
       animal_abuse: 'Animal abuse',
       animal_sale: 'Selling animals',
       other: 'Other',
+      adoption_followup: 'Adoption follow-up not done',
     },
     chooseReason: 'Choose a reason.',
     details: 'Details (optional)',
@@ -322,6 +337,9 @@ const en = {
     requestAccepted: '@{{username}} accepted your request to adopt {{pet}}.',
     requestRejected: '@{{username}} declined your request to adopt {{pet}}.',
     adopted: 'Congratulations! {{pet}} is now part of your family.',
+    followupDue:
+      'It has been {{when}} since you adopted {{pet}}. Share a photo or video for @{{username}}.',
+    followupPosted: '@{{username}} shared how {{pet}} is doing.',
   },
   pushSettings: {
     title: 'Notifications',
@@ -519,6 +537,7 @@ const en = {
     ownAdoption: 'You cannot ask to adopt your own pet.',
     adoptionClosed: 'This pet is no longer up for adoption.',
     requestNotAccepted: 'Choose someone whose request you accepted.',
+    followupNotOverdue: 'You can only report an overdue follow-up of a pet you gave for adoption.',
     alreadyReposted: 'You already reposted this post.',
     alreadyReported: 'You already reported this.',
     blocked: 'You cannot do this because of a block.',

@@ -3,6 +3,7 @@ import type { RecordModel } from 'pocketbase';
 
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toAdoption, type Adoption } from '@/features/adoption/api';
+import { toFollowup, type Milestone } from '@/features/adoption/followups';
 import { toPost, type Post } from '@/features/posts/api';
 
 export const NOTIFICATIONS = 'notifications';
@@ -16,7 +17,9 @@ export type NotificationType =
   | 'adoption_request'
   | 'request_accepted'
   | 'request_rejected'
-  | 'adopted';
+  | 'adopted'
+  | 'followup_due'
+  | 'followup_posted';
 
 /** Named so it does not clash with the browser's `Notification`. */
 export interface AppNotification {
@@ -31,6 +34,8 @@ export interface AppNotification {
   /** The listing, for adoption notifications (with its pet when expanded). */
   adoptionId: string;
   adoption?: Adoption;
+  /** For follow-up notifications: 1 week, 1 month, 3 months or 6 months. */
+  followupMilestone: Milestone | '';
   read: boolean;
   created: string;
 }
@@ -50,6 +55,8 @@ const TYPES: readonly NotificationType[] = [
   'request_accepted',
   'request_rejected',
   'adopted',
+  'followup_due',
+  'followup_posted',
 ];
 
 export function toNotification(record: RecordModel): AppNotification {
@@ -58,6 +65,7 @@ export function toNotification(record: RecordModel): AppNotification {
     post?: RecordModel;
     comment?: RecordModel;
     adoption?: RecordModel;
+    followup?: RecordModel;
   };
   const type = TYPES.find((value) => value === record.type) ?? 'paw';
   return {
@@ -70,6 +78,7 @@ export function toNotification(record: RecordModel): AppNotification {
     commentText: String(expand.comment?.text ?? ''),
     adoptionId: String(record.adoption ?? ''),
     adoption: expand.adoption ? toAdoption(expand.adoption) : undefined,
+    followupMilestone: expand.followup ? toFollowup(expand.followup).milestone : '',
     read: Boolean(record.read),
     created: String(record.created ?? ''),
   };
@@ -85,7 +94,7 @@ export async function listNotifications(
   const result = await client.collection(NOTIFICATIONS).getList(page, perPage, {
     filter: client.filter('recipient = {:me}', { me }),
     sort: '-created,-id',
-    expand: 'actor,post,comment,adoption.pet',
+    expand: 'actor,post,comment,adoption.pet,followup',
     skipTotal: true,
   });
   return {

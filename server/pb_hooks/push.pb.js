@@ -54,22 +54,36 @@ onRecordAfterCreateSuccess((e) => {
         .getString('text');
     }
     const adoptionId = notification.getString('adoption');
+    const postId = notification.getString('post');
     let pet = '';
-    let data = { type, postId: notification.getString('post'), actorId: actor };
+    let milestone = '';
+    let data = { type, postId, actorId: actor };
     if (adoptionId) {
       const adoption = e.app.findRecordById('adoptions', adoptionId);
       const petId = adoption.getString('pet');
       pet = e.app.findRecordById('pets', petId).getString('name');
-      // A new family opens the pet's profile; the other adoption pushes open the listing.
-      data =
-        type === 'adopted'
-          ? { type, petId, actorId: actor }
-          : { type, adoptionId, actorId: actor };
+      if (notification.getString('followup')) {
+        milestone = e.app
+          .findRecordById('adoption_followups', notification.getString('followup'))
+          .getString('milestone');
+      }
+      // A new family and a follow-up reminder open the pet (the reminder, to post about it);
+      // a follow-up update opens the post; the other adoption pushes open the listing.
+      if (type === 'adopted' || type === 'followup_due') {
+        data = { type, petId, actorId: actor };
+      } else if (type === 'followup_posted') {
+        data = { type, postId, actorId: actor };
+      } else {
+        data = { type, adoptionId, actorId: actor };
+      }
     }
     sendPush(
       e.app,
       notification.getString('recipient'),
-      (t) => ({ title: 'Pawly', body: t[type](username, comment, pet) }),
+      (t) => ({
+        title: 'Pawly',
+        body: t[type](username, comment, pet, milestone ? t.milestones[milestone] : ''),
+      }),
       data,
     );
   } catch (error) {

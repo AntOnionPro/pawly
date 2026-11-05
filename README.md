@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 5, Adoption (in progress).** Latest release: `v0.5.0` (stage 4). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 5, Adoption (done, pending the `v0.6.0` release to `main`).** Stage 6 starts after that release is merged. Latest release: `v0.5.0` (stage 4). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -18,7 +18,7 @@ Current stage: **Stage 5, Adoption (in progress).** Latest release: `v0.5.0` (st
 | 2 | Pets and posts | Done |
 | 3 | Social interaction | Done |
 | 4 | Messages and notifications | Done |
-| 5 | Adoption | In progress |
+| 5 | Adoption | Done |
 | 6 | Rescue | Not started |
 | 7 | Moderation | Not started |
 | 8 | Infrastructure and web | Not started |
@@ -26,9 +26,7 @@ Current stage: **Stage 5, Adoption (in progress).** Latest release: `v0.5.0` (st
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 5 issues: adoption listings and the Adoption tab ([#56](https://github.com/AntOnionPro/pawly/issues/56), done), adoption requests ([#57](https://github.com/AntOnionPro/pawly/issues/57), done), marking a pet as adopted and moving its profile ([#58](https://github.com/AntOnionPro/pawly/issues/58), done) and the follow-up after adoption ([#59](https://github.com/AntOnionPro/pawly/issues/59)).
-
-Stage 4 delivered: direct messages ([#43](https://github.com/AntOnionPro/pawly/issues/43)), sending posts by message ([#44](https://github.com/AntOnionPro/pawly/issues/44)), in-app notifications ([#45](https://github.com/AntOnionPro/pawly/issues/45)), push notifications ([#46](https://github.com/AntOnionPro/pawly/issues/46)) and notification preferences ([#47](https://github.com/AntOnionPro/pawly/issues/47)). Push on Android needs a development build (stage 8).
+Stage 5 delivered: adoption listings and the Adoption tab ([#56](https://github.com/AntOnionPro/pawly/issues/56)), adoption requests ([#57](https://github.com/AntOnionPro/pawly/issues/57)), marking a pet as adopted and moving its profile ([#58](https://github.com/AntOnionPro/pawly/issues/58)) and the follow-up after adoption ([#59](https://github.com/AntOnionPro/pawly/issues/59)). Push on Android needs a development build (stage 8).
 
 ## Features
 

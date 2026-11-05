@@ -292,6 +292,7 @@ describe('the congratulations', () => {
           commentText: '',
           adoptionId: 'a1',
           adoption: ADOPTED,
+          followupMilestone: '',
           read: true,
           created: new Date().toISOString(),
         },
