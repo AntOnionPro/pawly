@@ -27,7 +27,8 @@ export type ErrorKey =
   | 'errors.tooManyFiles'
   | 'errors.fileType'
   | 'errors.fileTooLarge'
-  | 'errors.petNotOwned';
+  | 'errors.petNotOwned'
+  | 'errors.alreadyReposted';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
@@ -42,6 +43,7 @@ function codeToKey(field: string, code: string): ErrorKey {
     case 'validation_not_unique':
       if (field === 'username') return 'errors.usernameTaken';
       if (field === 'email') return 'errors.emailTaken';
+      if (field === 'repostOf') return 'errors.alreadyReposted';
       return 'errors.invalid';
     case 'validation_is_email':
     case 'validation_invalid_email':

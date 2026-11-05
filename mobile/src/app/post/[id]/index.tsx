@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ScrollViewInstance, TextInputInstance } from 'react-native';
@@ -13,6 +13,7 @@ import { CommentList } from '@/features/comments/CommentList';
 import { useDeletePost, usePost } from '@/features/posts/hooks';
 import { usePawAction } from '@/features/posts/paws';
 import { PostCard } from '@/features/posts/PostCard';
+import { useRepostAction, useShareAction } from '@/features/posts/reposts';
 import { confirm } from '@/utils/confirm';
 
 export default function PostDetailScreen() {
@@ -23,6 +24,8 @@ export default function PostDetailScreen() {
   const { data: post, error, refetch, isPending } = usePost(id);
   const remove = useDeletePost();
   const paw = usePawAction();
+  const repost = useRepostAction();
+  const share = useShareAction();
   const commentInput = useRef<TextInputInstance>(null);
   const scroll = useRef<ScrollViewInstance>(null);
   // After sending a comment, scroll to it once it is on the screen.
@@ -50,6 +53,11 @@ export default function PostDetailScreen() {
 
   function openUser(userId: string) {
     router.push({ pathname: '/user/[id]', params: { id: userId } });
+  }
+
+  // A repost has no page of its own: its link opens the original post.
+  if (post?.repostOfId) {
+    return <Redirect href={{ pathname: '/post/[id]', params: { id: post.repostOfId } }} />;
   }
 
   const deleteError = remove.error
@@ -87,6 +95,8 @@ export default function PostDetailScreen() {
               if (status === 'signedIn') commentInput.current?.focus();
               else router.push('/sign-in');
             }}
+            onRepost={() => repost(post)}
+            onShare={() => share(post)}
             onPressPet={(petId) => router.push({ pathname: '/pet/[id]', params: { id: petId } })}
             onPressAuthor={openUser}
             onEdit={

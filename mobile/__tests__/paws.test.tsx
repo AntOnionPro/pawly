@@ -40,6 +40,10 @@ const POST: api.Post = {
   commentCount: 2,
   pawedByMe: false,
   myPawId: null,
+  repostCount: 0,
+  repostOfId: null,
+  repostedByMe: false,
+  myRepostId: null,
 };
 
 beforeEach(async () => {

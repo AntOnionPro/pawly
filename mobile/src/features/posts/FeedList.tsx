@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
@@ -15,8 +14,7 @@ import { spacing } from '@/theme/typography';
 import type { Post, PostFilter } from './api';
 import { FeedTabs, type FeedTab } from './FeedTabs';
 import { usePostList } from './hooks';
-import { usePawAction } from './paws';
-import { PostCard } from './PostCard';
+import { PostListItem } from './PostListItem';
 
 const DISCOVER = { all: true } as const;
 
@@ -26,10 +24,8 @@ const DISCOVER = { all: true } as const;
  */
 export function FeedList() {
   const { t } = useTranslation();
-  const router = useRouter();
   const colors = useThemeColors();
   const { status, user } = useAuth();
-  const paw = usePawAction();
   const [tab, setTab] = useState<FeedTab>('following');
   const signedIn = status === 'signedIn' && user !== null;
   const showFollowing = signedIn && tab === 'following';
@@ -101,16 +97,7 @@ export function FeedList() {
             </ThemedText>
           ) : undefined
         }
-        renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            onOpen={() => router.push({ pathname: '/post/[id]', params: { id: item.id } })}
-            onPaw={() => paw(item)}
-            onComments={() => router.push({ pathname: '/post/[id]', params: { id: item.id } })}
-            onPressAuthor={(id) => router.push({ pathname: '/user/[id]', params: { id } })}
-            onPressPet={(id) => router.push({ pathname: '/pet/[id]', params: { id } })}
-          />
-        )}
+        renderItem={({ item }) => <PostListItem post={item} />}
         onEndReachedThreshold={0.5}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) void fetchNextPage();

@@ -16,8 +16,23 @@ function isPhoto(name) {
  * - `newFiles`: files uploaded in this request, as `{ name, size }`.
  * - `author`: id of the author.
  * - `petOwners`: owner id of each tagged pet ('' if the pet does not exist).
+ * - `isRepost`: whether the post reposts another one (its text is an optional comment, and
+ *   it cannot have files or pets).
  */
-function postError({ text, mediaCount, newFiles, author, petOwners }) {
+function postError({ text, mediaCount, newFiles, author, petOwners, isRepost }) {
+  if (isRepost) {
+    if (mediaCount > 0) {
+      return {
+        field: 'media',
+        code: 'repost_media',
+        message: 'A repost cannot have photos or videos.',
+      };
+    }
+    if ((petOwners || []).length > 0) {
+      return { field: 'pets', code: 'repost_pets', message: 'A repost cannot tag pets.' };
+    }
+    return null;
+  }
   if (!String(text || '').trim() && mediaCount === 0) {
     return {
       field: 'text',

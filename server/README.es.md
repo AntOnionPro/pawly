@@ -112,6 +112,10 @@ La colección `paws` guarda las huellas (etapa 3): una por `user` y `post`. Cual
 
 La colección `comments` guarda los comentarios de las publicaciones (etapa 3): `post`, `author` y `text` (de 1 a 500 caracteres, guardado sin espacios al principio ni al final). Cualquiera los ve. Solo el autor edita un comentario, y no puede moverlo a otra publicación. Lo pueden borrar el autor del comentario o el autor de la publicación. Se borran con la publicación o con la cuenta.
 
+## Republicaciones
+
+Una republicación es una publicación cuyo `repostOf` apunta a la original (etapa 3). Su `text` es un comentario opcional y no puede tener archivos ni mascotas. Republicar una republicación republica su original, cada usuario republica una publicación una sola vez y una republicación siempre sigue apuntando a la misma publicación. Borrar la republicación la deshace; borrar la original borra sus republicaciones.
+
 ## Seguidores
 
 La colección `follows` guarda quién sigue a quién (etapa 3): `follower` sigue a `following`, una vez por par, y nadie se sigue a sí mismo. Cualquiera los ve; solo el seguidor crea o borra el suyo. Se borran con cualquiera de las dos cuentas.
@@ -120,7 +124,7 @@ El feed "Siguiendo" lista las publicaciones con el filtro `author.follows_via_fo
 
 ## Contadores
 
-Cada publicación tiene un `pawCount` y un `commentCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.
+Cada publicación tiene un `pawCount`, un `commentCount` y un `repostCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.
 
 ## Cómo cambiar la base de datos
 

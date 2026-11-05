@@ -66,6 +66,10 @@ function post(id: string, author = SOL): postsApi.Post {
     commentCount: 0,
     pawedByMe: false,
     myPawId: null,
+    repostCount: 0,
+    repostOfId: null,
+    repostedByMe: false,
+    myRepostId: null,
   };
 }
 

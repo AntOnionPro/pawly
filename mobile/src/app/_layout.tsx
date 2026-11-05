@@ -83,6 +83,7 @@ function RootNavigator() {
         <Stack.Screen name="pet/[id]/edit" options={{ title: t('pets.edit') }} />
         <Stack.Screen name="post/[id]/index" options={{ title: t('posts.title') }} />
         <Stack.Screen name="post/[id]/edit" options={{ title: t('posts.edit') }} />
+        <Stack.Screen name="post/[id]/repost" options={{ title: t('reposts.title') }} />
         <Stack.Screen name="user/[id]/index" options={{ title: '' }} />
         <Stack.Screen name="user/[id]/followers" options={{ title: t('follows.followersTitle') }} />
         <Stack.Screen name="user/[id]/following" options={{ title: t('follows.followingTitle') }} />

@@ -53,6 +53,10 @@ const POST: postsApi.Post = {
   commentCount: 2,
   pawedByMe: false,
   myPawId: null,
+  repostCount: 0,
+  repostOfId: null,
+  repostedByMe: false,
+  myRepostId: null,
 };
 
 function comment(id: string, author = ROCCO, overrides: Partial<api.Comment> = {}): api.Comment {
