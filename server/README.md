@@ -87,6 +87,10 @@ Without SMTP configured, emails are not sent: they are printed in the server con
 
 Open the link in the computer's browser to verify the account or reset the password. Real email (SMTP) is configured in stage 8.
 
+## Pets
+
+The `pets` collection holds pet profiles (stage 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (up to 60), an approximate `birthDate` (cannot be in the future) and a `photo` (up to 5 MB, with thumbnails). Anyone can see pets; only the owner creates, edits and deletes them, and cannot change the owner. Deleting an account deletes its pets.
+
 ## How to change the database
 
 1. Change the collections in the admin panel while `npm run dev` is running.

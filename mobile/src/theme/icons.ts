@@ -48,6 +48,7 @@ export const icons = {
   delete: { sf: { default: 'trash', selected: 'trash' }, md: 'delete' },
   edit: { sf: { default: 'pencil', selected: 'pencil' }, md: 'edit' },
   camera: { sf: { default: 'camera', selected: 'camera' }, md: 'photo_camera' },
+  add: { sf: { default: 'plus', selected: 'plus' }, md: 'add' },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconName = keyof typeof icons;

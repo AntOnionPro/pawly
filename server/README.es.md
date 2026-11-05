@@ -87,6 +87,10 @@ Sin SMTP configurado, los correos no se envían: se muestran en la consola del s
 
 Abre el enlace en el navegador de la computadora para verificar la cuenta o restablecer la contraseña. El correo real (SMTP) se configura en la etapa 8.
 
+## Mascotas
+
+La colección `pets` guarda los perfiles de mascota (etapa 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (hasta 60), una fecha de nacimiento aproximada `birthDate` (no puede ser futura) y una `photo` (hasta 5 MB, con miniaturas). Cualquiera ve las mascotas; solo el dueño las crea, edita y borra, y no puede cambiar el dueño. Al eliminar una cuenta se borran sus mascotas.
+
 ## Cómo cambiar la base de datos
 
 1. Cambia las colecciones en el panel de administración mientras corre `npm run dev`.

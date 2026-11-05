@@ -8,8 +8,8 @@ Pawly se construye por etapas. Cada etapa termina con algo que se puede probar e
 
 1. **Inicio.** Una etapa empieza solo cuando la anterior está mergeada. Antes de empezar se bajan los últimos cambios de `development`.
 2. **Issues.** Al empezar la etapa se abre un issue por funcionalidad con las plantillas, con criterios de aceptación y estimación.
-3. **Trabajo.** Cada issue tiene su propia rama desde `development` (`<tipo>/<n°issue>-<descripcion>`) y un pull request hacia `development` con pruebas.
-4. **Release.** Al terminar la etapa se abre un pull request `development → main` y se etiqueta la versión `v0.N.0`, donde N es el número de etapa. La etapa se marca como hecha en el README.
+3. **Trabajo, un issue a la vez.** Justo antes de empezar un issue se bajan los últimos cambios de `development` y se crea su rama desde ahí (`<tipo>/<n°issue>-<descripcion>`). Se abre un pull request hacia `development` con pruebas. El siguiente issue empieza solo cuando ese pull request está mergeado, así ningún pull request necesita "Update branch".
+4. **Release.** Al terminar la etapa se marca como hecha en el README y se abre un pull request `development → main`. Después de mergearlo se publica la release `v0.N.0` (N es el número de etapa) desde la página *Releases* de GitHub con destino `main`; eso también crea la etiqueta.
 
 ## Fase 1
 
