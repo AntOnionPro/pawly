@@ -89,7 +89,7 @@ Open the link in the computer's browser to verify the account or reset the passw
 
 ## Pets
 
-The `pets` collection holds pet profiles (stage 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (up to 60), an approximate `birthDate` (cannot be in the future) and a `photo` (up to 5 MB, with thumbnails). Anyone can see pets; only the owner creates, edits and deletes them, and cannot change the owner. Deleting an account deletes its pets.
+The `pets` collection holds pet profiles (stage 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (up to 60), an approximate `birthDate` (cannot be in the future) and a `photo` (up to 5 MB, with thumbnails). Anyone can see pets; only the owner creates, edits and deletes them, and cannot change the owner. Deleting an account deletes its pets. A pet adopted in Pawly also has `previousOwner` and `adoptedAt`, set only by the server (see [Completing an adoption](#completing-an-adoption)).
 
 ## Posts
 
@@ -102,7 +102,7 @@ The `posts` collection holds posts (stage 2):
 | `media`  | Up to 10 files: photos (JPEG, PNG, WebP, HEIC) up to 10 MB and videos (MP4, MOV) up to 50 MB. Photos get `300x300` and `1080x0` thumbnails. |
 | `pets`   | Up to 10 of the author's own pets. Deleting a pet removes it from the posts.                                                                |
 
-A post needs text or at least one file. Anyone can see and list posts; only the author edits and deletes them. The rules that the collection cannot express live in `pb_hooks/posts.pb.js` and `pb_hooks/lib/posts.js`; field errors use the codes `post_empty`, `photo_too_large` and `pet_not_owned`. Video length (60 seconds) is limited in the app, because the server cannot read video durations without extra tools.
+A post needs text or at least one file. Anyone can see and list posts; only the author edits and deletes them. The rules that the collection cannot express live in `pb_hooks/posts.pb.js` and `pb_hooks/lib/posts.js`; field errors use the codes `post_empty`, `photo_too_large` and `pet_not_owned` (only newly tagged pets must be the author's, so a post keeps the pets it already tagged). Video length (60 seconds) is limited in the app, because the server cannot read video durations without extra tools.
 
 ## Paw prints
 
@@ -124,7 +124,7 @@ The "Following" feed lists posts with the filter `author.follows_via_following.f
 
 ## Reports and blocks
 
-The `reports` collection holds reports (stage 3): the `reporter` reports exactly one `post`, `comment` or `user`, with a `reason` (`spam`, `offensive`, `animal_abuse`, `animal_sale` or `other`) and optional `details`. Only superusers see them, in the admin panel; reviewing them comes in stage 7. Each user reports the same thing once, and nobody reports themselves or their own content.
+The `reports` collection holds reports (stage 3): the `reporter` reports exactly one `post`, `comment` or `user`, with a `reason` (`spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, or `adoption_followup` for a missed [adoption follow-up](#adoption-follow-up)) and optional `details`. Only superusers see them, in the admin panel; reviewing them comes in stage 7. Each user reports the same thing once, and nobody reports themselves or their own content.
 
 The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
 
@@ -140,11 +140,59 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notifications
 
-`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow` or `repost`), the related `post` and `comment`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. They are deleted with either account and with the related post or comment.
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due` or `followup_posted`), the related `post`, `comment`, `adoption` or `followup`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
 
 ## Push notifications
 
-`push_tokens` holds the Expo push tokens of each user's devices (stage 4), with the app `language` for the text. Only the owner sees, saves and deletes theirs, and saving a token that belongs to another account moves it (one account per device). After each in-app notification and each direct message, the server sends a push to every device of the recipient with Expo Push Service (`pb_hooks/push.pb.js`); tokens Expo reports as no longer registered are deleted, and a failed push never makes the action fail. `notification_prefs` holds which pushes each user wants (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): one record per user, only the owner sees and changes it, and without it every type is on. A type turned off sends no push, but the in-app notification is still created. `PAWLY_PUSH_URL` changes the address of the service: the tests point it to a fake one and never call Expo.
+`push_tokens` holds the Expo push tokens of each user's devices (stage 4), with the app `language` for the text. Only the owner sees, saves and deletes theirs, and saving a token that belongs to another account moves it (one account per device). After each in-app notification and each direct message, the server sends a push to every device of the recipient with Expo Push Service (`pb_hooks/push.pb.js`); tokens Expo reports as no longer registered are deleted, and a failed push never makes the action fail. `notification_prefs` holds which pushes each user wants (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`, and `adoptionOff` for every adoption notification): one record per user, only the owner sees and changes it, and without it every type is on. A type turned off sends no push, but the in-app notification is still created. `PAWLY_PUSH_URL` changes the address of the service: the tests point it to a fake one and never call Expo.
+
+## Adoption listings
+
+`adoptions` holds the adoption listings (stage 5). Each one puts one of the `publisher`'s own `pet`s up for adoption; the pet's species, breed and age come from its profile.
+
+| Field          | Rules                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `publisher`    | The signed-in user; cannot be changed. Deleting the account deletes their listings.    |
+| `pet`          | One of the publisher's pets; cannot be changed. Deleting the pet deletes its listings. |
+| `sex`          | `female` or `male`. Required.                                                          |
+| `size`         | `small`, `medium` or `large`. Required.                                                |
+| `vaccines`     | `complete`, `partial` or `none`. Required.                                             |
+| `sterilized`   | Whether the pet is spayed or neutered.                                                 |
+| `health`       | Up to 500 characters.                                                                  |
+| `zone`         | Approximate area as text, such as "Coyoacán, CDMX", up to 80 characters. Required.     |
+| `requirements` | Up to 1,000 characters.                                                                |
+| `description`  | Up to 2,200 characters.                                                                |
+| `media`        | Up to 10 photos or videos, with the same limits and thumbnails as posts.               |
+| `status`       | `available` or `adopted`. Set by the server: a new listing is always `available`.      |
+
+Anyone can see and list them; only the publisher edits and deletes them while they are available, and editing cannot change the pet, the status or the adoption data (`adopter`, `adoptedAt`). A pet has at most one `available` listing. Texts are trimmed. The rules live in `pb_hooks/adoptions.pb.js`; field errors use the codes `pet_not_owned`, `pet_already_listed` and `photo_too_large`.
+
+## Adoption requests
+
+`adoption_requests` holds the requests to adopt (stage 5): the `applicant` asks for the pet of an `adoption` listing with a presentation `message` (required, up to 1,000 characters). Only the applicant and the publisher see a request, and nobody deletes it. The server sets the `status` and checks every change (`pb_hooks/adoption_requests.pb.js`):
+
+- A new request is `pending`. Nobody asks for their own listing (`own_adoption`), for one that is no longer available (`adoption_closed`), across a block (`blocked`) or twice for the same listing (`already_requested`).
+- Only the status changes afterwards, and only while the listing is available. The applicant withdraws a `pending` or `accepted` request (`withdrawn`, final); the publisher accepts (`accepted`) or rejects (`rejected`) any request that was not withdrawn. Anything else fails with `invalid_status`.
+
+Accepting a request does not move the pet: that happens when the publisher marks it as adopted. Requests are deleted with the listing and with the applicant's account.
+
+## Completing an adoption
+
+`POST /api/pawly/adoptions/{id}/adopt` with `{ "request": "<id>" }` marks a listing as adopted by someone whose request the publisher accepted (`pb_hooks/adoptions.pb.js`). Only the publisher can do it, and only once; otherwise it fails with `adoption_closed`, `request_not_accepted` or `pet_not_owned`. In one transaction:
+
+- The listing becomes `adopted`, with the `adopter` and the date (`adoptedAt`). An adopted listing can no longer be edited or deleted by the publisher: it is part of the pet's history.
+- The pet moves to the adopter. It keeps who had it before (`previousOwner`) and when it was adopted (`adoptedAt`); only the server sets these two fields.
+- The other `pending` and `accepted` requests are rejected, and their applicants get a `request_rejected` notification.
+
+The adopter gets an `adopted` notification. Earlier posts that tag the pet keep their author and the tag, and their author can still edit them; from then on only the new owner tags the pet in new posts.
+
+## Adoption follow-up
+
+`adoption_followups` holds the follow-ups of each adopted listing (stage 5): four per adoption (`milestone` `week1`, `month1`, `month3` and `month6`), due 7, 30, 90 and 180 days after it (`dueAt`). Only the server creates and changes them (`pb_hooks/followups.pb.js` and `pb_hooks/lib/followups.js`); only the adopter and the previous owner see them. They are deleted with the listing.
+
+- **Reminders:** a daily task (15:00 UTC, 9:00 in Mexico City) sends the adopter a `followup_due` notification on each follow-up's day, once (`remindedAt`). `POST /api/pawly/followups/run` runs it at once, optionally as if it were `{ "now": "<ISO date>" }`; only superusers can call it, and the tests use it with simulated dates.
+- **Updates:** a post by the adopter that tags the pet counts as the update (`post`) of the follow-up whose window is open, from its date until 14 days later. The previous owner gets a `followup_posted` notification.
+- **Overdue:** a follow-up without an update 14 days after its date is overdue. Then the previous owner can report the adopter with the reason `adoption_followup`; anyone else, or before that, fails with `followup_not_overdue`.
 
 ## Counters
 

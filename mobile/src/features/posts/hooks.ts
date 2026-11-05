@@ -45,7 +45,11 @@ export function useCreatePost() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (post: NewPost) => createPost(client, user?.id ?? '', post),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: postKeys.all }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: postKeys.all });
+      // A post about an adopted pet can complete an adoption follow-up.
+      await queryClient.invalidateQueries({ queryKey: ['adoptionFollowups'] });
+    },
   });
 }
 

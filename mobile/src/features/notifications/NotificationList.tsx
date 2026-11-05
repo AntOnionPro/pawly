@@ -8,6 +8,8 @@ import { avatarUrl, useAuth } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
+import { useAdoptionPhoto } from '@/features/adoption/AdoptionCard';
+import type { Adoption } from '@/features/adoption/api';
 import { useBlockedIds } from '@/features/moderation/hooks';
 import { useAskForPushOnce } from '@/features/push/hooks';
 import { mediaKind, mediaUrl } from '@/features/posts/api';
@@ -24,6 +26,7 @@ const COMMENT_PREVIEW = 80;
 function useNotificationText(notification: AppNotification): string {
   const { t } = useTranslation();
   const username = notification.actor?.username ?? '';
+  const pet = notification.adoption?.pet?.name ?? '';
   switch (notification.type) {
     case 'paw':
       return t('notifications.paw', { username });
@@ -36,7 +39,31 @@ function useNotificationText(notification: AppNotification): string {
       return t('notifications.follow', { username });
     case 'repost':
       return t('notifications.repost', { username });
+    case 'adoption_request':
+      return t('notifications.adoptionRequest', { username, pet });
+    case 'request_accepted':
+      return t('notifications.requestAccepted', { username, pet });
+    case 'request_rejected':
+      return t('notifications.requestRejected', { username, pet });
+    case 'adopted':
+      return t('notifications.adopted', { pet });
+    case 'followup_due':
+      return t('notifications.followupDue', {
+        username,
+        pet,
+        when: notification.followupMilestone
+          ? t(`adoption.followups.milestones.${notification.followupMilestone}`)
+          : '',
+      });
+    case 'followup_posted':
+      return t('notifications.followupPosted', { username, pet });
   }
+}
+
+/** Small picture of the listing an adoption notification is about. */
+function AdoptionThumb({ adoption }: { adoption: Adoption }) {
+  const photo = useAdoptionPhoto(adoption);
+  return photo ? <Image source={{ uri: photo }} style={styles.photo} /> : null;
 }
 
 function NotificationRow({ notification }: { notification: AppNotification }) {
@@ -51,7 +78,21 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
   const photo = post?.media.find((file) => mediaKind(file) === 'photo');
 
   function open() {
-    if (notification.type === 'follow') {
+    if (notification.type === 'followup_due' && notification.adoption?.petId) {
+      // Straight to a new post with the pet tagged.
+      router.push({ pathname: '/post', params: { petId: notification.adoption.petId } });
+    } else if (notification.type === 'followup_posted' && notification.postId) {
+      router.push({ pathname: '/post/[id]', params: { id: notification.postId } });
+    } else if (notification.type === 'adopted' && notification.adoption?.petId) {
+      router.push({ pathname: '/pet/[id]', params: { id: notification.adoption.petId } });
+    } else if (notification.type === 'adoption_request' && notification.adoptionId) {
+      router.push({
+        pathname: '/adoption/[id]/requests',
+        params: { id: notification.adoptionId },
+      });
+    } else if (notification.adoptionId) {
+      router.push({ pathname: '/adoption/[id]', params: { id: notification.adoptionId } });
+    } else if (notification.type === 'follow') {
       router.push({ pathname: '/user/[id]', params: { id: notification.actorId } });
     } else if (notification.postId) {
       router.push({ pathname: '/post/[id]', params: { id: notification.postId } });
@@ -81,6 +122,9 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
       </View>
       {post && photo ? (
         <Image source={{ uri: mediaUrl(client, post, photo, '300x300') }} style={styles.photo} />
+      ) : null}
+      {notification.adoption && !(post && photo) ? (
+        <AdoptionThumb adoption={notification.adoption} />
       ) : null}
     </Pressable>
   );

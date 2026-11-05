@@ -89,7 +89,7 @@ Abre el enlace en el navegador de la computadora para verificar la cuenta o rest
 
 ## Mascotas
 
-La colección `pets` guarda los perfiles de mascota (etapa 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (hasta 60), una fecha de nacimiento aproximada `birthDate` (no puede ser futura) y una `photo` (hasta 5 MB, con miniaturas). Cualquiera ve las mascotas; solo el dueño las crea, edita y borra, y no puede cambiar el dueño. Al eliminar una cuenta se borran sus mascotas.
+La colección `pets` guarda los perfiles de mascota (etapa 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (hasta 60), una fecha de nacimiento aproximada `birthDate` (no puede ser futura) y una `photo` (hasta 5 MB, con miniaturas). Cualquiera ve las mascotas; solo el dueño las crea, edita y borra, y no puede cambiar el dueño. Al eliminar una cuenta se borran sus mascotas. Una mascota adoptada en Pawly también tiene `previousOwner` y `adoptedAt`, que solo pone el servidor (ver [Cerrar una adopción](#cerrar-una-adopción)).
 
 ## Publicaciones
 
@@ -102,7 +102,7 @@ La colección `posts` guarda las publicaciones (etapa 2):
 | `media`  | Hasta 10 archivos: fotos (JPEG, PNG, WebP, HEIC) de hasta 10 MB y videos (MP4, MOV) de hasta 50 MB. Las fotos tienen miniaturas `300x300` y `1080x0`. |
 | `pets`   | Hasta 10 mascotas propias del autor. Al borrar una mascota se quita de las publicaciones.                                                             |
 
-Una publicación necesita texto o al menos un archivo. Cualquiera ve y lista publicaciones; solo el autor las edita y borra. Las reglas que la colección no puede expresar están en `pb_hooks/posts.pb.js` y `pb_hooks/lib/posts.js`; los errores por campo usan los códigos `post_empty`, `photo_too_large` y `pet_not_owned`. La duración de los videos (60 segundos) se limita en la app, porque el servidor no puede leer la duración sin herramientas extra.
+Una publicación necesita texto o al menos un archivo. Cualquiera ve y lista publicaciones; solo el autor las edita y borra. Las reglas que la colección no puede expresar están en `pb_hooks/posts.pb.js` y `pb_hooks/lib/posts.js`; los errores por campo usan los códigos `post_empty`, `photo_too_large` y `pet_not_owned` (solo las mascotas recién etiquetadas deben ser del autor, así una publicación conserva las que ya etiquetaba). La duración de los videos (60 segundos) se limita en la app, porque el servidor no puede leer la duración sin herramientas extra.
 
 ## Huellas
 
@@ -124,7 +124,7 @@ El feed "Siguiendo" lista las publicaciones con el filtro `author.follows_via_fo
 
 ## Reportes y bloqueos
 
-La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`) o un usuario (`user`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale` u `other`) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración; su revisión llega en la etapa 7. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
+La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`) o un usuario (`user`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, o `adoption_followup` para un [seguimiento posadopción](#seguimiento-posadopción) no cumplido) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración; su revisión llega en la etapa 7. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
 
 La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
 
@@ -140,11 +140,59 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow` o `repost`), la publicación y el comentario relacionados (`post`, `comment`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Se borran con cualquiera de las dos cuentas y con la publicación o el comentario relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due` o `followup_posted`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 
-`push_tokens` guarda los tokens de Expo Push de los dispositivos de cada usuario (etapa 4), con el idioma de la app (`language`) para el texto. Solo su dueño los ve, guarda y borra, y guardar un token que pertenece a otra cuenta lo mueve (una cuenta por dispositivo). Después de cada notificación dentro de la app y de cada mensaje directo, el servidor envía un push a todos los dispositivos del destinatario con Expo Push Service (`pb_hooks/push.pb.js`); los tokens que Expo marca como no registrados se borran, y un push fallido nunca hace fallar la acción. `notification_prefs` guarda qué push quiere cada usuario (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`): un registro por usuario, solo su dueño lo ve y lo cambia, y sin él todos los tipos están encendidos. Un tipo apagado no envía push, pero la notificación dentro de la app se crea igual. `PAWLY_PUSH_URL` cambia la dirección del servicio: las pruebas apuntan a uno falso y nunca llaman a Expo.
+`push_tokens` guarda los tokens de Expo Push de los dispositivos de cada usuario (etapa 4), con el idioma de la app (`language`) para el texto. Solo su dueño los ve, guarda y borra, y guardar un token que pertenece a otra cuenta lo mueve (una cuenta por dispositivo). Después de cada notificación dentro de la app y de cada mensaje directo, el servidor envía un push a todos los dispositivos del destinatario con Expo Push Service (`pb_hooks/push.pb.js`); los tokens que Expo marca como no registrados se borran, y un push fallido nunca hace fallar la acción. `notification_prefs` guarda qué push quiere cada usuario (`pawOff`, `commentOff`, `followOff`, `repostOff`, `messageOff`, y `adoptionOff` para todos los avisos de adopción): un registro por usuario, solo su dueño lo ve y lo cambia, y sin él todos los tipos están encendidos. Un tipo apagado no envía push, pero la notificación dentro de la app se crea igual. `PAWLY_PUSH_URL` cambia la dirección del servicio: las pruebas apuntan a uno falso y nunca llaman a Expo.
+
+## Fichas de adopción
+
+`adoptions` guarda las fichas de adopción (etapa 5). Cada una pone en adopción una mascota (`pet`) de quien publica (`publisher`); la especie, la raza y la edad salen del perfil de la mascota.
+
+| Campo          | Reglas                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------- |
+| `publisher`    | El usuario con sesión; no se puede cambiar. Borrar la cuenta borra sus fichas.          |
+| `pet`          | Una mascota de quien publica; no se puede cambiar. Borrar la mascota borra sus fichas.  |
+| `sex`          | `female` o `male`. Obligatorio.                                                         |
+| `size`         | `small`, `medium` o `large`. Obligatorio.                                               |
+| `vaccines`     | `complete`, `partial` o `none`. Obligatorio.                                            |
+| `sterilized`   | Si la mascota está esterilizada.                                                        |
+| `health`       | Hasta 500 caracteres.                                                                   |
+| `zone`         | Zona aproximada en texto, como "Coyoacán, CDMX", hasta 80 caracteres. Obligatorio.      |
+| `requirements` | Hasta 1,000 caracteres.                                                                 |
+| `description`  | Hasta 2,200 caracteres.                                                                 |
+| `media`        | Hasta 10 fotos o videos, con los mismos límites y miniaturas que las publicaciones.     |
+| `status`       | `available` o `adopted`. Lo pone el servidor: una ficha nueva siempre está `available`. |
+
+Cualquiera las ve y las lista; solo quien publica las edita y las borra mientras están disponibles, y al editar no se puede cambiar la mascota, el estado ni los datos de la adopción (`adopter`, `adoptedAt`). Una mascota tiene a lo más una ficha `available`. Los textos se recortan. Las reglas están en `pb_hooks/adoptions.pb.js`; los errores de campo usan los códigos `pet_not_owned`, `pet_already_listed` y `photo_too_large`.
+
+## Solicitudes de adopción
+
+`adoption_requests` guarda las solicitudes para adoptar (etapa 5): quien solicita (`applicant`) pide la mascota de una ficha (`adoption`) con un mensaje de presentación (`message`, obligatorio, hasta 1,000 caracteres). Solo el solicitante y quien publica ven una solicitud, y nadie la borra. El servidor pone el estado (`status`) y revisa cada cambio (`pb_hooks/adoption_requests.pb.js`):
+
+- Una solicitud nueva queda `pending`. Nadie solicita su propia ficha (`own_adoption`), una que ya no está disponible (`adoption_closed`), con un bloqueo de por medio (`blocked`) ni dos veces la misma ficha (`already_requested`).
+- Después solo cambia el estado, y solo mientras la ficha está disponible. El solicitante retira una solicitud `pending` o `accepted` (`withdrawn`, definitivo); quien publica acepta (`accepted`) o rechaza (`rejected`) cualquier solicitud que no se haya retirado. Lo demás falla con `invalid_status`.
+
+Aceptar una solicitud no traspasa la mascota: eso pasa cuando quien publica la marca como adoptada. Las solicitudes se borran con la ficha y con la cuenta del solicitante.
+
+## Cerrar una adopción
+
+`POST /api/pawly/adoptions/{id}/adopt` con `{ "request": "<id>" }` marca una ficha como adoptada por una persona cuya solicitud aceptó quien publica (`pb_hooks/adoptions.pb.js`). Solo quien publica puede hacerlo, y solo una vez; si no, falla con `adoption_closed`, `request_not_accepted` o `pet_not_owned`. En una sola transacción:
+
+- La ficha pasa a `adopted`, con el adoptante (`adopter`) y la fecha (`adoptedAt`). Quien publica ya no puede editar ni borrar una ficha adoptada: es parte de la historia de la mascota.
+- La mascota pasa al adoptante. Guarda quién la tenía antes (`previousOwner`) y cuándo fue adoptada (`adoptedAt`); solo el servidor pone estos dos campos.
+- Las demás solicitudes `pending` y `accepted` se rechazan, y sus solicitantes reciben una notificación `request_rejected`.
+
+El adoptante recibe una notificación `adopted`. Las publicaciones anteriores que etiquetan a la mascota conservan su autor y la etiqueta, y su autor todavía puede editarlas; desde entonces solo el nuevo dueño etiqueta a la mascota en publicaciones nuevas.
+
+## Seguimiento posadopción
+
+`adoption_followups` guarda los seguimientos de cada ficha adoptada (etapa 5): cuatro por adopción (`milestone` `week1`, `month1`, `month3` y `month6`), para 7, 30, 90 y 180 días después (`dueAt`). Solo el servidor los crea y cambia (`pb_hooks/followups.pb.js` y `pb_hooks/lib/followups.js`); solo el adoptante y el dueño anterior los ven. Se borran con la ficha.
+
+- **Recordatorios:** una tarea diaria (15:00 UTC, 9:00 en la Ciudad de México) envía al adoptante una notificación `followup_due` el día de cada seguimiento, una sola vez (`remindedAt`). `POST /api/pawly/followups/run` la corre al momento, opcionalmente como si fuera `{ "now": "<fecha ISO>" }`; solo los superusuarios pueden llamarla, y las pruebas la usan con fechas simuladas.
+- **Actualizaciones:** una publicación del adoptante que etiqueta a la mascota cuenta como la actualización (`post`) del seguimiento cuya ventana está abierta, desde su fecha hasta 14 días después. El dueño anterior recibe una notificación `followup_posted`.
+- **Vencidos:** un seguimiento sin actualización 14 días después de su fecha está vencido. Entonces el dueño anterior puede reportar al adoptante con el motivo `adoption_followup`; cualquier otra persona, o antes de eso, falla con `followup_not_overdue`.
 
 ## Contadores
 

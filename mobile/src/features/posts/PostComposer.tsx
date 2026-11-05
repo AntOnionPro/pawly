@@ -17,15 +17,21 @@ import { pickPostMedia, type ComposerMedia } from './media';
 import { MediaStrip } from './MediaStrip';
 import { PetPicker } from './PetPicker';
 
+interface PostComposerProps {
+  /** A pet to tag from the start (for example, from an adoption follow-up reminder). */
+  petId?: string;
+  onPublished: (post: Post) => void;
+}
+
 /** New post: photos and videos, text and tagged pets. */
-export function PostComposer({ onPublished }: { onPublished: (post: Post) => void }) {
+export function PostComposer({ petId, onPublished }: PostComposerProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { data: pets = [] } = usePets(user?.id);
   const create = useCreatePost();
   const [text, setText] = useState('');
   const [media, setMedia] = useState<ComposerMedia[]>([]);
-  const [petIds, setPetIds] = useState<string[]>([]);
+  const [petIds, setPetIds] = useState<string[]>(petId ? [petId] : []);
   const [errors, setErrors] = useState<string[]>([]);
 
   const remaining = POST_FILES_MAX - media.length;

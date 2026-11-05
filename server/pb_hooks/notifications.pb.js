@@ -58,6 +58,43 @@ onRecordAfterCreateSuccess((e) => {
   });
 }, 'posts');
 
+// A new adoption request, for the publisher of the listing.
+onRecordAfterCreateSuccess((e) => {
+  e.next();
+  const { notify } = require(`${__hooks}/lib/notifications.js`);
+  try {
+    const adoption = e.app.findRecordById('adoptions', e.record.getString('adoption'));
+    notify(e.app, {
+      recipient: adoption.getString('publisher'),
+      actor: e.record.getString('applicant'),
+      type: 'adoption_request',
+      adoption: adoption.id,
+    });
+  } catch (error) {
+    console.log(`[pawly-notifications] adoption request: ${error}`);
+  }
+}, 'adoption_requests');
+
+// The publisher accepted or rejected a request: tell the applicant.
+onRecordUpdateRequest((e) => {
+  const from = e.record.original().getString('status');
+  e.next();
+  const to = e.record.getString('status');
+  if (from === to || (to !== 'accepted' && to !== 'rejected')) return;
+  const { notify } = require(`${__hooks}/lib/notifications.js`);
+  try {
+    const adoption = e.app.findRecordById('adoptions', e.record.getString('adoption'));
+    notify(e.app, {
+      recipient: e.record.getString('applicant'),
+      actor: adoption.getString('publisher'),
+      type: to === 'accepted' ? 'request_accepted' : 'request_rejected',
+      adoption: adoption.id,
+    });
+  } catch (error) {
+    console.log(`[pawly-notifications] adoption request status: ${error}`);
+  }
+}, 'adoption_requests');
+
 // Marks all of the signed-in user's notifications as read.
 routerAdd(
   'POST',

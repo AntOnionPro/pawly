@@ -43,7 +43,7 @@ export function EditPostForm({ post, onSaved }: { post: Post; onSaved: () => voi
 
   return (
     <View style={styles.container}>
-      <MediaCarousel post={post} />
+      <MediaCarousel record={post} />
       <TextField
         label={t('posts.text')}
         hint={t('posts.textCount', { used: text.length, max: POST_TEXT_MAX })}

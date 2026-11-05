@@ -111,18 +111,25 @@ function signedInUserId(client: PocketBase): string | undefined {
   return client.authStore?.isValid ? client.authStore.record?.id : undefined;
 }
 
+/** A record with photos and videos in `media`: a post or an adoption listing. */
+export interface MediaRecord {
+  id: string;
+  collectionId: string;
+  media: string[];
+}
+
 /**
- * URL of a post file. Photos use a thumbnail: `1080x0` (feed width) by default or `300x300`
- * for grids. Videos have no thumbnails and always use the original file.
+ * URL of a post (or adoption listing) file. Photos use a thumbnail: `1080x0` (feed width) by
+ * default or `300x300` for grids. Videos have no thumbnails and always use the original file.
  */
 export function mediaUrl(
   client: PocketBase,
-  post: Post,
+  record: Pick<MediaRecord, 'id' | 'collectionId'>,
   fileName: string,
   thumb: '1080x0' | '300x300' = '1080x0',
 ): string {
   return client.files.getURL(
-    { id: post.id, collectionId: post.collectionId, collectionName: POSTS },
+    { id: record.id, collectionId: record.collectionId },
     fileName,
     mediaKind(fileName) === 'photo' ? { thumb } : undefined,
   );

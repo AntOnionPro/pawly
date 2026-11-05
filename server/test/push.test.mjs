@@ -49,6 +49,8 @@ const TOKENS = '/api/collections/push_tokens/records';
 const POSTS = '/api/collections/posts/records';
 const CONVERSATIONS = '/api/collections/conversations/records';
 const MESSAGES = '/api/collections/messages/records';
+const ADOPTIONS = '/api/collections/adoptions/records';
+const REQUESTS = '/api/collections/adoption_requests/records';
 let counter = 0;
 
 async function device(user, language = 'es') {
@@ -133,6 +135,103 @@ describe('sending', () => {
         sound: 'default',
       },
     ]);
+  });
+
+  test('adoption requests and answers reach both sides and open the listing', async () => {
+    const sol = await verifiedUser();
+    const luna = await verifiedUser();
+    const solDevice = await device(sol, 'es');
+    const lunaDevice = await device(luna, 'en');
+    const { body: pet } = await create('/api/collections/pets/records', sol, {
+      owner: sol.record.id,
+      name: 'Firulais',
+      species: 'dog',
+    });
+    const { body: adoption } = await create(ADOPTIONS, sol, {
+      publisher: sol.record.id,
+      pet: pet.id,
+      sex: 'male',
+      size: 'medium',
+      vaccines: 'complete',
+      zone: 'Coyoacán',
+    });
+    const { body: request } = await create(REQUESTS, luna, {
+      adoption: adoption.id,
+      applicant: luna.record.id,
+      message: 'Hola',
+    });
+    await pb.api(`${REQUESTS}/${request.id}`, {
+      method: 'PATCH',
+      token: sol.token,
+      body: { status: 'accepted' },
+    });
+    assert.deepEqual(
+      received.map((message) => [message.to, message.body, message.data]),
+      [
+        [
+          solDevice.token,
+          `@${luna.record.username} quiere adoptar a Firulais.`,
+          { type: 'adoption_request', adoptionId: adoption.id, actorId: luna.record.id },
+        ],
+        [
+          lunaDevice.token,
+          `@${sol.record.username} accepted your request to adopt Firulais.`,
+          { type: 'request_accepted', adoptionId: adoption.id, actorId: sol.record.id },
+        ],
+      ],
+    );
+
+    // Marking the pet as adopted congratulates the adopter and opens the pet's profile.
+    received = [];
+    await pb.api(`/api/pawly/adoptions/${adoption.id}/adopt`, {
+      method: 'POST',
+      token: sol.token,
+      body: { request: request.id },
+    });
+    assert.deepEqual(
+      received.map((message) => [message.to, message.body, message.data]),
+      [
+        [
+          lunaDevice.token,
+          'Congratulations! Firulais is now part of your family.',
+          { type: 'adopted', petId: pet.id, actorId: sol.record.id },
+        ],
+      ],
+    );
+
+    // One preference turns off every adoption push.
+    received = [];
+    await create('/api/collections/notification_prefs/records', luna, {
+      user: luna.record.id,
+      adoptionOff: true,
+    });
+    const { body: other } = await create('/api/collections/pets/records', sol, {
+      owner: sol.record.id,
+      name: 'Sol',
+      species: 'cat',
+    });
+    const { body: second } = await create(ADOPTIONS, sol, {
+      publisher: sol.record.id,
+      pet: other.id,
+      sex: 'female',
+      size: 'small',
+      vaccines: 'none',
+      zone: 'Coyoacán',
+    });
+    const { body: secondRequest } = await create(REQUESTS, luna, {
+      adoption: second.id,
+      applicant: luna.record.id,
+      message: 'Hola',
+    });
+    await pb.api(`${REQUESTS}/${secondRequest.id}`, {
+      method: 'PATCH',
+      token: sol.token,
+      body: { status: 'rejected' },
+    });
+    assert.deepEqual(
+      received.map((message) => message.data.type),
+      ['adoption_request'],
+    );
   });
 
   test('tokens Expo no longer recognizes are deleted', async () => {

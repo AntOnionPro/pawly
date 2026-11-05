@@ -11,6 +11,14 @@ const TEXTS = {
     comment: (u, text) => `@${u} comentó: “${text}”`,
     follow: (u) => `@${u} empezó a seguirte.`,
     repost: (u) => `@${u} republicó tu publicación.`,
+    adoption_request: (u, _, pet) => `@${u} quiere adoptar a ${pet}.`,
+    request_accepted: (u, _, pet) => `@${u} aceptó tu solicitud para adoptar a ${pet}.`,
+    request_rejected: (u, _, pet) => `@${u} no aceptó tu solicitud para adoptar a ${pet}.`,
+    adopted: (_u, _, pet) => `¡Felicidades! Ahora ${pet} es parte de tu familia.`,
+    followup_due: (u, _, pet, when) =>
+      `Ya pasó ${when} desde que adoptaste a ${pet}. Comparte una foto o video para @${u}.`,
+    followup_posted: (u, _, pet) => `@${u} compartió cómo está ${pet}.`,
+    milestones: { week1: '1 semana', month1: '1 mes', month3: '3 meses', month6: '6 meses' },
     sharedPost: 'Compartió una publicación',
   },
   en: {
@@ -18,6 +26,14 @@ const TEXTS = {
     comment: (u, text) => `@${u} commented: “${text}”`,
     follow: (u) => `@${u} started following you.`,
     repost: (u) => `@${u} reposted your post.`,
+    adoption_request: (u, _, pet) => `@${u} wants to adopt ${pet}.`,
+    request_accepted: (u, _, pet) => `@${u} accepted your request to adopt ${pet}.`,
+    request_rejected: (u, _, pet) => `@${u} declined your request to adopt ${pet}.`,
+    adopted: (_u, _, pet) => `Congratulations! ${pet} is now part of your family.`,
+    followup_due: (u, _, pet, when) =>
+      `It has been ${when} since you adopted ${pet}. Share a photo or video for @${u}.`,
+    followup_posted: (u, _, pet) => `@${u} shared how ${pet} is doing.`,
+    milestones: { week1: '1 week', month1: '1 month', month3: '3 months', month6: '6 months' },
     sharedPost: 'Shared a post',
   },
 };
@@ -30,13 +46,23 @@ function texts(language) {
   return TEXTS[language] || TEXTS.es;
 }
 
-/** Whether `userId` wants pushes of `type` (paw, comment, follow, repost or message). */
+/** Push types that share one preference: every adoption notification is "adoption". */
+const PREFERENCE = {
+  adoption_request: 'adoption',
+  request_accepted: 'adoption',
+  request_rejected: 'adoption',
+  adopted: 'adoption',
+  followup_due: 'adoption',
+  followup_posted: 'adoption',
+};
+
+/** Whether `userId` wants pushes of `type` (paw, comment, follow, repost, message, adoption…). */
 function wantsPush(app, userId, type) {
   try {
     const prefs = app.findFirstRecordByFilter('notification_prefs', 'user = {:user}', {
       user: userId,
     });
-    return !prefs.getBool(`${type}Off`);
+    return !prefs.getBool(`${PREFERENCE[type] || type}Off`);
   } catch {
     // No preferences saved yet: everything is on.
     return true;

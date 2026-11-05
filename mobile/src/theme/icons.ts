@@ -66,6 +66,21 @@ export const icons = {
   add: { sf: { default: 'plus', selected: 'plus' }, md: 'add' },
   remove: { sf: { default: 'xmark.circle.fill', selected: 'xmark.circle.fill' }, md: 'cancel' },
   video: { sf: { default: 'video', selected: 'video.fill' }, md: 'videocam' },
+  filter: {
+    sf: {
+      default: 'line.3.horizontal.decrease.circle',
+      selected: 'line.3.horizontal.decrease.circle.fill',
+    },
+    md: 'filter_list',
+  },
+  location: {
+    sf: { default: 'mappin.and.ellipse', selected: 'mappin.and.ellipse' },
+    md: 'location_on',
+  },
+  requests: {
+    sf: { default: 'list.bullet.clipboard', selected: 'list.bullet.clipboard.fill' },
+    md: 'assignment',
+  },
   gallery: {
     sf: { default: 'photo.on.rectangle', selected: 'photo.on.rectangle' },
     md: 'photo_library',

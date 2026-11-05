@@ -40,6 +40,8 @@ const LUNA: api.Pet = {
   breed: 'Xoloitzcuintle',
   birthDate: '2022-03-01',
   photo: '',
+  previousOwnerId: '',
+  adoptedAt: '',
 };
 
 const type = (label: string, text: string) =>

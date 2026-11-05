@@ -43,9 +43,16 @@ export async function forgetPushToken(client: PocketBase, authToken: string): Pr
 export const NOTIFICATION_PREFS = 'notification_prefs';
 
 /** Push types the user can turn off. */
-export type PushType = 'paw' | 'comment' | 'follow' | 'repost' | 'message';
+export type PushType = 'paw' | 'comment' | 'follow' | 'repost' | 'message' | 'adoption';
 
-export const PUSH_TYPES: readonly PushType[] = ['paw', 'comment', 'follow', 'repost', 'message'];
+export const PUSH_TYPES: readonly PushType[] = [
+  'paw',
+  'comment',
+  'follow',
+  'repost',
+  'message',
+  'adoption',
+];
 
 /** `true` = the user wants pushes of that type. */
 export type PushPrefs = Record<PushType, boolean>;
@@ -56,7 +63,14 @@ export interface SavedPushPrefs {
   prefs: PushPrefs;
 }
 
-const ALL_ON: PushPrefs = { paw: true, comment: true, follow: true, repost: true, message: true };
+const ALL_ON: PushPrefs = {
+  paw: true,
+  comment: true,
+  follow: true,
+  repost: true,
+  message: true,
+  adoption: true,
+};
 
 export async function getPushPrefs(client: PocketBase, userId: string): Promise<SavedPushPrefs> {
   const result = await client.collection(NOTIFICATION_PREFS).getList(1, 1, {
