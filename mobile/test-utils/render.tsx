@@ -16,6 +16,8 @@ export const TEST_USER: User = {
   bio: 'Tengo una perrita.',
   avatar: '',
   verified: true,
+  followerCount: 0,
+  followingCount: 0,
 };
 
 /** Session whose actions are Jest mocks that succeed unless overridden. */

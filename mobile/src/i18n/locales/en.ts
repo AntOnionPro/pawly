@@ -126,6 +126,26 @@ const en = {
   feed: {
     empty: 'There are no posts yet. Be the first to share your pet.',
     end: 'You are all caught up.',
+    tabs: {
+      following: 'Following',
+      discover: 'Discover',
+    },
+    followingEmpty: 'Posts by the people you follow will show up here.',
+    goDiscover: 'Go to Discover',
+  },
+  follows: {
+    follow: 'Follow',
+    following: 'Following',
+    unfollowHint: 'Tap to unfollow.',
+    followersLabel_one: 'follower',
+    followersLabel_other: 'followers',
+    followingLabel_one: 'following',
+    followingLabel_other: 'following',
+    followersTitle: 'Followers',
+    followingTitle: 'Following',
+    noFollowers: 'No followers yet.',
+    noFollowing: 'Not following anyone yet.',
+    failed: 'The change could not be saved.',
   },
   user: {
     posts: 'Posts',

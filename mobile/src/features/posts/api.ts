@@ -135,8 +135,12 @@ export async function removePaw(
   await client.collection(PAWS).delete(id);
 }
 
-/** Which posts to list: all (feed), by author or by tagged pet. */
-export type PostFilter = { all: true } | { authorId: string } | { petId: string };
+/**
+ * Which posts to list: all (Discover), by the people a user follows (Following), by author
+ * or by tagged pet.
+ */
+export type PostFilter =
+  { all: true } | { followedBy: string } | { authorId: string } | { petId: string };
 
 export interface PostPage {
   items: Post[];
@@ -149,6 +153,11 @@ export const POSTS_PER_PAGE = 12;
 function filterExpression(client: PocketBase, filter: PostFilter): string {
   if ('authorId' in filter) return client.filter('author = {:id}', { id: filter.authorId });
   if ('petId' in filter) return client.filter('pets ~ {:id}', { id: filter.petId });
+  if ('followedBy' in filter) {
+    return client.filter('author.follows_via_following.follower ?= {:id}', {
+      id: filter.followedBy,
+    });
+  }
   return '';
 }
 

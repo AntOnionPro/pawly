@@ -26,7 +26,7 @@ Current stage: **Stage 3, Social interaction (in progress).** Latest release: `v
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 3 issues: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30), done), comments ([#31](https://github.com/AntOnionPro/pawly/issues/31), done), follows ([#32](https://github.com/AntOnionPro/pawly/issues/32)), sharing ([#33](https://github.com/AntOnionPro/pawly/issues/33)), search ([#34](https://github.com/AntOnionPro/pawly/issues/34)) and report and block ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
+Stage 3 issues: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30), done), comments ([#31](https://github.com/AntOnionPro/pawly/issues/31), done), follows ([#32](https://github.com/AntOnionPro/pawly/issues/32), done), sharing ([#33](https://github.com/AntOnionPro/pawly/issues/33)), search ([#34](https://github.com/AntOnionPro/pawly/issues/34)) and report and block ([#35](https://github.com/AntOnionPro/pawly/issues/35)).
 
 ## Features
 
@@ -51,7 +51,7 @@ Stage 3 issues: paw prints ([#30](https://github.com/AntOnionPro/pawly/issues/30
 - Posts with text, images and videos, with several files per post.
 - Users react with a paw print (the only reaction) and comment. They can edit and delete their own posts and comments.
 - Sharing outside the app (system share sheet with a link to the web version) and inside the app (repost, or send by direct message).
-- Users follow each other. The home feed mixes people you follow with content to discover.
+- Users follow each other. Home has two tabs: **Following** (posts by the people you follow) and **Discover** (every post). Visitors only see Discover.
 - Search for users, pets and posts.
 
 #### Direct messages

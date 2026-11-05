@@ -1,27 +1,39 @@
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/auth/AuthProvider';
+import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
 
-import type { Post } from './api';
+import type { Post, PostFilter } from './api';
+import { FeedTabs, type FeedTab } from './FeedTabs';
 import { usePostList } from './hooks';
 import { usePawAction } from './paws';
 import { PostCard } from './PostCard';
 
-const FEED = { all: true } as const;
+const DISCOVER = { all: true } as const;
 
-/** Home feed: every post, newest first. Loads more at the end; pull down to refresh. */
+/**
+ * Home feed, newest first: "Following" (posts by the people you follow) and "Discover" (every
+ * post). Visitors only see Discover. Loads more at the end; pull down to refresh.
+ */
 export function FeedList() {
   const { t } = useTranslation();
   const router = useRouter();
   const colors = useThemeColors();
+  const { status, user } = useAuth();
   const paw = usePawAction();
+  const [tab, setTab] = useState<FeedTab>('following');
+  const signedIn = status === 'signedIn' && user !== null;
+  const showFollowing = signedIn && tab === 'following';
+  const filter: PostFilter = showFollowing && user ? { followedBy: user.id } : DISCOVER;
   const {
     data,
     error,
@@ -31,7 +43,7 @@ export function FeedList() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = usePostList(FEED);
+  } = usePostList(filter);
   const posts: Post[] = data?.pages.flatMap((page) => page.items) ?? [];
 
   return (
@@ -45,11 +57,14 @@ export function FeedList() {
           <View style={[styles.separator, { backgroundColor: colors.border }]} />
         )}
         ListHeaderComponent={
-          <View style={styles.header}>
-            <Icon name="paw" selected size={28} color={colors.accent} />
-            <ThemedText variant="title" accessibilityRole="header">
-              {t('home.title')}
-            </ThemedText>
+          <View style={styles.top}>
+            <View style={styles.header}>
+              <Icon name="paw" selected size={28} color={colors.accent} />
+              <ThemedText variant="title" accessibilityRole="header">
+                {t('home.title')}
+              </ThemedText>
+            </View>
+            {signedIn ? <FeedTabs selected={tab} onSelect={setTab} /> : null}
           </View>
         }
         ListEmptyComponent={
@@ -57,6 +72,17 @@ export function FeedList() {
             <Loading />
           ) : error ? (
             <LoadError error={error} onRetry={() => void refetch()} />
+          ) : showFollowing ? (
+            <View style={styles.followingEmpty}>
+              <ThemedText color="textSecondary" style={styles.centerText}>
+                {t('feed.followingEmpty')}
+              </ThemedText>
+              <Button
+                variant="secondary"
+                label={t('feed.goDiscover')}
+                onPress={() => setTab('discover')}
+              />
+            </View>
           ) : (
             <ThemedText color="textSecondary" style={styles.center}>
               {t('feed.empty')}
@@ -105,8 +131,11 @@ export function FeedList() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: spacing.md, flexGrow: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.md },
+  top: { gap: spacing.sm, marginBottom: spacing.md },
+  header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   separator: { height: StyleSheet.hairlineWidth, marginVertical: spacing.lg },
   center: { textAlign: 'center', padding: spacing.lg },
+  centerText: { textAlign: 'center' },
+  followingEmpty: { gap: spacing.md, padding: spacing.lg },
   footer: { marginVertical: spacing.lg },
 });

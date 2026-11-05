@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/auth/AuthProvider';
 import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
+import { FollowButton } from '@/features/follows/FollowButton';
 import { PetList } from '@/features/pets/PetList';
 import { PostGrid } from '@/features/posts/PostGrid';
 import { ProfileHeader } from '@/features/profile/ProfileHeader';
@@ -26,6 +27,7 @@ export default function UserScreen() {
       {user ? (
         <>
           <ProfileHeader user={user} />
+          <FollowButton userId={user.id} />
           <PetList ownerId={user.id} />
           <PostGrid
             filter={{ authorId: user.id }}
