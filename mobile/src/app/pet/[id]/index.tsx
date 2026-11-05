@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
 import { PetAdoptionButton } from '@/features/adoption/PetAdoptionButton';
+import { PetAdoptionHistory } from '@/features/adoption/PetAdoptionHistory';
 import { usePet } from '@/features/pets/hooks';
 import { PetProfile } from '@/features/pets/PetProfile';
 import { PostGrid } from '@/features/posts/PostGrid';
@@ -33,6 +34,7 @@ export default function PetScreen() {
               router.push({ pathname: '/user/[id]', params: { id: ownerId } })
             }
           />
+          <PetAdoptionHistory pet={pet} />
           <PetAdoptionButton pet={pet} isOwner={user?.id === pet.ownerId} />
           <PostGrid filter={{ petId: pet.id }} title={t('user.posts')} empty={t('user.noPosts')} />
         </>

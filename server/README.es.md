@@ -89,7 +89,7 @@ Abre el enlace en el navegador de la computadora para verificar la cuenta o rest
 
 ## Mascotas
 
-La colección `pets` guarda los perfiles de mascota (etapa 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (hasta 60), una fecha de nacimiento aproximada `birthDate` (no puede ser futura) y una `photo` (hasta 5 MB, con miniaturas). Cualquiera ve las mascotas; solo el dueño las crea, edita y borra, y no puede cambiar el dueño. Al eliminar una cuenta se borran sus mascotas.
+La colección `pets` guarda los perfiles de mascota (etapa 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (hasta 60), una fecha de nacimiento aproximada `birthDate` (no puede ser futura) y una `photo` (hasta 5 MB, con miniaturas). Cualquiera ve las mascotas; solo el dueño las crea, edita y borra, y no puede cambiar el dueño. Al eliminar una cuenta se borran sus mascotas. Una mascota adoptada en Pawly también tiene `previousOwner` y `adoptedAt`, que solo pone el servidor (ver [Cerrar una adopción](#cerrar-una-adopción)).
 
 ## Publicaciones
 
@@ -102,7 +102,7 @@ La colección `posts` guarda las publicaciones (etapa 2):
 | `media`  | Hasta 10 archivos: fotos (JPEG, PNG, WebP, HEIC) de hasta 10 MB y videos (MP4, MOV) de hasta 50 MB. Las fotos tienen miniaturas `300x300` y `1080x0`. |
 | `pets`   | Hasta 10 mascotas propias del autor. Al borrar una mascota se quita de las publicaciones.                                                             |
 
-Una publicación necesita texto o al menos un archivo. Cualquiera ve y lista publicaciones; solo el autor las edita y borra. Las reglas que la colección no puede expresar están en `pb_hooks/posts.pb.js` y `pb_hooks/lib/posts.js`; los errores por campo usan los códigos `post_empty`, `photo_too_large` y `pet_not_owned`. La duración de los videos (60 segundos) se limita en la app, porque el servidor no puede leer la duración sin herramientas extra.
+Una publicación necesita texto o al menos un archivo. Cualquiera ve y lista publicaciones; solo el autor las edita y borra. Las reglas que la colección no puede expresar están en `pb_hooks/posts.pb.js` y `pb_hooks/lib/posts.js`; los errores por campo usan los códigos `post_empty`, `photo_too_large` y `pet_not_owned` (solo las mascotas recién etiquetadas deben ser del autor, así una publicación conserva las que ya etiquetaba). La duración de los videos (60 segundos) se limita en la app, porque el servidor no puede leer la duración sin herramientas extra.
 
 ## Huellas
 
@@ -140,7 +140,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted` o `request_rejected`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, y aceptarla o rechazarla avisa al solicitante. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected` o `adopted`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, y cerrar la adopción felicita al adoptante. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 
@@ -165,7 +165,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 | `media`        | Hasta 10 fotos o videos, con los mismos límites y miniaturas que las publicaciones.     |
 | `status`       | `available` o `adopted`. Lo pone el servidor: una ficha nueva siempre está `available`. |
 
-Cualquiera las ve y las lista; solo quien publica las edita y las borra, y al editar no se puede cambiar la mascota ni el estado. Una mascota tiene a lo más una ficha `available`. Los textos se recortan. Las reglas están en `pb_hooks/adoptions.pb.js`; los errores de campo usan los códigos `pet_not_owned`, `pet_already_listed` y `photo_too_large`.
+Cualquiera las ve y las lista; solo quien publica las edita y las borra mientras están disponibles, y al editar no se puede cambiar la mascota, el estado ni los datos de la adopción (`adopter`, `adoptedAt`). Una mascota tiene a lo más una ficha `available`. Los textos se recortan. Las reglas están en `pb_hooks/adoptions.pb.js`; los errores de campo usan los códigos `pet_not_owned`, `pet_already_listed` y `photo_too_large`.
 
 ## Solicitudes de adopción
 
@@ -175,6 +175,16 @@ Cualquiera las ve y las lista; solo quien publica las edita y las borra, y al ed
 - Después solo cambia el estado, y solo mientras la ficha está disponible. El solicitante retira una solicitud `pending` o `accepted` (`withdrawn`, definitivo); quien publica acepta (`accepted`) o rechaza (`rejected`) cualquier solicitud que no se haya retirado. Lo demás falla con `invalid_status`.
 
 Aceptar una solicitud no traspasa la mascota: eso pasa cuando quien publica la marca como adoptada. Las solicitudes se borran con la ficha y con la cuenta del solicitante.
+
+## Cerrar una adopción
+
+`POST /api/pawly/adoptions/{id}/adopt` con `{ "request": "<id>" }` marca una ficha como adoptada por una persona cuya solicitud aceptó quien publica (`pb_hooks/adoptions.pb.js`). Solo quien publica puede hacerlo, y solo una vez; si no, falla con `adoption_closed`, `request_not_accepted` o `pet_not_owned`. En una sola transacción:
+
+- La ficha pasa a `adopted`, con el adoptante (`adopter`) y la fecha (`adoptedAt`). Quien publica ya no puede editar ni borrar una ficha adoptada: es parte de la historia de la mascota.
+- La mascota pasa al adoptante. Guarda quién la tenía antes (`previousOwner`) y cuándo fue adoptada (`adoptedAt`); solo el servidor pone estos dos campos.
+- Las demás solicitudes `pending` y `accepted` se rechazan, y sus solicitantes reciben una notificación `request_rejected`.
+
+El adoptante recibe una notificación `adopted`. Las publicaciones anteriores que etiquetan a la mascota conservan su autor y la etiqueta, y su autor todavía puede editarlas; desde entonces solo el nuevo dueño etiqueta a la mascota en publicaciones nuevas.
 
 ## Contadores
 

@@ -14,6 +14,7 @@ const TEXTS = {
     adoption_request: (u, _, pet) => `@${u} quiere adoptar a ${pet}.`,
     request_accepted: (u, _, pet) => `@${u} aceptó tu solicitud para adoptar a ${pet}.`,
     request_rejected: (u, _, pet) => `@${u} no aceptó tu solicitud para adoptar a ${pet}.`,
+    adopted: (_u, _, pet) => `¡Felicidades! Ahora ${pet} es parte de tu familia.`,
     sharedPost: 'Compartió una publicación',
   },
   en: {
@@ -24,6 +25,7 @@ const TEXTS = {
     adoption_request: (u, _, pet) => `@${u} wants to adopt ${pet}.`,
     request_accepted: (u, _, pet) => `@${u} accepted your request to adopt ${pet}.`,
     request_rejected: (u, _, pet) => `@${u} declined your request to adopt ${pet}.`,
+    adopted: (_u, _, pet) => `Congratulations! ${pet} is now part of your family.`,
     sharedPost: 'Shared a post',
   },
 };
@@ -41,6 +43,7 @@ const PREFERENCE = {
   adoption_request: 'adoption',
   request_accepted: 'adoption',
   request_rejected: 'adoption',
+  adopted: 'adoption',
 };
 
 /** Whether `userId` wants pushes of `type` (paw, comment, follow, repost, message, adoption…). */

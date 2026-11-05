@@ -39,7 +39,10 @@ function MyRequest({ adoption, request }: { adoption: Adoption; request: Adoptio
     (request.status === 'pending' || request.status === 'accepted');
   const text = {
     pending: t('adoptionRequests.pendingText', { username }),
-    accepted: t('adoptionRequests.acceptedText', { username, name }),
+    accepted:
+      adoption.adopterId === request.applicantId
+        ? t('adoptionRequests.adoptedText', { name })
+        : t('adoptionRequests.acceptedText', { username, name }),
     rejected: t('adoptionRequests.rejectedText', { username }),
     withdrawn: t('adoptionRequests.withdrawnText'),
   }[request.status];
@@ -64,7 +67,9 @@ function MyRequest({ adoption, request }: { adoption: Adoption; request: Adoptio
         })}
       </ThemedText>
       <ThemedText>{text}</ThemedText>
-      {request.status === 'accepted' ? <MessageButton userId={adoption.publisherId} /> : null}
+      {request.status === 'accepted' && adoption.status === 'available' ? (
+        <MessageButton userId={adoption.publisherId} />
+      ) : null}
       {canWithdraw ? (
         <Button
           variant="link"
@@ -94,17 +99,29 @@ export function RequestSection({ adoption }: { adoption: Adoption }) {
 
   if (isPublisher) {
     return (
-      <Button
-        icon="requests"
-        label={
-          pending > 0
-            ? t('adoptionRequests.viewPending', { count: pending })
-            : t('adoptionRequests.view')
-        }
-        onPress={() =>
-          router.push({ pathname: '/adoption/[id]/requests', params: { id: adoption.id } })
-        }
-      />
+      <View style={styles.actions}>
+        <Button
+          icon="requests"
+          label={
+            pending > 0
+              ? t('adoptionRequests.viewPending', { count: pending })
+              : t('adoptionRequests.view')
+          }
+          onPress={() =>
+            router.push({ pathname: '/adoption/[id]/requests', params: { id: adoption.id } })
+          }
+        />
+        {adoption.status === 'available' ? (
+          <Button
+            variant="secondary"
+            icon="adoption"
+            label={t('adoption.markAdopted')}
+            onPress={() =>
+              router.push({ pathname: '/adoption/[id]/complete', params: { id: adoption.id } })
+            }
+          />
+        ) : null}
+      </View>
     );
   }
   if (signedIn && isPending) return null;
@@ -124,6 +141,7 @@ export function RequestSection({ adoption }: { adoption: Adoption }) {
 }
 
 const styles = StyleSheet.create({
+  actions: { gap: spacing.sm },
   card: {
     gap: spacing.sm,
     padding: spacing.md,

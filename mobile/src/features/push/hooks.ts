@@ -132,11 +132,13 @@ export function useAskForPushOnce() {
   }, [status]);
 }
 
-/** Opens what a tapped push is about: the chat, the post, the profile or the adoption. */
+/** Opens what a tapped push is about: the chat, the post, a profile, a pet or the adoption. */
 export function usePushTaps() {
   const router = useRouter();
   const open = useEffectEvent((target: PushTarget) => {
-    if (target.type === 'adoption_request' && target.adoptionId) {
+    if (target.type === 'adopted' && target.petId) {
+      router.push({ pathname: '/pet/[id]', params: { id: target.petId } });
+    } else if (target.type === 'adoption_request' && target.adoptionId) {
       router.push({ pathname: '/adoption/[id]/requests', params: { id: target.adoptionId } });
     } else if (target.adoptionId) {
       router.push({ pathname: '/adoption/[id]', params: { id: target.adoptionId } });

@@ -42,6 +42,8 @@ const LUNA: petsApi.Pet = {
   breed: '',
   birthDate: '',
   photo: '',
+  previousOwnerId: '',
+  adoptedAt: '',
 };
 
 const POST: api.Post = {

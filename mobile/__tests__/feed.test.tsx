@@ -227,6 +227,8 @@ describe('UserScreen', () => {
         breed: '',
         birthDate: '',
         photo: '',
+        previousOwnerId: '',
+        adoptedAt: '',
       },
     ]);
     jest.mocked(api.listPosts).mockResolvedValue({ items: [post('9')], page: 1, hasMore: false });

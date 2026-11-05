@@ -15,7 +15,8 @@ export type NotificationType =
   | 'repost'
   | 'adoption_request'
   | 'request_accepted'
-  | 'request_rejected';
+  | 'request_rejected'
+  | 'adopted';
 
 /** Named so it does not clash with the browser's `Notification`. */
 export interface AppNotification {
@@ -48,6 +49,7 @@ const TYPES: readonly NotificationType[] = [
   'adoption_request',
   'request_accepted',
   'request_rejected',
+  'adopted',
 ];
 
 export function toNotification(record: RecordModel): AppNotification {

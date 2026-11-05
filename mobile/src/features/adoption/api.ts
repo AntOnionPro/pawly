@@ -43,6 +43,11 @@ export interface Adoption {
   /** Stored file names, in order. */
   media: string[];
   status: AdoptionStatus;
+  /** Who adopted the pet and when, once the listing is adopted ('' before). */
+  adopterId: string;
+  /** Present when the adopter was expanded. */
+  adopter?: User;
+  adoptedAt: string;
   created: string;
 }
 
@@ -77,14 +82,18 @@ export interface AdoptionPage {
 }
 
 export const ADOPTIONS_PER_PAGE = 12;
-const EXPAND = 'pet,publisher';
+const EXPAND = 'pet,publisher,adopter';
 
 function oneOf<T extends string>(values: readonly T[], value: unknown, fallback: T): T {
   return values.includes(value as T) ? (value as T) : fallback;
 }
 
 export function toAdoption(record: RecordModel): Adoption {
-  const expand = (record.expand ?? {}) as { pet?: RecordModel; publisher?: RecordModel };
+  const expand = (record.expand ?? {}) as {
+    pet?: RecordModel;
+    publisher?: RecordModel;
+    adopter?: RecordModel;
+  };
   return {
     id: record.id,
     collectionId: record.collectionId,
@@ -102,6 +111,9 @@ export function toAdoption(record: RecordModel): Adoption {
     description: String(record.description ?? ''),
     media: Array.isArray(record.media) ? record.media.map(String) : [],
     status: record.status === 'adopted' ? 'adopted' : 'available',
+    adopterId: String(record.adopter ?? ''),
+    adopter: toUser(expand.adopter) ?? undefined,
+    adoptedAt: String(record.adoptedAt ?? ''),
     created: String(record.created ?? ''),
   };
 }
@@ -143,6 +155,38 @@ export async function getPetAdoption(client: PocketBase, petId: string): Promise
   });
   const [record] = result.items;
   return record ? toAdoption(record) : null;
+}
+
+/** The listing through which a pet was last adopted, or `null`. */
+export async function getAdoptedListing(
+  client: PocketBase,
+  petId: string,
+): Promise<Adoption | null> {
+  const result = await client.collection(ADOPTIONS).getList(1, 1, {
+    filter: client.filter("pet = {:pet} && status = 'adopted'", { pet: petId }),
+    sort: '-adoptedAt',
+    expand: EXPAND,
+    skipTotal: true,
+  });
+  const [record] = result.items;
+  return record ? toAdoption(record) : null;
+}
+
+/**
+ * Marks a listing as adopted by the applicant of an accepted request: the pet moves to them
+ * and the other open requests are rejected (server/pb_hooks/adoptions.pb.js).
+ */
+export async function completeAdoption(
+  client: PocketBase,
+  adoptionId: string,
+  requestId: string,
+): Promise<Adoption> {
+  return toAdoption(
+    await client.send(`/api/pawly/adoptions/${encodeURIComponent(adoptionId)}/adopt`, {
+      method: 'POST',
+      body: { request: requestId },
+    }),
+  );
 }
 
 async function toFormData(values: AdoptionValues, publisherId?: string): Promise<FormData> {

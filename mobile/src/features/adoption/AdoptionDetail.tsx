@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 
-import { avatarUrl, useAuth } from '@/auth/AuthProvider';
+import { avatarUrl, useAuth, type User } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
@@ -18,7 +18,7 @@ import { useAgeText } from './useAgeText';
 interface AdoptionDetailProps {
   adoption: Adoption;
   onPressPet: (petId: string) => void;
-  onPressPublisher: (userId: string) => void;
+  onPressUser: (userId: string) => void;
   /** Shown only to the publisher. */
   onEdit?: () => void;
   /** Shown under the name and zone: asking to adopt, or the requests (publisher). */
@@ -53,11 +53,28 @@ function Section({ title, text }: { title: string; text: string }) {
   );
 }
 
+/** Row with a user's photo and a sentence about them; opens their profile. */
+function UserLink({ user, label, onPress }: { user: User; label: string; onPress: () => void }) {
+  const { client } = useAuth();
+  const colors = useThemeColors();
+  return (
+    <Pressable
+      accessibilityRole="link"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={({ pressed }) => [styles.publisher, pressed && styles.pressed]}>
+      <Avatar uri={avatarUrl(client, user, '100x100')} username={user.username} size={40} />
+      <ThemedText style={styles.publisherText}>{label}</ThemedText>
+      <Icon name="chevron" size={16} color={colors.textSecondary} />
+    </Pressable>
+  );
+}
+
 /** Full adoption listing: photos and videos, the pet's data, requirements and publisher. */
 export function AdoptionDetail({
   adoption,
   onPressPet,
-  onPressPublisher,
+  onPressUser,
   onEdit,
   action,
 }: AdoptionDetailProps) {
@@ -121,21 +138,18 @@ export function AdoptionDetail({
       <Section title={t('adoption.requirementsTitle')} text={adoption.requirements} />
 
       {publisher ? (
-        <Pressable
-          accessibilityRole="link"
-          accessibilityLabel={t('adoption.publishedBy', { username: publisher.username })}
-          onPress={() => onPressPublisher(publisher.id)}
-          style={({ pressed }) => [styles.publisher, pressed && styles.pressed]}>
-          <Avatar
-            uri={avatarUrl(client, publisher, '100x100')}
-            username={publisher.username}
-            size={40}
-          />
-          <ThemedText style={styles.publisherText}>
-            {t('adoption.publishedBy', { username: publisher.username })}
-          </ThemedText>
-          <Icon name="chevron" size={16} color={colors.textSecondary} />
-        </Pressable>
+        <UserLink
+          user={publisher}
+          label={t('adoption.publishedBy', { username: publisher.username })}
+          onPress={() => onPressUser(publisher.id)}
+        />
+      ) : null}
+      {adoption.adopter ? (
+        <UserLink
+          user={adoption.adopter}
+          label={t('adoption.adoptedBy', { username: adoption.adopter.username })}
+          onPress={() => adoption.adopter && onPressUser(adoption.adopter.id)}
+        />
       ) : null}
 
       {pet ? (

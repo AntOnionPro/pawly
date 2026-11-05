@@ -51,6 +51,8 @@ const FIRULAIS: petsApi.Pet = {
   breed: 'Xoloitzcuintle',
   birthDate: `${new Date().getFullYear() - 2}-01-01`,
   photo: '',
+  previousOwnerId: '',
+  adoptedAt: '',
 };
 
 function adoption(id: string, overrides: Partial<api.Adoption> = {}): api.Adoption {
@@ -71,6 +73,8 @@ function adoption(id: string, overrides: Partial<api.Adoption> = {}): api.Adopti
     description: 'Le encanta jugar',
     media: ['foto_a.jpg'],
     status: 'available',
+    adopterId: '',
+    adoptedAt: '',
     created: new Date().toISOString(),
     ...overrides,
   };
@@ -125,7 +129,7 @@ describe('adoption API helpers', () => {
     expect(getList).toHaveBeenCalledWith(2, 12, {
       filter: 'status = \'available\' && pet.species = "cat" && sex = "female"',
       sort: '-created,-id',
-      expand: 'pet,publisher',
+      expand: 'pet,publisher,adopter',
       skipTotal: true,
     });
   });
@@ -220,12 +224,12 @@ describe('Adoption tab', () => {
 describe('listing page', () => {
   it('shows the data, requirements and publisher, and links to the pet', async () => {
     const onPressPet = jest.fn();
-    const onPressPublisher = jest.fn();
+    const onPressUser = jest.fn();
     await renderWith(
       <AdoptionDetail
         adoption={adoption('a1')}
         onPressPet={onPressPet}
-        onPressPublisher={onPressPublisher}
+        onPressUser={onPressUser}
       />,
       authValue(),
     );
@@ -239,7 +243,7 @@ describe('listing page', () => {
     expect(screen.queryByRole('button', { name: 'Editar ficha' })).toBeNull();
 
     await fireEvent.press(screen.getByRole('link', { name: 'Publicada por @sol' }));
-    expect(onPressPublisher).toHaveBeenCalledWith('u2');
+    expect(onPressUser).toHaveBeenCalledWith('u2');
     await fireEvent.press(screen.getByRole('button', { name: 'Ver el perfil de Firulais' }));
     expect(onPressPet).toHaveBeenCalledWith('p1');
   });

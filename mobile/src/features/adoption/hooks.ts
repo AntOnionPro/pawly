@@ -1,10 +1,14 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useAuth } from '@/auth/AuthProvider';
+import { petKeys } from '@/features/pets/hooks';
+import { postKeys } from '@/features/posts/hooks';
 
 import {
+  completeAdoption,
   createAdoption,
   deleteAdoption,
+  getAdoptedListing,
   getAdoption,
   getPetAdoption,
   listAdoptions,
@@ -19,6 +23,7 @@ export const adoptionKeys = {
   list: (filter: AdoptionFilter) => ['adoptions', 'list', filter] as const,
   detail: (id: string) => ['adoptions', 'detail', id] as const,
   byPet: (petId: string) => ['adoptions', 'pet', petId] as const,
+  adoptedPet: (petId: string) => ['adoptions', 'adopted', petId] as const,
 };
 
 /** Pages of available listings, newest first. */
@@ -68,5 +73,33 @@ export function useDeleteAdoption() {
   return useMutation({
     mutationFn: (id: string) => deleteAdoption(client, id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: adoptionKeys.all }),
+  });
+}
+
+/** The listing through which a pet was last adopted (`null` if none). */
+export function useAdoptedListing(petId: string | undefined, enabled: boolean) {
+  const { client } = useAuth();
+  return useQuery({
+    queryKey: adoptionKeys.adoptedPet(petId ?? ''),
+    queryFn: () => getAdoptedListing(client, petId ?? ''),
+    enabled: enabled && Boolean(petId),
+  });
+}
+
+/** Marks a listing as adopted; the pet changes owner, so pets, posts and requests refresh. */
+export function useCompleteAdoption() {
+  const { client } = useAuth();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ adoptionId, requestId }: { adoptionId: string; requestId: string }) =>
+      completeAdoption(client, adoptionId, requestId),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: adoptionKeys.all }),
+        queryClient.invalidateQueries({ queryKey: ['adoptionRequests'] }),
+        queryClient.invalidateQueries({ queryKey: petKeys.all }),
+        queryClient.invalidateQueries({ queryKey: postKeys.all }),
+      ]);
+    },
   });
 }

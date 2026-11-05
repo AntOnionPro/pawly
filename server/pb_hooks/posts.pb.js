@@ -3,7 +3,7 @@
 // Post rules the collection settings cannot express:
 // - a post needs text or at least one photo or video;
 // - photos are limited to 10 MB (videos keep the 50 MB field limit);
-// - only the author's own pets can be tagged;
+// - only the author's own pets can be tagged (pets tagged before stay, even after an adoption);
 // - a repost points to the original post (reposting a repost reposts its original), keeps
 //   pointing to it when edited, and has no files or pets.
 function validatePost(e) {
@@ -28,7 +28,11 @@ function validatePost(e) {
     name: file.originalName,
     size: file.size,
   }));
-  const petOwners = record.getStringSlice('pets').map((id) => {
+  // Only newly tagged pets must be the author's: a post keeps the pets it already tagged,
+  // even after one of them was adopted by someone else.
+  const tagged = record.isNew() ? [] : record.original().getStringSlice('pets');
+  const newPets = record.getStringSlice('pets').filter((id) => !tagged.includes(id));
+  const petOwners = newPets.map((id) => {
     try {
       return e.app.findRecordById('pets', id).getString('owner');
     } catch {

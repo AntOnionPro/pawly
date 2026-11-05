@@ -13,3 +13,22 @@ function validatePet(e) {
 
 onRecordCreateRequest(validatePet, 'pets');
 onRecordUpdateRequest(validatePet, 'pets');
+
+// Only the server records adoptions (pb_hooks/adoptions.pb.js): owners cannot set or change
+// who had the pet before or when it was adopted.
+onRecordCreateRequest((e) => {
+  if (!e.hasSuperuserAuth()) {
+    e.record.set('previousOwner', '');
+    e.record.set('adoptedAt', '');
+  }
+  e.next();
+}, 'pets');
+
+onRecordUpdateRequest((e) => {
+  if (!e.hasSuperuserAuth()) {
+    const original = e.record.original();
+    e.record.set('previousOwner', original.get('previousOwner'));
+    e.record.set('adoptedAt', original.get('adoptedAt'));
+  }
+  e.next();
+}, 'pets');

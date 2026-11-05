@@ -39,6 +39,8 @@ const MICHI = {
   breed: 'Siamés',
   birthDate: '',
   photo: '',
+  previousOwnerId: '',
+  adoptedAt: '',
 };
 
 function post(id: string, text: string): postsApi.Post {
