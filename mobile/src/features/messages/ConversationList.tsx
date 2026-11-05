@@ -23,9 +23,9 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
   const date = useRelativeDate(conversation.lastMessageAt);
   const other = conversation.other;
   const mine = conversation.lastSenderId === user?.id;
-  const preview = mine
-    ? t('messages.you', { text: conversation.lastMessageText })
-    : conversation.lastMessageText;
+  // A message that only shares a post has no text.
+  const text = conversation.lastMessageText || t('messages.sharedPost');
+  const preview = mine ? t('messages.you', { text }) : text;
   const label = [
     other ? `@${other.username}` : '',
     conversation.unread ? t('messages.unreadMark') : '',

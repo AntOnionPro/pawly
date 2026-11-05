@@ -130,7 +130,7 @@ The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the block
 
 ## Direct messages
 
-`conversations` holds one conversation per pair of users (stage 4), stored in order (`userA` < `userB`). Only its two participants see it. The server keeps a preview of the last message (`lastMessageText`, `lastMessageAt`, `lastSender`) and a "read up to" date for each participant (`readA`, `readB`): a participant marks it as read with an empty update, and no other field can change. `messages` holds the messages: 1 to 1000 characters, only the participants read and write them, and nobody writes across a block (`pb_hooks/messages.pb.js`). Both are deleted with the account. Reports can also be about a `message`.
+`conversations` holds one conversation per pair of users (stage 4), stored in order (`userA` < `userB`). Only its two participants see it. The server keeps a preview of the last message (`lastMessageText`, `lastMessageAt`, `lastSender`) and a "read up to" date for each participant (`readA`, `readB`): a participant marks it as read with an empty update, and no other field can change. `messages` holds the messages: up to 1000 characters and optionally a shared `post` (text or a post is required). Only the participants read and write them, and nobody writes across a block (`pb_hooks/messages.pb.js`). If a shared post is deleted, `post` becomes empty and `hasPost` (set by the server) stays true. Both are deleted with the account. Reports can also be about a `message`.
 
 The app counts unread conversations with this filter:
 

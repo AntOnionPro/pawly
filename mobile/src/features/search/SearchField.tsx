@@ -5,13 +5,19 @@ import { Icon } from '@/components/Icon';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing, typography } from '@/theme/typography';
 
-/** Search box with a magnifying glass; gets the keyboard as soon as the screen opens. */
+/** Search box with a magnifying glass; by default it gets the keyboard when the screen opens. */
 export function SearchField({
   value,
   onChangeText,
+  label,
+  placeholder,
+  autoFocus = true,
 }: {
   value: string;
   onChangeText: (text: string) => void;
+  label?: string;
+  placeholder?: string;
+  autoFocus?: boolean;
 }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -19,13 +25,13 @@ export function SearchField({
     <View style={[styles.box, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Icon name="search" size={20} color={colors.textSecondary} />
       <TextInput
-        accessibilityLabel={t('search.title')}
-        placeholder={t('search.placeholder')}
+        accessibilityLabel={label ?? t('search.title')}
+        placeholder={placeholder ?? t('search.placeholder')}
         placeholderTextColor={colors.textSecondary}
         selectionColor={colors.accent}
         value={value}
         onChangeText={onChangeText}
-        autoFocus
+        autoFocus={autoFocus}
         autoCapitalize="none"
         autoCorrect={false}
         returnKeyType="search"

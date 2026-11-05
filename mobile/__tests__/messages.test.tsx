@@ -80,7 +80,14 @@ const CONVERSATION: api.Conversation = {
 };
 
 function message(id: string, senderId: string, text: string): api.Message {
-  return { id, conversationId: 'c1', senderId, text, created: '2026-11-05 15:30:00.000Z' };
+  return {
+    id,
+    conversationId: 'c1',
+    senderId,
+    text,
+    created: '2026-11-05 15:30:00.000Z',
+    hasPost: false,
+  };
 }
 
 /** Fake client whose realtime subscriptions can be triggered from the test. */
@@ -226,7 +233,10 @@ describe('messages API helpers', () => {
     const update = jest.fn().mockResolvedValue({});
     const client = fakeClient(jest.fn(), { create, update });
     await actual.sendMessage(client, 'u1', 'c1', '  Hola ');
-    expect(create).toHaveBeenCalledWith({ conversation: 'c1', sender: 'u1', text: 'Hola' });
+    expect(create).toHaveBeenCalledWith(
+      { conversation: 'c1', sender: 'u1', text: 'Hola', post: '' },
+      { expand: 'post,post.author' },
+    );
     await actual.markRead(client, 'c1');
     expect(update).toHaveBeenCalledWith('c1', {});
   });
