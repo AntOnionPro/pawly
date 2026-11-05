@@ -19,7 +19,15 @@ export type ErrorKey =
   | 'errors.invalidCredentials'
   | 'errors.unverified'
   | 'errors.network'
-  | 'errors.generic';
+  | 'errors.generic'
+  | 'errors.postEmpty'
+  | 'errors.photoTooLarge'
+  | 'errors.videoTooLarge'
+  | 'errors.videoTooLong'
+  | 'errors.tooManyFiles'
+  | 'errors.fileType'
+  | 'errors.fileTooLarge'
+  | 'errors.petNotOwned';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
@@ -60,6 +68,18 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.tooYoung';
     case 'terms_required':
       return 'errors.termsRequired';
+    case 'post_empty':
+      return 'errors.postEmpty';
+    case 'photo_too_large':
+      return 'errors.photoTooLarge';
+    case 'pet_not_owned':
+      return 'errors.petNotOwned';
+    case 'validation_too_many_files':
+      return 'errors.tooManyFiles';
+    case 'validation_invalid_mime_type':
+      return 'errors.fileType';
+    case 'validation_file_size_limit':
+      return 'errors.fileTooLarge';
     default:
       return 'errors.invalid';
   }

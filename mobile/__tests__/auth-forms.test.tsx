@@ -8,7 +8,7 @@ import { PREFERENCES_KEY } from '@/preferences/storage';
 
 import { authValue, renderWith, serverError } from '../test-utils/render';
 
-jest.mock('@/components/DateField', () => require('../test-utils/mocks/DateField'));
+jest.mock('@/components/DateField', () => jest.requireActual('../test-utils/mocks/DateField'));
 
 jest.mock('expo-localization', () => ({
   getLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],

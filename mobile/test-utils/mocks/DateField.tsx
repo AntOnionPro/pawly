@@ -1,5 +1,5 @@
 // The native date picker cannot be driven in tests: a text field stands in for it.
-// Use with: jest.mock('@/components/DateField', () => require('../test-utils/mocks/DateField'));
+// Use with: jest.mock('@/components/DateField', () => jest.requireActual('../test-utils/mocks/DateField'));
 import { Text, TextInput, View } from 'react-native';
 
 import type { DateFieldProps } from '@/components/DateField';

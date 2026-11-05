@@ -12,7 +12,7 @@ import { confirm } from '@/utils/confirm';
 
 import { renderWith, serverError, signedIn } from '../test-utils/render';
 
-jest.mock('@/components/DateField', () => require('../test-utils/mocks/DateField'));
+jest.mock('@/components/DateField', () => jest.requireActual('../test-utils/mocks/DateField'));
 jest.mock('expo-localization', () => ({
   getLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],
   useLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],
