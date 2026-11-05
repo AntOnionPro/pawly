@@ -39,10 +39,10 @@ bin/pocketbase superuser upsert tu@ejemplo.com 'una-contraseña-larga' --dir pb_
 
 ## Scripts
 
-| Comando            | Qué hace                                                                       |
-| ------------------ | ------------------------------------------------------------------------------ |
-| `npm run download` | Descarga en `bin/` la versión fijada de PocketBase.                            |
-| `npm run dev`      | Arranca PocketBase para desarrollo.                                            |
+| Comando            | Qué hace                                                                         |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `npm run download` | Descarga en `bin/` la versión fijada de PocketBase.                              |
+| `npm run dev`      | Arranca PocketBase para desarrollo.                                              |
 | `npm test`         | Arranca PocketBase con una base de datos temporal y corre las pruebas (`test/`). |
 
 ## Estructura
@@ -57,6 +57,35 @@ server/
 ├── bin/                  Ejecutable de PocketBase (no va en git)
 └── pb_data/              Base de datos y archivos locales (no van en git)
 ```
+
+## Cuentas
+
+La colección `users` guarda las cuentas (etapa 1):
+
+| Campo             | Visible para   | Notas                                                                           |
+| ----------------- | -------------- | ------------------------------------------------------------------------------- |
+| `username`        | Todos          | 3–30 caracteres: minúsculas, números, `.` y `_`. Único sin importar mayúsculas. |
+| `bio`             | Todos          | Hasta 150 caracteres.                                                           |
+| `avatar`          | Todos          | JPEG, PNG, WebP o HEIC, hasta 5 MB, con miniaturas de 100×100 y 400×400.        |
+| `email`           | Solo el dueño  |                                                                                 |
+| `birthdate`       | Nadie (oculto) | Se guarda al registrarse y no se puede cambiar.                                 |
+| `termsAcceptedAt` | Nadie (oculto) | Lo guarda el servidor al registrarse.                                           |
+
+Reglas aplicadas en `pb_hooks/accounts.pb.js`:
+
+- **Registro:** se envía `username`, `email`, `password`, `passwordConfirm`, `dateOfBirth` y `acceptTerms: true`. La fecha de nacimiento va como `dateOfBirth` porque PocketBase quita los campos ocultos de las peticiones de usuarios; el hook la valida (13 años o más) y la guarda en `birthdate`. Errores por campo: `dateOfBirth` (`birthdate_required`, `birthdate_invalid`, `too_young`) y `acceptTerms` (`terms_required`).
+- **Verificación:** el correo se envía justo después del registro. Solo las cuentas verificadas inician sesión: una cuenta sin verificar recibe **403**, una contraseña incorrecta recibe **400**.
+- **Perfiles:** cualquiera puede ver uno; para listarlos hace falta sesión; cada usuario edita y borra solo su propia cuenta.
+
+### Correos durante el desarrollo
+
+Sin SMTP configurado, los correos no se envían: se muestran en la consola del servidor con su enlace, por ejemplo:
+
+```text
+[pawly-mail] to=luna@example.com subject="Verifica tu correo de Pawly / Verify your Pawly email" link=http://localhost:8090/_/#/auth/confirm-verification/…
+```
+
+Abre el enlace en el navegador de la computadora para verificar la cuenta o restablecer la contraseña. El correo real (SMTP) se configura en la etapa 8.
 
 ## Cómo cambiar la base de datos
 

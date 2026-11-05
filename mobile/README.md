@@ -42,6 +42,24 @@ If the iPhone cannot reach the computer (firewall or a network that isolates dev
 - Allow the port with `sudo ufw allow 8081/tcp` if you use `ufw`.
 - Or start with `npx expo start --tunnel`, which works across networks.
 
+## Connect to the server
+
+Accounts need the server from `server/` running on the same computer. Start it so the phones can reach it:
+
+```bash
+cd server && PB_HTTP=0.0.0.0:8090 npm run dev
+```
+
+The app finds it on its own: it uses the same IP as Expo, on port 8090. To use another server, set `EXPO_PUBLIC_API_URL` (for example in `mobile/.env.local`):
+
+```bash
+EXPO_PUBLIC_API_URL=http://192.168.1.20:8090
+```
+
+During development, verification and password emails are printed in the server console; open the link on the computer (see `server/README.md`).
+
+If you use `ufw`, also allow the server port with `sudo ufw allow 8090/tcp`.
+
 ## Scripts
 
 | Command                | What it does                                           |
@@ -65,12 +83,16 @@ mobile/
 │   ├── app/            Screens and navigation (Expo Router: one file per route)
 │   │   ├── (tabs)/     Bottom bar: Home, Adoption, Post, Rescue, Profile
 │   │   └── settings.tsx
+│   ├── api/            PocketBase client, server URL and error messages
+│   ├── auth/           Session (AuthProvider) and form validation
 │   ├── components/     Reusable UI (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Screen content grouped by feature
+│   ├── features/       Screen content grouped by feature (auth, profile, account, legal, settings)
 │   ├── i18n/           Translations (Spanish and English)
 │   ├── preferences/    Theme and language chosen by the user, saved on the phone
-│   └── theme/          Colors, icons, typography and contrast helpers
+│   ├── theme/          Colors, icons, typography and contrast helpers
+│   └── utils/          Small helpers (native or browser confirmation dialog)
 ├── __tests__/          Jest tests
+├── test-utils/         Shared test helpers (providers and a fake session)
 └── assets/             Icons and splash screen (placeholders until there is a logo)
 ```
 

@@ -1,12 +1,26 @@
 import { useTranslation } from 'react-i18next';
 
+import { Group } from '@/components/Group';
+import { NavRow } from '@/components/NavRow';
 import { OptionGroup, type Option } from '@/components/OptionGroup';
 import type { LanguagePreference } from '@/i18n';
 import { usePreferences } from '@/preferences/PreferencesProvider';
 import type { ThemePreference } from '@/preferences/storage';
 
-/** Theme and language choices. Rendered by the `/settings` route. */
-export function SettingsContent() {
+export interface AccountActions {
+  onChangePassword: () => void;
+  onSignOut: () => void;
+  onDeleteAccount: () => void;
+}
+
+interface SettingsContentProps {
+  /** Shown only with a session. */
+  account?: AccountActions;
+  onOpenLegal?: (doc: 'terms' | 'privacy') => void;
+}
+
+/** Account, theme, language and legal documents. Rendered by the `/settings` route. */
+export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) {
   const { t } = useTranslation();
   const { theme, language, setTheme, setLanguage } = usePreferences();
 
@@ -25,6 +39,27 @@ export function SettingsContent() {
 
   return (
     <>
+      {account ? (
+        <Group title={t('settings.account')}>
+          <NavRow
+            icon="lock"
+            label={t('account.password.title')}
+            onPress={account.onChangePassword}
+          />
+          <NavRow
+            icon="signOut"
+            label={t('account.signOut.label')}
+            onPress={account.onSignOut}
+            divider
+          />
+          <NavRow
+            icon="delete"
+            label={t('account.delete.label')}
+            onPress={account.onDeleteAccount}
+            divider
+          />
+        </Group>
+      ) : null}
       <OptionGroup
         title={t('settings.theme.title')}
         options={themeOptions}
@@ -37,6 +72,21 @@ export function SettingsContent() {
         selected={language}
         onSelect={setLanguage}
       />
+      {onOpenLegal ? (
+        <Group title={t('settings.legal')}>
+          <NavRow
+            icon="document"
+            label={t('legal.terms.title')}
+            onPress={() => onOpenLegal('terms')}
+          />
+          <NavRow
+            icon="document"
+            label={t('legal.privacy.title')}
+            onPress={() => onOpenLegal('privacy')}
+            divider
+          />
+        </Group>
+      ) : null}
     </>
   );
 }

@@ -10,6 +10,9 @@ export const typography = {
   body: { fontSize: 16, lineHeight: 22, fontWeight: '400' },
   label: { fontSize: 13, lineHeight: 18, fontWeight: '600', textTransform: 'uppercase' },
   caption: { fontSize: 13, lineHeight: 18, fontWeight: '400' },
+  // 19 pt bold counts as large text (WCAG), so white on the pink accent (4.23:1) passes AA.
+  button: { fontSize: 19, lineHeight: 24, fontWeight: '700' },
+  link: { fontSize: 16, lineHeight: 22, fontWeight: '600' },
 } as const satisfies Record<string, TextStyle>;
 
 export type TypographyVariant = keyof typeof typography;

@@ -42,6 +42,24 @@ Si el iPhone no logra conectarse a la computadora (firewall o una red que aísla
 - Abre el puerto con `sudo ufw allow 8081/tcp` si usas `ufw`.
 - O arranca con `npx expo start --tunnel`, que funciona entre redes distintas.
 
+## Conectar con el servidor
+
+Las cuentas necesitan el servidor de `server/` corriendo en la misma computadora. Arráncalo así para que los celulares lleguen a él:
+
+```bash
+cd server && PB_HTTP=0.0.0.0:8090 npm run dev
+```
+
+La app lo encuentra sola: usa la misma IP que Expo, en el puerto 8090. Para usar otro servidor, define `EXPO_PUBLIC_API_URL` (por ejemplo en `mobile/.env.local`):
+
+```bash
+EXPO_PUBLIC_API_URL=http://192.168.1.20:8090
+```
+
+Durante el desarrollo, los correos de verificación y de contraseña aparecen en la consola del servidor; abre el enlace en la computadora (ver `server/README.es.md`).
+
+Si usas `ufw`, abre también el puerto del servidor con `sudo ufw allow 8090/tcp`.
+
 ## Scripts
 
 | Comando                | Qué hace                                                 |
@@ -65,12 +83,16 @@ mobile/
 │   ├── app/            Pantallas y navegación (Expo Router: un archivo por ruta)
 │   │   ├── (tabs)/     Barra inferior: Inicio, Adopción, Publicar, Rescate, Perfil
 │   │   └── settings.tsx
+│   ├── api/            Cliente de PocketBase, URL del servidor y mensajes de error
+│   ├── auth/           Sesión (AuthProvider) y validación de formularios
 │   ├── components/     Interfaz reutilizable (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Contenido de pantallas agrupado por funcionalidad
+│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
-│   └── theme/          Colores, íconos, tipografía y utilidades de contraste
+│   ├── theme/          Colores, íconos, tipografía y utilidades de contraste
+│   └── utils/          Utilidades pequeñas (diálogo de confirmación nativo o del navegador)
 ├── __tests__/          Pruebas de Jest
+├── test-utils/         Utilidades de prueba compartidas (providers y sesión simulada)
 └── assets/             Íconos y pantalla de carga (provisionales hasta tener logo)
 ```
 

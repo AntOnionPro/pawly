@@ -20,14 +20,14 @@ Work branch examples: `feat/12-dark-mode`, `fix/31-crash-on-image-upload`, `docs
 4. **Pull request to `development`.** Fill in the template and reference the issue under *Notas Adicionales* (for example `Closes #12`).
 5. **Documentation.** Update the *Project status* section of `README.md` and `README.es.md` in the same PR. All documentation is kept in English and Spanish.
 6. **Review and merge.** Merging requires the 4 checks in green and every conversation resolved. Approvals are not required (the repository has a single maintainer and GitHub does not allow approving your own PR); whoever merges reviews the PR first.
-7. **Release.** To deploy, open a `development → main` PR (merge commit, no squash, so both branches do not diverge).
+7. **Release.** To deploy, open a `development → main` PR (merge commit, no squash, so both branches do not diverge). Unlike `development`, the `main` rule does not require the branch to be up to date: each release leaves a merge commit only on `main`, and updating `development` would be a direct push, which its own rule forbids.
 
 ## Required CI checks
 
 | Check | Workflow | What it validates |
 | --- | --- | --- |
-| `Lint` | `.github/workflows/ci.yml` | YAML syntax (yamllint), workflows (actionlint), and that templates only use labels defined in `.github/labels.yml`. |
-| `Tests` | `.github/workflows/ci.yml` | Runs the project's test suite (`npm test` or `pytest`, depending on the detected stack). |
+| `Lint` | `.github/workflows/ci.yml` | YAML syntax (yamllint), workflows (actionlint), labels used by the templates, server scripts (ShellCheck), and the app's ESLint, Prettier and TypeScript. |
+| `Tests` | `.github/workflows/ci.yml` | Server tests (PocketBase), app tests (Jest) and an app build for Android, iOS and web. |
 | `Rama destino` | `.github/workflows/pr-checks.yml` | PRs to `main` only come from `development`. |
 | `Issue vinculado` | `.github/workflows/pr-checks.yml` | PRs to `development` reference an issue (`#N`). |
 

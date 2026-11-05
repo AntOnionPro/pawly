@@ -8,13 +8,13 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 0, Cimientos (terminada, falta la release `v0.1.0` a `main`).** La etapa 1 empieza cuando esa release esté mergeada. El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 1, Cuentas (terminada, falta la release `v0.2.0` a `main`).** La etapa 2 empieza cuando esa release esté mergeada. Última release: `v0.1.0` (etapa 0). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
 | – | Repositorio, CI, flujo de trabajo y alcance funcional | Hecho |
 | 0 | Cimientos | Hecho |
-| 1 | Cuentas | Sin empezar |
+| 1 | Cuentas | Hecho |
 | 2 | Mascotas y publicaciones | Sin empezar |
 | 3 | Interacción social | Sin empezar |
 | 4 | Mensajes y notificaciones | Sin empezar |
@@ -26,7 +26,7 @@ Etapa actual: **etapa 0, Cimientos (terminada, falta la release `v0.1.0` a `main
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Entregado en la etapa 0: plan y colores ([#5](https://github.com/AntOnionPro/pawly/issues/5)), esqueleto de la app ([#6](https://github.com/AntOnionPro/pawly/issues/6)) y esqueleto del servidor ([#7](https://github.com/AntOnionPro/pawly/issues/7)).
+Entregado en la etapa 1: cuentas en el servidor ([#12](https://github.com/AntOnionPro/pawly/issues/12)), sesión y registro en la app ([#13](https://github.com/AntOnionPro/pawly/issues/13)) y perfil y cuenta ([#14](https://github.com/AntOnionPro/pawly/issues/14)).
 
 ## Funcionalidades
 
@@ -220,6 +220,7 @@ Costos externos:
 - Logo e ícono de la app (la app usa los provisionales de Expo).
 - Identificadores de la app para las tiendas (bundle ID de iOS y nombre de paquete de Android).
 - Nombre de dominio.
+- Texto en español del permiso de fotos en iOS (la build usa inglés hasta la etapa 9).
 - Proveedor de mapas.
 - Proveedor de email (SMTP).
 - Límites de video (tamaño y duración).
