@@ -86,11 +86,11 @@ mobile/
 │   ├── api/            Cliente de PocketBase, URL del servidor, mensajes de error y caché de React Query
 │   ├── auth/           Sesión (AuthProvider) y validación de formularios
 │   ├── components/     Interfaz reutilizable (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, legal, settings)
+│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
 │   ├── theme/          Colores, íconos, tipografía y utilidades de contraste
-│   └── utils/          Utilidades pequeñas (diálogo de confirmación nativo o del navegador)
+│   └── utils/          Utilidades pequeñas (diálogo de confirmación, selector de fotos, subida de archivos)
 ├── __tests__/          Pruebas de Jest
 ├── test-utils/         Utilidades de prueba compartidas (providers y sesión simulada)
 └── assets/             Íconos y pantalla de carga (provisionales hasta tener logo)
@@ -103,5 +103,6 @@ mobile/
 - **Íconos:** solo con `Icon` y `src/theme/icons.ts` (SF Symbols en iOS, Material Symbols en Android y web). Sin emojis en la interfaz.
 - **Datos del servidor:** se leen y cambian con hooks de React Query por funcionalidad (por ejemplo `src/features/pets/hooks.ts`), así las pantallas comparten la caché y se actualizan después de cada cambio.
 - **Traducciones:** todo texto va en `src/i18n/locales/es.ts` y `en.ts`. TypeScript falla si falta una clave en cualquiera de los dos idiomas.
+- **Subidas:** agrega los archivos elegidos a un formulario con `appendFile` (`src/utils/upload.ts`). En iOS y Android sube `{ uri, name, type }` y en la web un `File` real.
 - **Módulos nativos:** la etapa 0 solo usa módulos incluidos en Expo Go. Una librería con código nativo propio necesita una build de desarrollo.
 - **Versión de Expo:** la app usa Expo SDK 58. Antes de usar una API de Expo, revisa la documentación de esa versión (ver `AGENTS.md`).

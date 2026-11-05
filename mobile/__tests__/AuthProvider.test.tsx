@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { render, screen } from '@testing-library/react-native';
+import { useEffect } from 'react';
 import { Text } from 'react-native';
 
 import { AUTH_STORAGE_KEY, createClient } from '@/api/client';
@@ -98,8 +99,12 @@ describe('AuthProvider', () => {
   describe('account actions', () => {
     let auth: AuthContextValue;
 
-    function Capture() {
-      auth = useAuth();
+    // Hands the session to the test after each render (outside of render itself).
+    function Capture({ onAuth }: { onAuth: (value: AuthContextValue) => void }) {
+      const value = useAuth();
+      useEffect(() => {
+        onAuth(value);
+      });
       return <Status />;
     }
 
@@ -114,7 +119,7 @@ describe('AuthProvider', () => {
       const client = createClient('http://pawly.test');
       await render(
         <AuthProvider client={client}>
-          <Capture />
+          <Capture onAuth={(value) => (auth = value)} />
         </AuthProvider>,
       );
       await screen.findByText('signedIn:luna');

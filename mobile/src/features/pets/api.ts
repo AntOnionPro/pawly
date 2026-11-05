@@ -2,6 +2,7 @@ import type PocketBase from 'pocketbase';
 import type { RecordModel } from 'pocketbase';
 
 import type { PickedImage } from '@/utils/pickPhoto';
+import { appendFile } from '@/utils/upload';
 
 export const PETS = 'pets';
 
@@ -85,7 +86,7 @@ export async function getPet(client: PocketBase, id: string): Promise<Pet> {
   return toPet(await client.collection(PETS).getOne(id, { expand: 'owner' }));
 }
 
-function toFormData(values: PetValues, ownerId?: string): FormData {
+async function toFormData(values: PetValues, ownerId?: string): Promise<FormData> {
   const data = new FormData();
   if (ownerId) data.append('owner', ownerId);
   data.append('name', values.name.trim());
@@ -95,8 +96,7 @@ function toFormData(values: PetValues, ownerId?: string): FormData {
   if (values.photo === null) {
     data.append('photo', '');
   } else if (values.photo) {
-    // React Native uploads a local file from { uri, name, type }.
-    data.append('photo', values.photo as unknown as Blob);
+    await appendFile(data, 'photo', values.photo);
   }
   return data;
 }
@@ -106,11 +106,11 @@ export async function createPet(
   ownerId: string,
   values: PetValues,
 ): Promise<Pet> {
-  return toPet(await client.collection(PETS).create(toFormData(values, ownerId)));
+  return toPet(await client.collection(PETS).create(await toFormData(values, ownerId)));
 }
 
 export async function updatePet(client: PocketBase, id: string, values: PetValues): Promise<Pet> {
-  return toPet(await client.collection(PETS).update(id, toFormData(values)));
+  return toPet(await client.collection(PETS).update(id, await toFormData(values)));
 }
 
 export async function deletePet(client: PocketBase, id: string): Promise<void> {

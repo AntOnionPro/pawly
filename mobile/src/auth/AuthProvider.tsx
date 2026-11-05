@@ -12,6 +12,7 @@ import {
 
 import { getClient, restoreSession } from '@/api/client';
 import type { PickedImage } from '@/utils/pickPhoto';
+import { appendFile } from '@/utils/upload';
 
 import { normalizeUsername, type SignUpValues } from './validation';
 
@@ -169,8 +170,7 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
       if (avatar === null) {
         data.append('avatar', '');
       } else if (avatar) {
-        // React Native uploads a local file from { uri, name, type }.
-        data.append('avatar', avatar as unknown as Blob);
+        await appendFile(data, 'avatar', avatar);
       }
       // The SDK updates the saved session with the new profile.
       await client.collection(USERS).update(id, data);
