@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
@@ -6,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
+import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
@@ -24,6 +26,7 @@ const DISCOVER = { all: true } as const;
  */
 export function FeedList() {
   const { t } = useTranslation();
+  const router = useRouter();
   const colors = useThemeColors();
   const { status, user } = useAuth();
   const [tab, setTab] = useState<FeedTab>('following');
@@ -56,9 +59,15 @@ export function FeedList() {
           <View style={styles.top}>
             <View style={styles.header}>
               <Icon name="paw" selected size={28} color={colors.accent} />
-              <ThemedText variant="title" accessibilityRole="header">
+              <ThemedText variant="title" accessibilityRole="header" style={styles.title}>
                 {t('home.title')}
               </ThemedText>
+              <IconButton
+                icon="search"
+                size={26}
+                label={t('search.title')}
+                onPress={() => router.push('/search')}
+              />
             </View>
             {signedIn ? <FeedTabs selected={tab} onSelect={setTab} /> : null}
           </View>
@@ -120,6 +129,7 @@ const styles = StyleSheet.create({
   content: { padding: spacing.md, flexGrow: 1 },
   top: { gap: spacing.sm, marginBottom: spacing.md },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  title: { flex: 1 },
   separator: { height: StyleSheet.hairlineWidth, marginVertical: spacing.lg },
   center: { textAlign: 'center', padding: spacing.lg },
   centerText: { textAlign: 'center' },

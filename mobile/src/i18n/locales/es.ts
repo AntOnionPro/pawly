@@ -142,6 +142,19 @@ const es: Resources = {
     unavailable: 'Esta publicación ya no está disponible.',
     tile: 'Republicación: {{text}}',
   },
+  search: {
+    title: 'Buscar',
+    placeholder: 'Personas, mascotas o publicaciones',
+    tabs: {
+      users: 'Usuarios',
+      pets: 'Mascotas',
+      posts: 'Publicaciones',
+    },
+    prompt: 'Escribe para buscar.',
+    noResults: 'No hay resultados para “{{query}}”.',
+    signInForUsers: 'Inicia sesión para buscar personas.',
+    petOwner: 'de @{{username}}',
+  },
   time: {
     now: 'ahora',
     minutes: '{{count}} min',

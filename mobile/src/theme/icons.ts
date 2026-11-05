@@ -29,6 +29,7 @@ export const icons = {
     md: 'repeat',
   },
   share: { sf: { default: 'square.and.arrow.up', selected: 'square.and.arrow.up' }, md: 'share' },
+  search: { sf: { default: 'magnifyingglass', selected: 'magnifyingglass' }, md: 'search' },
   send: { sf: { default: 'paperplane.fill', selected: 'paperplane.fill' }, md: 'send' },
   check: { sf: { default: 'checkmark', selected: 'checkmark' }, md: 'check' },
   mail: { sf: { default: 'envelope', selected: 'envelope.fill' }, md: 'mail' },
