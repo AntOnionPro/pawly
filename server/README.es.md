@@ -91,6 +91,19 @@ Abre el enlace en el navegador de la computadora para verificar la cuenta o rest
 
 La colección `pets` guarda los perfiles de mascota (etapa 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (hasta 60), una fecha de nacimiento aproximada `birthDate` (no puede ser futura) y una `photo` (hasta 5 MB, con miniaturas). Cualquiera ve las mascotas; solo el dueño las crea, edita y borra, y no puede cambiar el dueño. Al eliminar una cuenta se borran sus mascotas.
 
+## Publicaciones
+
+La colección `posts` guarda las publicaciones (etapa 2):
+
+| Campo    | Reglas                                                                                                                                                |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `author` | El usuario con sesión; no se puede cambiar. Al eliminar la cuenta se borran sus publicaciones.                                                        |
+| `text`   | Hasta 2,200 caracteres.                                                                                                                               |
+| `media`  | Hasta 10 archivos: fotos (JPEG, PNG, WebP, HEIC) de hasta 10 MB y videos (MP4, MOV) de hasta 50 MB. Las fotos tienen miniaturas `300x300` y `1080x0`. |
+| `pets`   | Hasta 10 mascotas propias del autor. Al borrar una mascota se quita de las publicaciones.                                                             |
+
+Una publicación necesita texto o al menos un archivo. Cualquiera ve y lista publicaciones; solo el autor las edita y borra. Las reglas que la colección no puede expresar están en `pb_hooks/posts.pb.js` y `pb_hooks/lib/posts.js`; los errores por campo usan los códigos `post_empty`, `photo_too_large` y `pet_not_owned`. La duración de los videos (60 segundos) se limita en la app, porque el servidor no puede leer la duración sin herramientas extra.
+
 ## Cómo cambiar la base de datos
 
 1. Cambia las colecciones en el panel de administración mientras corre `npm run dev`.

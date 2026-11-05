@@ -91,6 +91,19 @@ Open the link in the computer's browser to verify the account or reset the passw
 
 The `pets` collection holds pet profiles (stage 2): `owner`, `name` (1–40), `species` (`dog`, `cat`, `bird`, `rabbit`, `rodent`, `reptile`, `fish`, `other`), `breed` (up to 60), an approximate `birthDate` (cannot be in the future) and a `photo` (up to 5 MB, with thumbnails). Anyone can see pets; only the owner creates, edits and deletes them, and cannot change the owner. Deleting an account deletes its pets.
 
+## Posts
+
+The `posts` collection holds posts (stage 2):
+
+| Field    | Rules                                                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `author` | The signed-in user; cannot be changed. Deleting the account deletes its posts.                                                              |
+| `text`   | Up to 2,200 characters.                                                                                                                     |
+| `media`  | Up to 10 files: photos (JPEG, PNG, WebP, HEIC) up to 10 MB and videos (MP4, MOV) up to 50 MB. Photos get `300x300` and `1080x0` thumbnails. |
+| `pets`   | Up to 10 of the author's own pets. Deleting a pet removes it from the posts.                                                                |
+
+A post needs text or at least one file. Anyone can see and list posts; only the author edits and deletes them. The rules that the collection cannot express live in `pb_hooks/posts.pb.js` and `pb_hooks/lib/posts.js`; field errors use the codes `post_empty`, `photo_too_large` and `pet_not_owned`. Video length (60 seconds) is limited in the app, because the server cannot read video durations without extra tools.
+
 ## How to change the database
 
 1. Change the collections in the admin panel while `npm run dev` is running.
