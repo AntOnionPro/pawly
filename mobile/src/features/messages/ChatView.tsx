@@ -1,6 +1,5 @@
 import { useRouter } from 'expo-router';
-import { HeaderHeightContext } from 'expo-router/react-navigation';
-import { use, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
@@ -111,7 +110,6 @@ export function ChatView({ conversationId }: { conversationId: string }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const colors = useThemeColors();
-  const headerHeight = use(HeaderHeightContext) ?? 0;
   const header = useHeaderOverlap();
   const conversation = useConversation(conversationId);
   const messages = useMessages(conversationId);
@@ -140,7 +138,7 @@ export function ChatView({ conversationId }: { conversationId: string }) {
         <KeyboardAvoidingView
           style={styles.root}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={headerHeight}>
+          keyboardVerticalOffset={header.keyboardOffset}>
           {other ? <ChatHeader other={other} /> : null}
           {conversation.isPending || messages.isPending ? (
             <View style={styles.root}>

@@ -1,16 +1,17 @@
-import { HeaderHeightContext } from 'expo-router/react-navigation';
-import { use, type PropsWithChildren, type ReactNode, type Ref } from 'react';
+import type { PropsWithChildren, ReactNode, Ref } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
+  View,
   type ScrollViewInstance,
 } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
+import { useHeaderOverlap } from '@/utils/useHeaderOverlap';
 
 interface ScreenProps extends PropsWithChildren {
   /** Safe area edges to pad. Screens under a native header only need the bottom. */
@@ -30,24 +31,27 @@ export function Screen({
   onContentSizeChange,
 }: ScreenProps) {
   const colors = useThemeColors();
-  // The keyboard is measured from the top of the window, so a header above the screen counts.
-  const headerHeight = use(HeaderHeightContext) ?? 0;
+  // The keyboard is measured from the top of the window: the offset is where this screen
+  // starts (under the see-through header of iOS 26+, below it elsewhere).
+  const position = useHeaderOverlap();
   return (
     <SafeAreaView edges={edges} style={[styles.root, { backgroundColor: colors.background }]}>
-      <KeyboardAvoidingView
-        style={styles.root}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={headerHeight}>
-        <ScrollView
-          ref={scrollRef}
-          onContentSizeChange={onContentSizeChange}
-          contentContainerStyle={styles.content}
-          contentInsetAdjustmentBehavior="automatic"
-          keyboardShouldPersistTaps="handled">
-          {children}
-        </ScrollView>
-        {footer}
-      </KeyboardAvoidingView>
+      <View onLayout={position.onLayout} style={styles.root}>
+        <KeyboardAvoidingView
+          style={styles.root}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={position.keyboardOffset}>
+          <ScrollView
+            ref={scrollRef}
+            onContentSizeChange={onContentSizeChange}
+            contentContainerStyle={styles.content}
+            contentInsetAdjustmentBehavior="automatic"
+            keyboardShouldPersistTaps="handled">
+            {children}
+          </ScrollView>
+          {footer}
+        </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }
