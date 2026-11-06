@@ -1,4 +1,12 @@
-import { colors, palette } from '@/theme/colors';
+import {
+  colors,
+  LIGHT_PALETTES,
+  lightThemes,
+  mix,
+  palette,
+  PALETTE_NAMES,
+  themeColors,
+} from '@/theme/colors';
 import { AA, contrastRatio } from '@/theme/contrast';
 
 describe('contrastRatio', () => {
@@ -19,9 +27,12 @@ describe('contrastRatio', () => {
   });
 });
 
-describe.each(['light', 'dark'] as const)('%s theme', (scheme) => {
-  const theme = colors[scheme];
+const THEMES = [
+  ...PALETTE_NAMES.map((name) => [`light ${name}`, lightThemes[name]] as const),
+  ['dark', colors.dark] as const,
+];
 
+describe.each(THEMES)('%s theme', (_name, theme) => {
   it.each([
     ['text', 'background'],
     ['text', 'surface'],
@@ -49,6 +60,27 @@ describe('palette', () => {
       accent: '#D84080',
     });
     expect(colors.dark).toMatchObject({ background: '#000000', text: '#FFFFFF' });
+  });
+
+  it('derives the pink palette exactly as agreed', () => {
+    expect(lightThemes.pink).toEqual(colors.light);
+    expect(colors.light).toMatchObject({
+      textSecondary: '#804F5B',
+      border: '#E4D1D6',
+      tabIndicator: '#FAE8F0',
+    });
+    expect(mix('#000000', '#FFFFFF', 0.5)).toBe('#808080');
+  });
+
+  it('has the five palettes of the README, and no yellow', () => {
+    expect(PALETTE_NAMES).toEqual(['pink', 'orange', 'green', 'blue', 'purple']);
+    expect(LIGHT_PALETTES.orange).toEqual({
+      background: '#FFF7F0',
+      text: '#4A1C04',
+      accent: '#D2560F',
+    });
+    expect(themeColors('dark', 'green')).toBe(colors.dark);
+    expect(themeColors('light', 'green')).toBe(lightThemes.green);
   });
 
   it('does not use pink or wine in the dark theme', () => {

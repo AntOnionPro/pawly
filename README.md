@@ -27,7 +27,7 @@ Current stage: **Stage 7.5, Design and details (in progress).** Stages 8 and 9 a
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) and Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)). It is released as `v0.8.5`.
+Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) and Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)). It is released as `v0.8.5`.
 
 ## Features
 
@@ -89,7 +89,7 @@ Reports appear as a list and on a map of nearby cases. Users can opt in to push 
 
 #### Settings
 
-- Language, theme, font, notification preferences, nearby radius, blocked users, change password, delete account, terms and privacy notice, sign out.
+- Language, theme, color palette, font, notification preferences, nearby radius, blocked users, change password, delete account, terms and privacy notice, sign out.
 
 ### Phase 2
 
@@ -112,19 +112,22 @@ Reports appear as a list and on a map of nearby cases. Users can opt in to push 
 - Icons only, never emojis, in the interface. Native look on each platform: SF Symbols on iOS and Material Symbols on Android.
 - Logo: a cat that forms the letter P (`mobile/assets/brand/logo.svg`), in pink `#FF2981`, which stays the same whatever palette is chosen. The app icon is the white logo on that pink (with dark and tinted versions on iOS and a monochrome one on Android), and Home shows "Pawly" written with that P (`mobile/assets/brand/wordmark.svg`) in the accent color.
 - Font: Ubuntu (light, regular, medium and bold), also in the top bars and the tab bar. In settings it can be changed to the phone's own font (San Francisco on iOS, Roboto on Android). What the system draws (alerts, keyboard, share sheet) always uses the system font.
-- Coming in stage 7.5: light theme palettes to choose in settings (pink, orange, green, blue and purple).
 - The reaction is a paw print, not a heart.
 - The desktop web version has the lowest priority.
 
 ### Colors
 
-Light theme:
+Light theme: each person chooses its palette in settings (pink by default). Every palette has a very light background (primary), a very dark color for text, icons and bars (secondary) and an accent for the active paw print, the main button and the active tab (tertiary):
 
-| Role | Color | Use |
-| --- | --- | --- |
-| Primary | `#FFF5F7` (very light pastel pink) | Background |
-| Secondary | `#4A0818` (dark wine) | Text, icons and bars |
-| Tertiary | `#D84080` (pink) | Accents: active paw print, main button, active tab |
+| Palette | Primary (background) | Secondary (text) | Tertiary (accent) | Accent on background | White on accent |
+| --- | --- | --- | --- | --- | --- |
+| Pink (default) | `#FFF5F7` | `#4A0818` | `#D84080` | 3.96:1 | 4.23:1 |
+| Orange | `#FFF7F0` | `#4A1C04` | `#D2560F` | 3.90:1 | 4.14:1 |
+| Green | `#F2FAF4` | `#0E3B1F` | `#2E8A4F` | 4.06:1 | 4.32:1 |
+| Blue | `#F2F7FF` | `#0B2447` | `#2F6BD8` | 4.63:1 | 4.98:1 |
+| Purple | `#F8F5FF` | `#2E1065` | `#7C3AED` | 5.29:1 | 5.70:1 |
+
+Secondary text, borders and the tab indicator are blends of these colors (`mobile/src/theme/colors.ts`). There is no yellow: a bright yellow accent is not visible on a light background (2.1:1).
 
 Dark theme:
 
@@ -136,9 +139,9 @@ Dark theme:
 | `#3A3A3C` | Borders and dividers |
 | `#8E8E93` | Secondary text |
 
-Pink and wine are not used in the dark theme. The theme follows the system setting and can be changed in settings.
+The palettes are not used in the dark theme, which is always black and white. The theme follows the system setting and can be changed in settings.
 
-Contrast: `#D84080` on `#FFF5F7` is 3.96:1, enough for icons and large or bold text but not for small text (which needs 4.5:1). Small text uses `#4A0818` (14.7:1).
+Contrast: every accent is at least 3:1 on its background, enough for icons and large or bold text but not for small text (which needs 4.5:1). Small text uses the secondary color (11.9:1 or more). `mobile/__tests__/contrast.test.ts` checks every palette.
 
 ### Languages
 

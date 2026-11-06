@@ -13,7 +13,12 @@ import { I18nextProvider } from 'react-i18next';
 import { Appearance, Platform, useColorScheme, type TextStyle } from 'react-native';
 
 import { createI18n, resolveLanguage, type LanguagePreference } from '@/i18n';
-import { colors, type ColorSchemeName, type ThemeColors } from '@/theme/colors';
+import {
+  themeColors,
+  type ColorSchemeName,
+  type PaletteName,
+  type ThemeColors,
+} from '@/theme/colors';
 import { fontFor, type FontPreference } from '@/theme/fonts';
 
 import {
@@ -32,6 +37,7 @@ interface PreferencesContextValue extends Preferences {
   setLanguage: (language: LanguagePreference) => void;
   setNearbyRadius: (radiusKm: NearbyRadius) => void;
   setFont: (font: FontPreference) => void;
+  setPalette: (palette: PaletteName) => void;
 }
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
@@ -90,6 +96,7 @@ export function PreferencesProvider({ children }: PropsWithChildren) {
       setLanguage: (lang) => update({ language: lang }),
       setNearbyRadius: (radiusKm) => update({ nearbyRadiusKm: radiusKm }),
       setFont: (font) => update({ font }),
+      setPalette: (palette) => update({ palette }),
     }),
     [preferences, ready, update],
   );
@@ -120,7 +127,8 @@ export function useColorSchemeName(): ColorSchemeName {
 }
 
 export function useThemeColors(): ThemeColors {
-  return colors[useColorSchemeName()];
+  const scheme = useColorSchemeName();
+  return themeColors(scheme, usePreferences().palette);
 }
 
 /** The style that sets the chosen font for a text of the given weight (see `fontFor`). */
