@@ -5,7 +5,7 @@ import { NavRow } from '@/components/NavRow';
 import { OptionGroup, type Option } from '@/components/OptionGroup';
 import type { LanguagePreference } from '@/i18n';
 import { usePreferences } from '@/preferences/PreferencesProvider';
-import type { ThemePreference } from '@/preferences/storage';
+import { NEARBY_RADII, type ThemePreference } from '@/preferences/storage';
 
 export interface AccountActions {
   onNotifications: () => void;
@@ -24,7 +24,8 @@ interface SettingsContentProps {
 /** Account, theme, language and legal documents. Rendered by the `/settings` route. */
 export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) {
   const { t } = useTranslation();
-  const { theme, language, setTheme, setLanguage } = usePreferences();
+  const { theme, language, nearbyRadiusKm, setTheme, setLanguage, setNearbyRadius } =
+    usePreferences();
 
   const themeOptions: Option<ThemePreference>[] = [
     { value: 'system', label: t('settings.theme.system') },
@@ -80,6 +81,18 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
         options={languageOptions}
         selected={language}
         onSelect={setLanguage}
+      />
+      <OptionGroup
+        title={t('settings.nearby')}
+        options={NEARBY_RADII.map((radius) => ({
+          value: String(radius),
+          label: t('settings.nearbyRadius', { count: radius }),
+        }))}
+        selected={String(nearbyRadiusKm)}
+        onSelect={(value) => {
+          const radius = NEARBY_RADII.find((item) => String(item) === value);
+          if (radius) setNearbyRadius(radius);
+        }}
       />
       {onOpenLegal ? (
         <Group title={t('settings.legal')}>

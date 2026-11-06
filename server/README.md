@@ -211,7 +211,7 @@ The adopter gets an `adopted` notification. Earlier posts that tag the pet keep 
 | `lastSeenAt`  | Only for `lost`, required: when the pet was last seen (not in the future).                        |
 | `status`      | `open` (open, lost or found), `in_progress` (only for `help`) or `closed` (resolved or reunited). |
 
-A new report is always `open`. Anyone can see and list them; only the reporter edits, changes the status and deletes them. Texts are trimmed. The rules live in `pb_hooks/rescue.pb.js`; field errors use the codes `location_required`, `date_future`, `pet_not_owned`, `invalid_status` and `photo_too_large`.
+A new report is always `open`. The app finds nearby reports by asking for an area (`latitude` and `longitude` between two values, with an index) and keeps the ones inside the radius. Anyone can see and list them; only the reporter edits, changes the status and deletes them. Texts are trimmed. The rules live in `pb_hooks/rescue.pb.js`; field errors use the codes `location_required`, `date_future`, `pet_not_owned`, `invalid_status` and `photo_too_large`.
 
 ## Counters
 

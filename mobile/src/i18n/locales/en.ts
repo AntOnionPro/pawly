@@ -177,6 +177,19 @@ const en = {
     reportedBy: 'Reported by @{{username}}',
     reportLost: 'Report as lost',
     failed: 'The change could not be saved.',
+    list: 'List',
+    map: 'Map',
+    mapLabel: 'Map of rescue cases',
+    nearbyHeading: 'Cases within {{radius}} km of you',
+    nearbyEmpty: 'There are no open cases within {{radius}} km of you.',
+    changeRadius: 'Change distance',
+    locationOff: 'Use your location to see nearby cases, nearest first.',
+    locationOffDenied:
+      "To see nearby cases, turn on Pawly's location permission in the phone settings.",
+    enableLocation: 'Use my location',
+    distanceM: '{{distance}} m away',
+    distanceKm: '{{distance}} km away',
+    pickHint: 'Tap the map or drag the marker to adjust the place.',
   },
   profile: {
     title: 'Profile',
@@ -504,6 +517,9 @@ const en = {
     },
     account: 'Account',
     legal: 'Legal',
+    nearby: 'Nearby rescue cases',
+    nearbyRadius_one: 'Within {{count}} km',
+    nearbyRadius_other: 'Within {{count}} km',
   },
   auth: {
     signUp: {

@@ -9,13 +9,21 @@ export interface Coordinates {
 
 /** The phone's location, or why it is not available. */
 export type LocationResult =
-  { ok: true; coords: Coordinates } | { ok: false; reason: 'denied' | 'unavailable' };
+  | { ok: true; coords: Coordinates }
+  | { ok: false; reason: 'denied' | 'undetermined' | 'unavailable' };
 
-/** Asks for the location permission (if needed) and reads where the phone is now. */
-export async function getCurrentLocation(): Promise<LocationResult> {
+/**
+ * Reads where the phone is now. With `ask` (the default) it asks for the permission first;
+ * without it, it only reads the location if the permission was already given.
+ */
+export async function getCurrentLocation({ ask = true } = {}): Promise<LocationResult> {
   try {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') return { ok: false, reason: 'denied' };
+    const { status } = ask
+      ? await Location.requestForegroundPermissionsAsync()
+      : await Location.getForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      return { ok: false, reason: status === 'undetermined' ? 'undetermined' : 'denied' };
+    }
     const position = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
     });

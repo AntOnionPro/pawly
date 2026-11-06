@@ -182,6 +182,29 @@ describe('seeing reports', () => {
   });
 });
 
+describe('nearby reports', () => {
+  test('the list filters by an area of latitude and longitude', async () => {
+    const user = await verifiedUser();
+    const at = (latitude, longitude) => create(user, report(user, { latitude, longitude }));
+    const { body: coyoacan } = await at(19.3467, -99.1617);
+    const { body: zocalo } = await at(19.4326, -99.1332);
+    await at(20.6597, -103.3496); // Guadalajara, far away.
+
+    const area = (minLat, maxLat, minLng, maxLng) =>
+      encodeURIComponent(
+        `reporter = "${user.record.id}" && status != 'closed' && latitude >= ${minLat} && ` +
+          `latitude <= ${maxLat} && longitude >= ${minLng} && longitude <= ${maxLng}`,
+      );
+    const ids = async (filter) =>
+      (await pb.api(`${REPORTS}?filter=${filter}&sort=-created,-id`)).body.items.map(
+        (item) => item.id,
+      );
+    // About 5 km around Coyoacán, then about 25 km.
+    assert.deepEqual(await ids(area(19.30, 19.39, -99.21, -99.11)), [coyoacan.id]);
+    assert.deepEqual(await ids(area(19.12, 19.57, -99.40, -98.92)), [zocalo.id, coyoacan.id]);
+  });
+});
+
 describe('changing reports', () => {
   test('the reporter edits and moves the status; the kind stays', async () => {
     const user = await verifiedUser();

@@ -87,6 +87,7 @@ export const icons = {
   },
   locate: { sf: { default: 'location', selected: 'location.fill' }, md: 'my_location' },
   map: { sf: { default: 'map', selected: 'map.fill' }, md: 'map' },
+  list: { sf: { default: 'list.bullet', selected: 'list.bullet' }, md: 'list' },
   requests: {
     sf: { default: 'list.bullet.clipboard', selected: 'list.bullet.clipboard.fill' },
     md: 'assignment',

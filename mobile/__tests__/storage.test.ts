@@ -17,12 +17,18 @@ describe('parsePreferences', () => {
     expect(parsePreferences('{"theme":"dark","language":"es"}')).toEqual({
       theme: 'dark',
       language: 'es',
+      nearbyRadiusKm: 5,
     });
+    expect(parsePreferences('{"nearbyRadiusKm":25}').nearbyRadiusKm).toBe(25);
+    expect(parsePreferences('{"nearbyRadiusKm":3}').nearbyRadiusKm).toBe(5);
   });
 
   it('replaces unknown values with the defaults', () => {
     expect(parsePreferences('{"theme":"purple","language":"fr"}')).toEqual(DEFAULT_PREFERENCES);
-    expect(parsePreferences('{"theme":"light"}')).toEqual({ theme: 'light', language: 'system' });
+    expect(parsePreferences('{"theme":"light"}')).toEqual({
+      ...DEFAULT_PREFERENCES,
+      theme: 'light',
+    });
   });
 
   it('survives corrupted data', () => {
@@ -38,9 +44,11 @@ describe('loadPreferences / savePreferences', () => {
   });
 
   it('saves and loads the preferences', async () => {
-    await savePreferences({ theme: 'light', language: 'en' });
-    expect(await AsyncStorage.getItem(PREFERENCES_KEY)).toBe('{"theme":"light","language":"en"}');
-    expect(await loadPreferences()).toEqual({ theme: 'light', language: 'en' });
+    await savePreferences({ theme: 'light', language: 'en', nearbyRadiusKm: 10 });
+    expect(await AsyncStorage.getItem(PREFERENCES_KEY)).toBe(
+      '{"theme":"light","language":"en","nearbyRadiusKm":10}',
+    );
+    expect(await loadPreferences()).toEqual({ theme: 'light', language: 'en', nearbyRadiusKm: 10 });
   });
 
   it('falls back to the defaults if storage fails', async () => {

@@ -4,6 +4,7 @@ import type { RecordModel } from 'pocketbase';
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toPet, type Pet } from '@/features/pets/api';
 import type { ComposerMedia } from '@/features/posts/media';
+import { boundingBox, distanceKm, type Point } from '@/utils/geo';
 import { appendFile, uploadFetch } from '@/utils/upload';
 
 export const RESCUE_REPORTS = 'rescue_reports';
@@ -118,6 +119,44 @@ export async function listRescueReports(
     page,
     hasMore: result.items.length === perPage,
   };
+}
+
+/** A report with how far it is from the person looking. */
+export type NearbyReport = RescueReport & { distanceKm: number };
+
+/** Most nearby reports the app loads at once; a radius of 25 km rarely has more open cases. */
+export const NEARBY_MAX = 200;
+
+/**
+ * Open reports within `radiusKm` of `center`, nearest first. The server filters by the square
+ * around the circle (latitude and longitude); the app keeps the ones inside the circle.
+ */
+export async function listNearbyRescueReports(
+  client: PocketBase,
+  center: Point,
+  radiusKm: number,
+  filter: RescueFilter,
+): Promise<NearbyReport[]> {
+  const box = boundingBox(center, radiusKm);
+  const parts = [
+    "status != 'closed'",
+    client.filter(
+      'latitude >= {:minLat} && latitude <= {:maxLat} && longitude >= {:minLng} && longitude <= {:maxLng}',
+      box,
+    ),
+  ];
+  if (filter.kind) parts.push(client.filter('kind = {:kind}', { kind: filter.kind }));
+  const result = await client.collection(RESCUE_REPORTS).getList(1, NEARBY_MAX, {
+    filter: parts.join(' && '),
+    sort: '-created,-id',
+    expand: EXPAND,
+    skipTotal: true,
+  });
+  return result.items
+    .map(toRescueReport)
+    .map((report) => ({ ...report, distanceKm: distanceKm(center, report) }))
+    .filter((report) => report.distanceKm <= radiusKm)
+    .sort((a, b) => a.distanceKm - b.distanceKm);
 }
 
 export async function getRescueReport(client: PocketBase, id: string): Promise<RescueReport> {

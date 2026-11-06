@@ -17,6 +17,7 @@ import { useRelativeDate } from '@/utils/useRelativeDate';
 
 import type { RescueReport, RescueStatus } from './api';
 import { useSetRescueStatus } from './hooks';
+import { PointMap } from './maps';
 import { KIND_ICONS, useRescueDetail } from './RescueCard';
 
 interface RescueDetailProps {
@@ -103,6 +104,7 @@ export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: Rescue
       <ThemedText>{report.description}</ThemedText>
 
       <View style={[styles.place, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <PointMap point={report} kind={report.kind} />
         <View style={styles.placeRow}>
           <Icon name="location" size={20} color={colors.text} />
           <ThemedText style={styles.placeText}>{report.place || t('rescue.location')}</ThemedText>

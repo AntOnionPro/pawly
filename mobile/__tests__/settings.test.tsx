@@ -71,6 +71,7 @@ describe('SettingsContent', () => {
     expect(JSON.parse((await AsyncStorage.getItem(PREFERENCES_KEY)) ?? '{}')).toEqual({
       theme: 'system',
       language: 'en',
+      nearbyRadiusKm: 5,
     });
   });
 

@@ -15,3 +15,17 @@ jest.mock('expo-notifications', () => ({
   addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
   getLastNotificationResponseAsync: jest.fn(async () => null),
 }));
+
+// Native maps cannot run in tests: plain views stand in for the map and its markers.
+jest.mock('react-native-maps', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const MapView = ({ children, ...props }) => React.createElement(View, props, children);
+  const Marker = ({ children, ...props }) =>
+    React.createElement(
+      View,
+      { ...props, accessible: true, accessibilityRole: 'button' },
+      children,
+    );
+  return { __esModule: true, default: MapView, Marker };
+});

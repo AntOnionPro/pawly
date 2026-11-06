@@ -211,7 +211,7 @@ El adoptante recibe una notificación `adopted`. Las publicaciones anteriores qu
 | `lastSeenAt`  | Solo en `lost`, obligatoria: cuándo se vio por última vez (no puede ser futura).                             |
 | `status`      | `open` (abierto, perdido o encontrado), `in_progress` (solo en `help`) o `closed` (resuelto o reencontrado). |
 
-Un reporte nuevo siempre está `open`. Cualquiera los ve y los lista; solo quien reporta los edita, cambia su estado y los borra. Los textos se recortan. Las reglas están en `pb_hooks/rescue.pb.js`; los errores de campo usan los códigos `location_required`, `date_future`, `pet_not_owned`, `invalid_status` y `photo_too_large`.
+Un reporte nuevo siempre está `open`. La app busca los reportes cercanos pidiendo un área (`latitude` y `longitude` entre dos valores, con un índice) y se queda con los que caen dentro del radio. Cualquiera los ve y los lista; solo quien reporta los edita, cambia su estado y los borra. Los textos se recortan. Las reglas están en `pb_hooks/rescue.pb.js`; los errores de campo usan los códigos `location_required`, `date_future`, `pet_not_owned`, `invalid_status` y `photo_too_large`.
 
 ## Contadores
 
