@@ -672,6 +672,7 @@ const es: Resources = {
     alreadyReported: 'Ya reportaste esto.',
     blocked: 'No puedes hacerlo porque hay un bloqueo.',
     suspended: 'Tu cuenta está suspendida.',
+    contentBlocked: 'Tu texto tiene palabras que no se permiten en Pawly.',
   },
   legal: {
     draft: 'Borrador. La versión definitiva se publicará antes del lanzamiento.',
