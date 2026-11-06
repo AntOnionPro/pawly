@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 7, Moderation (done, pending the `v0.8.0` release to `main`).** Stage 8 starts after that release is merged. Latest release: `v0.7.0` (stage 6). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 7.5, Design and details (in progress).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -21,12 +21,13 @@ Current stage: **Stage 7, Moderation (done, pending the `v0.8.0` release to `mai
 | 5 | Adoption | Done |
 | 6 | Rescue | Done |
 | 7 | Moderation | Done |
-| 8 | Infrastructure and web | Not started |
-| 9 | Launch | Not started |
+| 7.5 | Design and details | In progress |
+| 8 | Infrastructure and web | Postponed |
+| 9 | Launch | Postponed |
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7 delivered: report review in the admin panel ([#74](https://github.com/AntOnionPro/pawly/issues/74)), account suspension ([#75](https://github.com/AntOnionPro/pawly/issues/75)), content filter ([#76](https://github.com/AntOnionPro/pawly/issues/76)) and limits against spam ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Moderation happens in the PocketBase admin panel; the server README explains how to [review reports](server/README.md#reviewing-reports), [suspend accounts](server/README.md#account-suspension), change the [content filter](server/README.md#content-filter) and the [limits against spam](server/README.md#limits-against-spam).
+Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) and Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)). It is released as `v0.8.5`.
 
 ## Features
 
@@ -109,6 +110,7 @@ Reports appear as a list and on a map of nearby cases. Users can opt in to push 
 - Vertical layout like Instagram, with a bottom navigation bar.
 - Tabs: **Home · Adoption · Post (+) · Rescue · Profile**. Search and notifications live in the top bar.
 - Icons only, never emojis, in the interface. Native look on each platform: SF Symbols on iOS and Material Symbols on Android.
+- Coming in stage 7.5: the Ubuntu font (with the system font as an option in settings), light theme palettes to choose in settings (pink, orange, green, blue and purple), and the logo: a cat that forms the letter P.
 - The reaction is a paw print, not a heart.
 - The desktop web version has the lowest priority.
 
@@ -217,7 +219,7 @@ External costs:
 
 ## Open items
 
-- Logo and app icon (the app uses Expo placeholders).
+- App icon (the app uses Expo placeholders until stage 7.5; the logo design exists).
 - App identifiers for the stores (iOS bundle ID and Android package name).
 - Domain name.
 - Spanish text for the iOS photo library and location permissions (the build uses English until stage 9).
