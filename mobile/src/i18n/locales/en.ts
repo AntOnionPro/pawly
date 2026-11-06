@@ -572,6 +572,11 @@ const en = {
     nearbyRadius_other: 'Within {{count}} km',
   },
   auth: {
+    suspended: {
+      until: 'Your account is suspended until {{date}}.',
+      forever: 'Your account is permanently suspended.',
+      reason: 'Reason: {{reason}}',
+    },
     signUp: {
       title: 'Create account',
       username: 'Username',
@@ -661,6 +666,7 @@ const en = {
     alreadyReposted: 'You already reposted this post.',
     alreadyReported: 'You already reported this.',
     blocked: 'You cannot do this because of a block.',
+    suspended: 'Your account is suspended.',
   },
   legal: {
     draft: 'Draft. The final version will be published before launch.',

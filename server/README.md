@@ -133,12 +133,23 @@ Each report keeps a copy of what was reported (stage 7): its kind (`targetKind`)
 1. Open the admin panel (`/_/`) and the `moderation_queue` collection. It has one row per reported content with pending reports: its `kind`, `target` (id), `author`, how many reports are `pending`, their `reasons`, the latest copy of the `text`, and the dates of the first and last report. Sort it by `pending`, from most to fewest.
 2. To see the content itself, open its collection (`posts`, `comments`, `messages`, `users`, `adoptions` or `rescue_reports`) and search for the `target` id. If it was already deleted, the copy in `text` remains.
 3. Open the `reports` collection, filter by `targetId = "<target>" && status = "pending"`, open one report and change its `status`. Optionally write a `reviewNote` (only superusers see it). Save it.
-   - `actioned` on a post, comment, message, listing or rescue report deletes the content and tells its author in the app ("We removed your post…", with the reason). On a user, it only closes the report: suspend the account on the user.
+   - `actioned` on a post, comment, message, listing or rescue report deletes the content and tells its author in the app ("We removed your post…", with the reason). On a user, it only closes the report: [suspend the account](#account-suspension) on the user.
    - `dismissed` keeps the content.
    - In both cases, every other pending report about the same content gets the same status, and everyone who reported it is told the result in the app. These notices from Pawly have no `actor` and no push.
 4. Setting a report back to `pending` clears `reviewedAt` and does nothing else.
 
 The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
+
+## Account suspension
+
+Superusers suspend an account from the admin panel (stage 7), in the `users` collection: `suspendedUntil` (a date) or `suspendedForever`, and a `suspensionReason` the person sees. The fields are hidden, so only superusers see and change them. While the suspension is in force (`pb_hooks/suspension.pb.js`):
+
+- The account cannot sign in or renew its session: the server answers 403 with the code `account_suspended` and `suspension` (`until`, `forever`, `reason`), only after the right password. The app shows "Your account is suspended until…" with the reason.
+- A session that was already open stops working on its next request (same answer), and the app signs out and shows the same message.
+- Its push tokens are deleted, so it gets no pushes.
+- Its profile and content stay; remove the content by [reviewing reports](#reviewing-reports) or, in serious cases, delete the account.
+
+When `suspendedUntil` passes, the account works again by itself. To lift a suspension earlier, empty `suspendedUntil` and turn off `suspendedForever`.
 
 ## Direct messages
 

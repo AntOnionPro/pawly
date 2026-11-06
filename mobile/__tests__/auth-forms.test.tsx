@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fireEvent, screen } from '@testing-library/react-native';
+import { ClientResponseError } from 'pocketbase';
 
 import { ForgotPasswordForm } from '@/features/auth/ForgotPasswordForm';
 import { SignInForm } from '@/features/auth/SignInForm';
@@ -153,6 +154,40 @@ describe('SignInForm', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Reenviar correo de verificación' }));
     expect(auth.requestVerification).toHaveBeenCalledWith('luna@ejemplo.com');
     expect(screen.getByText('Te enviamos un nuevo enlace de verificación.')).toBeOnTheScreen();
+  });
+
+  function suspended(suspension: { until: string; forever: boolean; reason: string }) {
+    const response = {
+      status: 403,
+      message: 'This account is suspended.',
+      data: { account: { code: 'account_suspended', message: 'x' } },
+      suspension,
+    };
+    return new ClientResponseError({ status: 403, response });
+  }
+
+  it('says until when and why the account is suspended', async () => {
+    const until = suspended({ until: '2026-11-12 12:00:00.000Z', forever: false, reason: 'Spam' });
+    const auth = authValue({ signIn: jest.fn().mockRejectedValue(until) });
+    await renderWith(<SignInForm {...props()} />, auth);
+    await screen.findByLabelText('Correo');
+    await submit('luna@ejemplo.com', '12345678');
+    expect(
+      screen.getByText(
+        /^Tu cuenta está suspendida hasta el 12 de noviembre de 2026.*\. Motivo: Spam$/,
+      ),
+    ).toBeOnTheScreen();
+    // It is not an unverified email.
+    expect(screen.queryByRole('button', { name: 'Reenviar correo de verificación' })).toBeNull();
+  });
+
+  it('says when the suspension is permanent', async () => {
+    const forever = suspended({ until: '', forever: true, reason: '' });
+    const auth = authValue({ signIn: jest.fn().mockRejectedValue(forever) });
+    await renderWith(<SignInForm {...props()} />, auth);
+    await screen.findByLabelText('Correo');
+    await submit('luna@ejemplo.com', '12345678');
+    expect(screen.getByText('Tu cuenta está suspendida de forma permanente.')).toBeOnTheScreen();
   });
 
   it('explains when the server cannot be reached', async () => {

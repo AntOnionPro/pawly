@@ -26,7 +26,7 @@ Etapa actual: **etapa 7, Moderación (en progreso).** Última release: `v0.7.0` 
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 7: revisión de reportes en el panel de administración ([#74](https://github.com/AntOnionPro/pawly/issues/74), hecho), suspender cuentas ([#75](https://github.com/AntOnionPro/pawly/issues/75)), filtro de contenido ([#76](https://github.com/AntOnionPro/pawly/issues/76)) y límites contra spam ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Los reportes se revisan en el panel de PocketBase; el [README del servidor](server/README.es.md#revisar-reportes) explica cómo.
+Issues de la etapa 7: revisión de reportes en el panel de administración ([#74](https://github.com/AntOnionPro/pawly/issues/74), hecho), suspender cuentas ([#75](https://github.com/AntOnionPro/pawly/issues/75), hecho), filtro de contenido ([#76](https://github.com/AntOnionPro/pawly/issues/76)) y límites contra spam ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Los reportes se revisan y las cuentas se suspenden en el panel de PocketBase; el README del servidor explica cómo [revisar reportes](server/README.es.md#revisar-reportes) y [suspender cuentas](server/README.es.md#suspender-cuentas).
 
 ## Funcionalidades
 

@@ -40,13 +40,21 @@ export type ErrorKey =
   | 'errors.reportClosed'
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
-  | 'errors.blocked';
+  | 'errors.blocked'
+  | 'errors.suspended';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
 /** What went wrong with a request, for the message shown above a form. */
 export type RequestErrorKind =
-  'network' | 'invalidCredentials' | 'unverified' | 'validation' | 'unknown';
+  'network' | 'invalidCredentials' | 'unverified' | 'suspended' | 'validation' | 'unknown';
+
+/** Whether the server refused the request because the account is suspended. */
+export function isSuspendedError(error: unknown): boolean {
+  if (!(error instanceof ClientResponseError) || error.status !== 403) return false;
+  const data = (error.response?.data ?? {}) as { account?: { code?: string } };
+  return data.account?.code === 'account_suspended';
+}
 
 function codeToKey(field: string, code: string): ErrorKey {
   switch (code) {
@@ -131,7 +139,7 @@ export function toFieldErrors(error: unknown): FieldErrors {
   const data = (error.response?.data ?? {}) as Record<string, { code?: string } | undefined>;
   const result: FieldErrors = {};
   for (const [field, detail] of Object.entries(data)) {
-    if (detail?.code) {
+    if (detail?.code && detail.code !== 'account_suspended') {
       result[field] = codeToKey(field, detail.code);
     }
   }
@@ -144,6 +152,7 @@ export function requestErrorKind(error: unknown): RequestErrorKind {
   }
   // status 0: the request never reached the server (offline, wrong address, server down).
   if (error.status === 0) return 'network';
+  if (isSuspendedError(error)) return 'suspended';
   if (Object.keys(toFieldErrors(error)).length > 0) return 'validation';
   if (error.status === 403) return 'unverified';
   if (error.status === 400) return 'invalidCredentials';
@@ -159,6 +168,8 @@ export function requestErrorKey(kind: RequestErrorKind): ErrorKey | null {
       return 'errors.invalidCredentials';
     case 'unverified':
       return 'errors.unverified';
+    case 'suspended':
+      return 'errors.suspended';
     case 'unknown':
       return 'errors.generic';
     default:

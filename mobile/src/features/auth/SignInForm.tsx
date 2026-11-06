@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { requestErrorKey, requestErrorKind, toFieldErrors, type FieldErrors } from '@/api/errors';
 import { useAuth } from '@/auth/AuthProvider';
+import { suspensionOf, suspensionText } from '@/auth/suspension';
 import { validateSignIn } from '@/auth/validation';
 import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
@@ -18,7 +19,7 @@ interface SignInFormProps {
 }
 
 export function SignInForm({ onSignedIn, onForgotPassword, onSignUp }: SignInFormProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { signIn, requestVerification } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,6 +48,12 @@ export function SignInForm({ onSignedIn, onForgotPassword, onSignUp }: SignInFor
       await signIn(email, password);
       onSignedIn();
     } catch (error) {
+      const suspension = suspensionOf(error);
+      if (suspension) {
+        setErrors({});
+        setFormError(suspensionText(t, i18n.language, suspension));
+        return;
+      }
       const kind = requestErrorKind(error);
       setErrors(toFieldErrors(error));
       setUnverified(kind === 'unverified');
