@@ -25,6 +25,7 @@ import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
 import { confirm } from '@/utils/confirm';
 import { parseServerDate } from '@/utils/time';
+import { useHeaderOverlap } from '@/utils/useHeaderOverlap';
 
 import { MESSAGE_TEXT_MAX, type Message } from './api';
 import { messageErrorKey, useConversation, useMessages, useSendMessage } from './hooks';
@@ -111,6 +112,7 @@ export function ChatView({ conversationId }: { conversationId: string }) {
   const { user } = useAuth();
   const colors = useThemeColors();
   const headerHeight = use(HeaderHeightContext) ?? 0;
+  const header = useHeaderOverlap();
   const conversation = useConversation(conversationId);
   const messages = useMessages(conversationId);
   const send = useSendMessage(conversationId);
@@ -133,69 +135,74 @@ export function ChatView({ conversationId }: { conversationId: string }) {
   const loadError = conversation.error ?? messages.error;
   return (
     <SafeAreaView edges={['bottom']} style={[styles.root, { backgroundColor: colors.background }]}>
-      <KeyboardAvoidingView
-        style={styles.root}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={headerHeight}>
-        {other ? <ChatHeader other={other} /> : null}
-        {conversation.isPending || messages.isPending ? (
-          <View style={styles.root}>
-            <Loading />
-          </View>
-        ) : loadError ? (
-          <View style={styles.root}>
-            <LoadError
-              error={loadError}
-              onRetry={() => {
-                void conversation.refetch();
-                void messages.refetch();
+      {/* Not a scroll view: it leaves room for the see-through header of iOS 26+ itself. */}
+      <View onLayout={header.onLayout} style={[styles.root, { paddingTop: header.overlap }]}>
+        <KeyboardAvoidingView
+          style={styles.root}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={headerHeight}>
+          {other ? <ChatHeader other={other} /> : null}
+          {conversation.isPending || messages.isPending ? (
+            <View style={styles.root}>
+              <Loading />
+            </View>
+          ) : loadError ? (
+            <View style={styles.root}>
+              <LoadError
+                error={loadError}
+                onRetry={() => {
+                  void conversation.refetch();
+                  void messages.refetch();
+                }}
+              />
+            </View>
+          ) : items.length === 0 ? (
+            <View style={[styles.root, styles.center]}>
+              <ThemedText color="textSecondary" style={styles.centerText}>
+                {other ? t('messages.start', { username: other.username }) : ''}
+              </ThemedText>
+            </View>
+          ) : (
+            <FlatList
+              inverted
+              style={styles.root}
+              data={items}
+              keyExtractor={(message) => message.id}
+              renderItem={({ item }) => <Bubble message={item} mine={item.senderId === user?.id} />}
+              contentContainerStyle={styles.list}
+              onEndReachedThreshold={0.3}
+              onEndReached={() => {
+                if (messages.hasNextPage && !messages.isFetchingNextPage) {
+                  void messages.fetchNextPage();
+                }
               }}
-            />
-          </View>
-        ) : items.length === 0 ? (
-          <View style={[styles.root, styles.center]}>
-            <ThemedText color="textSecondary" style={styles.centerText}>
-              {other ? t('messages.start', { username: other.username }) : ''}
-            </ThemedText>
-          </View>
-        ) : (
-          <FlatList
-            inverted
-            style={styles.root}
-            data={items}
-            keyExtractor={(message) => message.id}
-            renderItem={({ item }) => <Bubble message={item} mine={item.senderId === user?.id} />}
-            contentContainerStyle={styles.list}
-            onEndReachedThreshold={0.3}
-            onEndReached={() => {
-              if (messages.hasNextPage && !messages.isFetchingNextPage) {
-                void messages.fetchNextPage();
+              ListFooterComponent={
+                messages.isFetchingNextPage ? (
+                  <ActivityIndicator color={colors.accent} />
+                ) : undefined
               }
-            }}
-            ListFooterComponent={
-              messages.isFetchingNextPage ? <ActivityIndicator color={colors.accent} /> : undefined
-            }
-          />
-        )}
-        {other && iBlocked ? (
-          <BlockedNotice other={other} />
-        ) : (
-          <ComposerBar
-            value={text}
-            onChangeText={(value) => {
-              setText(value);
-              if (send.error) send.reset();
-            }}
-            onSend={() => void submit()}
-            sending={send.isPending}
-            label={t('messages.label')}
-            placeholder={t('messages.placeholder')}
-            sendLabel={t('messages.send')}
-            maxLength={MESSAGE_TEXT_MAX}
-            error={send.error ? t(messageErrorKey(send.error)) : null}
-          />
-        )}
-      </KeyboardAvoidingView>
+            />
+          )}
+          {other && iBlocked ? (
+            <BlockedNotice other={other} />
+          ) : (
+            <ComposerBar
+              value={text}
+              onChangeText={(value) => {
+                setText(value);
+                if (send.error) send.reset();
+              }}
+              onSend={() => void submit()}
+              sending={send.isPending}
+              label={t('messages.label')}
+              placeholder={t('messages.placeholder')}
+              sendLabel={t('messages.send')}
+              maxLength={MESSAGE_TEXT_MAX}
+              error={send.error ? t(messageErrorKey(send.error)) : null}
+            />
+          )}
+        </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }

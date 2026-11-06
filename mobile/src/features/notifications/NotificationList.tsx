@@ -225,6 +225,8 @@ export function NotificationList() {
   return (
     <SafeAreaView edges={['bottom']} style={[styles.root, { backgroundColor: colors.background }]}>
       <FlatList
+        // iOS 26+ draws the screen under the see-through header: start the list below it.
+        contentInsetAdjustmentBehavior="automatic"
         data={notifications}
         keyExtractor={(notification) => notification.id}
         renderItem={({ item }) => <NotificationRow notification={item} />}
