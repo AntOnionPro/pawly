@@ -261,6 +261,8 @@ describe('follow-up notifications', () => {
       followupMilestone: 'month1',
       rescueId: '',
       distanceKm: 0,
+      contentKind: '',
+      reportReason: '',
       read: true,
       created: new Date().toISOString(),
       ...overrides,

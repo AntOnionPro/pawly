@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { avatarUrl, useAuth } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
+import { Icon } from '@/components/Icon';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
 import { useAdoptionPhoto } from '@/features/adoption/AdoptionCard';
@@ -19,7 +20,7 @@ import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
-import type { AppNotification } from './api';
+import { PAWLY_NOTICES, type AppNotification } from './api';
 import { useMarkAllNotificationsRead, useNotifications } from './hooks';
 
 const COMMENT_PREVIEW = 80;
@@ -66,7 +67,30 @@ function useNotificationText(notification: AppNotification): string {
         what: t(`rescueAlerts.what.${notification.rescue?.kind ?? 'help'}`),
         km: notification.distanceKm,
       });
+    case 'content_removed': {
+      const kind = notification.contentKind === 'user' ? '' : notification.contentKind;
+      return t(`notifications.contentRemoved.${kind || 'post'}`, {
+        reason: t(`report.reasons.${notification.reportReason || 'other'}`),
+      });
+    }
+    case 'report_actioned':
+      return t('notifications.reportActioned');
+    case 'report_dismissed':
+      return t('notifications.reportDismissed');
   }
+}
+
+/** The picture of a notice from Pawly itself. */
+function PawlyBadge() {
+  const { t } = useTranslation();
+  const colors = useThemeColors();
+  return (
+    <View
+      accessibilityLabel={t('notifications.fromPawly')}
+      style={[styles.badge, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <Icon name="shield" selected size={24} color={colors.accent} />
+    </View>
+  );
 }
 
 /** Small picture of the rescue case a notification is about. */
@@ -93,7 +117,10 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
   const photo = post?.media.find((file) => mediaKind(file) === 'photo');
 
   function open() {
-    if (notification.rescueId) {
+    if (notification.type === 'content_removed') {
+      // The rules it broke.
+      router.push({ pathname: '/legal/[doc]', params: { doc: 'terms' } });
+    } else if (notification.rescueId) {
       router.push({ pathname: '/rescue/[id]', params: { id: notification.rescueId } });
     } else if (notification.type === 'followup_due' && notification.adoption?.petId) {
       // Straight to a new post with the pet tagged.
@@ -116,18 +143,17 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
     }
   }
 
-  return (
-    <Pressable
-      accessibilityRole="link"
-      accessibilityLabel={[notification.read ? '' : t('notifications.new'), text, date]
-        .filter(Boolean)
-        .join(', ')}
-      onPress={open}
-      style={({ pressed }) => [
-        styles.row,
-        !notification.read && { backgroundColor: colors.tabIndicator },
-        pressed && styles.pressed,
-      ]}>
+  const label = [notification.read ? '' : t('notifications.new'), text, date]
+    .filter(Boolean)
+    .join(', ');
+  // A report review is only a notice: it leads nowhere.
+  const onPress =
+    notification.type === 'report_actioned' || notification.type === 'report_dismissed'
+      ? null
+      : open;
+  const content = (
+    <>
+      {PAWLY_NOTICES.includes(notification.type) ? <PawlyBadge /> : null}
       {actor ? (
         <Avatar uri={avatarUrl(client, actor, '100x100')} username={actor.username} size={44} />
       ) : null}
@@ -144,6 +170,24 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
         <AdoptionThumb adoption={notification.adoption} />
       ) : null}
       {notification.rescue ? <RescueThumb report={notification.rescue} /> : null}
+    </>
+  );
+  const unread = !notification.read && { backgroundColor: colors.tabIndicator };
+
+  if (!onPress) {
+    return (
+      <View accessible accessibilityLabel={label} style={[styles.row, unread]}>
+        {content}
+      </View>
+    );
+  }
+  return (
+    <Pressable
+      accessibilityRole="link"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={({ pressed }) => [styles.row, unread, pressed && styles.pressed]}>
+      {content}
     </Pressable>
   );
 }
@@ -226,6 +270,14 @@ const styles = StyleSheet.create({
   },
   text: { flex: 1, gap: 2 },
   photo: { width: 48, height: 48, borderRadius: radius.md / 2 },
+  badge: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   empty: { textAlign: 'center', padding: spacing.lg },
   pressed: { opacity: 0.6 },
 });

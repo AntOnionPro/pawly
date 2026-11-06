@@ -55,6 +55,25 @@ function notify(
   }
 }
 
+/**
+ * Notifies `recipient` of something from Pawly itself (no actor): a report review.
+ * `contentKind` and `reportReason` say what it is about. Never throws.
+ */
+function notifyFromPawly(app, { recipient, type, contentKind = '', reportReason = '' }) {
+  try {
+    if (!recipient) return;
+    const record = new Record(app.findCollectionByNameOrId('notifications'));
+    record.set('recipient', recipient);
+    record.set('type', type);
+    record.set('contentKind', contentKind);
+    record.set('reportReason', reportReason);
+    record.set('read', false);
+    app.save(record);
+  } catch (error) {
+    console.log(`[pawly-notifications] could not notify: ${error}`);
+  }
+}
+
 /** Author of a post, or '' if it does not exist. */
 function postAuthor(app, postId) {
   try {
@@ -64,4 +83,4 @@ function postAuthor(app, postId) {
   }
 }
 
-module.exports = { notify, postAuthor };
+module.exports = { notify, notifyFromPawly, postAuthor };
