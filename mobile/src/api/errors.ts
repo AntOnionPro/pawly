@@ -42,13 +42,20 @@ export type ErrorKey =
   | 'errors.alreadyReported'
   | 'errors.blocked'
   | 'errors.suspended'
-  | 'errors.contentBlocked';
+  | 'errors.contentBlocked'
+  | 'errors.rateLimited';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
 /** What went wrong with a request, for the message shown above a form. */
 export type RequestErrorKind =
-  'network' | 'invalidCredentials' | 'unverified' | 'suspended' | 'validation' | 'unknown';
+  | 'network'
+  | 'invalidCredentials'
+  | 'unverified'
+  | 'suspended'
+  | 'rateLimited'
+  | 'validation'
+  | 'unknown';
 
 /** Whether the server refused the request because the account is suspended. */
 export function isSuspendedError(error: unknown): boolean {
@@ -142,7 +149,8 @@ export function toFieldErrors(error: unknown): FieldErrors {
   const data = (error.response?.data ?? {}) as Record<string, { code?: string } | undefined>;
   const result: FieldErrors = {};
   for (const [field, detail] of Object.entries(data)) {
-    if (detail?.code && detail.code !== 'account_suspended') {
+    // A suspension or a limit is about the whole request, not about a field.
+    if (detail?.code && detail.code !== 'account_suspended' && detail.code !== 'rate_limited') {
       result[field] = codeToKey(field, detail.code);
     }
   }
@@ -156,6 +164,8 @@ export function requestErrorKind(error: unknown): RequestErrorKind {
   // status 0: the request never reached the server (offline, wrong address, server down).
   if (error.status === 0) return 'network';
   if (isSuspendedError(error)) return 'suspended';
+  // Too many requests: a limit against spam (per account or per connection).
+  if (error.status === 429) return 'rateLimited';
   if (Object.keys(toFieldErrors(error)).length > 0) return 'validation';
   if (error.status === 403) return 'unverified';
   if (error.status === 400) return 'invalidCredentials';
@@ -173,6 +183,8 @@ export function requestErrorKey(kind: RequestErrorKind): ErrorKey | null {
       return 'errors.unverified';
     case 'suspended':
       return 'errors.suspended';
+    case 'rateLimited':
+      return 'errors.rateLimited';
     case 'unknown':
       return 'errors.generic';
     default:

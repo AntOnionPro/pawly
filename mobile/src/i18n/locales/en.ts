@@ -668,6 +668,7 @@ const en = {
     blocked: 'You cannot do this because of a block.',
     suspended: 'Your account is suspended.',
     contentBlocked: 'Your text has words that are not allowed in Pawly.',
+    rateLimited: 'You are going too fast. Try again in a few minutes.',
   },
   legal: {
     draft: 'Draft. The final version will be published before launch.',

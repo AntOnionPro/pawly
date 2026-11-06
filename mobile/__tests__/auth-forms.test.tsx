@@ -205,6 +205,14 @@ describe('SignInForm', () => {
     expect(screen.getByText('Tu cuenta está suspendida de forma permanente.')).toBeOnTheScreen();
   });
 
+  it('explains when there were too many attempts', async () => {
+    const auth = authValue({ signIn: jest.fn().mockRejectedValue(serverError(429)) });
+    await renderWith(<SignInForm {...props()} />, auth);
+    await screen.findByLabelText('Correo');
+    await submit('luna@ejemplo.com', '12345678');
+    expect(screen.getByText('Vas muy rápido. Intenta de nuevo en unos minutos.')).toBeOnTheScreen();
+  });
+
   it('explains when the server cannot be reached', async () => {
     const auth = authValue({ signIn: jest.fn().mockRejectedValue(serverError(0)) });
     await renderWith(<SignInForm {...props()} />, auth);

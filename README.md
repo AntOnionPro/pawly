@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 7, Moderation (in progress).** Latest release: `v0.7.0` (stage 6). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 7, Moderation (done, pending the `v0.8.0` release to `main`).** Stage 8 starts after that release is merged. Latest release: `v0.7.0` (stage 6). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -20,13 +20,13 @@ Current stage: **Stage 7, Moderation (in progress).** Latest release: `v0.7.0` (
 | 4 | Messages and notifications | Done |
 | 5 | Adoption | Done |
 | 6 | Rescue | Done |
-| 7 | Moderation | In progress |
+| 7 | Moderation | Done |
 | 8 | Infrastructure and web | Not started |
 | 9 | Launch | Not started |
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7 issues: report review in the admin panel ([#74](https://github.com/AntOnionPro/pawly/issues/74), done), account suspension ([#75](https://github.com/AntOnionPro/pawly/issues/75), done), content filter ([#76](https://github.com/AntOnionPro/pawly/issues/76), done) and anti-spam limits ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Reports are reviewed and accounts are suspended in the PocketBase admin panel; the server README explains how to [review reports](server/README.md#reviewing-reports), [suspend accounts](server/README.md#account-suspension) and change the [content filter](server/README.md#content-filter).
+Stage 7 delivered: report review in the admin panel ([#74](https://github.com/AntOnionPro/pawly/issues/74)), account suspension ([#75](https://github.com/AntOnionPro/pawly/issues/75)), content filter ([#76](https://github.com/AntOnionPro/pawly/issues/76)) and limits against spam ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Moderation happens in the PocketBase admin panel; the server README explains how to [review reports](server/README.md#reviewing-reports), [suspend accounts](server/README.md#account-suspension), change the [content filter](server/README.md#content-filter) and the [limits against spam](server/README.md#limits-against-spam).
 
 ## Features
 
