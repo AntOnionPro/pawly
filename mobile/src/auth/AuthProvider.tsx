@@ -5,16 +5,20 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useEffectEvent,
   useMemo,
   useState,
   type PropsWithChildren,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { getClient, restoreSession } from '@/api/client';
+import { getClient, onSuspended, restoreSession } from '@/api/client';
 import { forgetPushToken } from '@/features/push/api';
+import { notify } from '@/utils/notify';
 import type { PickedImage } from '@/utils/pickPhoto';
 import { appendFile, uploadFetch } from '@/utils/upload';
 
+import { suspensionText, type Suspension } from './suspension';
 import { normalizeUsername, type SignUpValues } from './validation';
 
 /** Public profile plus the owner's own email. */
@@ -93,6 +97,15 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
   const [client] = useState(() => injected ?? getClient());
   const [status, setStatus] = useState<AuthStatus>('loading');
   const [user, setUser] = useState<User | null>(null);
+  const { t, i18n } = useTranslation();
+
+  const announceSuspension = useEffectEvent((suspension: Suspension) => {
+    notify(suspensionText(t, i18n.language, suspension));
+  });
+
+  // If the account is suspended while signed in, its next request signs it out (see
+  // `createClient`): say until when and why. Signing in again shows it in the form.
+  useEffect(() => onSuspended(client, (suspension) => announceSuspension(suspension)), [client]);
 
   useEffect(() => {
     const unsubscribe = client.authStore.onChange((_token, record) => {

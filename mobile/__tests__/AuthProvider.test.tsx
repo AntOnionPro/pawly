@@ -5,6 +5,15 @@ import { Text } from 'react-native';
 
 import { AUTH_STORAGE_KEY, createClient } from '@/api/client';
 import { AuthProvider, useAuth, type AuthContextValue } from '@/auth/AuthProvider';
+import { PreferencesProvider, usePreferences } from '@/preferences/PreferencesProvider';
+import { PREFERENCES_KEY } from '@/preferences/storage';
+import { notify } from '@/utils/notify';
+
+jest.mock('@/utils/notify', () => ({ notify: jest.fn() }));
+jest.mock('expo-localization', () => ({
+  getLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],
+  useLocales: () => [{ languageCode: 'es', languageTag: 'es-MX' }],
+}));
 
 // Uploads use React Native's XMLHttpRequest on phones (tested in upload.test.ts); here they go
 // through the same mocked fetch as every other request.
@@ -101,6 +110,82 @@ describe('AuthProvider', () => {
     fetchMock.mockImplementation(() => Promise.reject(new TypeError('Network request failed')));
     await renderProvider();
     expect(await screen.findByText('signedIn:luna')).toBeOnTheScreen();
+  });
+
+  describe('a suspended account', () => {
+    const SUSPENDED = {
+      status: 403,
+      message: 'This account is suspended.',
+      data: { account: { code: 'account_suspended', message: 'x' } },
+      suspension: { until: '', forever: true, reason: 'Maltrato animal' },
+    };
+    const TEXT = 'Tu cuenta está suspendida de forma permanente. Motivo: Maltrato animal';
+
+    function Ready({ children }: { children: React.ReactNode }) {
+      return usePreferences().ready ? children : null;
+    }
+
+    async function renderInSpanish(client = createClient('http://pawly.test')) {
+      await AsyncStorage.setItem(PREFERENCES_KEY, '{"theme":"light","language":"es"}');
+      await render(
+        <PreferencesProvider>
+          <Ready>
+            <AuthProvider client={client}>
+              <Status />
+            </AuthProvider>
+          </Ready>
+        </PreferencesProvider>,
+      );
+      return client;
+    }
+
+    beforeEach(() => {
+      jest.mocked(notify).mockClear();
+    });
+
+    it('is signed out when the app opens, and told why', async () => {
+      await AsyncStorage.setItem(
+        AUTH_STORAGE_KEY,
+        JSON.stringify({ token: fakeToken(), record: RECORD }),
+      );
+      fetchMock.mockImplementation(() => jsonResponse(403, SUSPENDED));
+      await renderInSpanish();
+      expect(await screen.findByText('visitor')).toBeOnTheScreen();
+      expect(await AsyncStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+      expect(notify).toHaveBeenCalledWith(TEXT);
+    });
+
+    it('is signed out at its next request, and told once', async () => {
+      await AsyncStorage.setItem(
+        AUTH_STORAGE_KEY,
+        JSON.stringify({ token: fakeToken(), record: RECORD }),
+      );
+      fetchMock.mockImplementationOnce(() =>
+        jsonResponse(200, { token: fakeToken(), record: RECORD }),
+      );
+      const client = await renderInSpanish();
+      expect(await screen.findByText('signedIn:luna')).toBeOnTheScreen();
+
+      fetchMock.mockImplementation(() => jsonResponse(403, SUSPENDED));
+      const requests = [
+        client.collection('posts').getList(1, 10),
+        client.collection('notifications').getList(1, 10),
+      ];
+      await Promise.allSettled(requests);
+      expect(await screen.findByText('visitor')).toBeOnTheScreen();
+      expect(notify).toHaveBeenCalledTimes(1);
+      expect(notify).toHaveBeenCalledWith(TEXT);
+    });
+
+    it('is not announced when signing in (the form says it)', async () => {
+      fetchMock.mockImplementation(() => jsonResponse(403, SUSPENDED));
+      const client = await renderInSpanish();
+      await screen.findByText('visitor');
+      await expect(
+        client.collection('users').authWithPassword('luna@ejemplo.com', '12345678'),
+      ).rejects.toMatchObject({ status: 403 });
+      expect(notify).not.toHaveBeenCalled();
+    });
   });
 
   describe('account actions', () => {

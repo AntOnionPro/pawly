@@ -133,12 +133,23 @@ Cada reporte guarda una copia de lo reportado (etapa 7): el tipo (`targetKind`),
 1. Abre el panel de administración (`/_/`) y la colección `moderation_queue`. Tiene una fila por contenido reportado con reportes pendientes: su tipo (`kind`), su id (`target`), su autor (`author`), cuántos reportes están pendientes (`pending`), sus motivos (`reasons`), la copia más reciente del texto (`text`) y las fechas del primer y del último reporte. Ordénala por `pending`, de más a menos.
 2. Para ver el contenido, abre su colección (`posts`, `comments`, `messages`, `users`, `adoptions` o `rescue_reports`) y busca el id de `target`. Si ya se borró, queda la copia en `text`.
 3. Abre la colección `reports`, filtra con `targetId = "<target>" && status = "pending"`, abre un reporte y cambia su `status`. Si quieres, escribe una nota en `reviewNote` (solo la ven los superusuarios). Guárdalo.
-   - `actioned` en una publicación, comentario, mensaje, ficha o reporte de rescate borra el contenido y se lo avisa a su autor en la app ("Quitamos tu publicación…", con el motivo). En un usuario solo cierra el reporte: la suspensión se hace en el usuario.
+   - `actioned` en una publicación, comentario, mensaje, ficha o reporte de rescate borra el contenido y se lo avisa a su autor en la app ("Quitamos tu publicación…", con el motivo). En un usuario solo cierra el reporte: la [suspensión](#suspender-cuentas) se hace en el usuario.
    - `dismissed` deja el contenido.
    - En los dos casos, los demás reportes pendientes del mismo contenido quedan con el mismo estado, y todos los que lo reportaron reciben el resultado en la app. Estos avisos de Pawly no tienen `actor` ni push.
 4. Regresar un reporte a `pending` borra `reviewedAt` y no hace nada más.
 
 La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
+
+## Suspender cuentas
+
+Los superusuarios suspenden una cuenta desde el panel de administración (etapa 7), en la colección `users`: `suspendedUntil` (una fecha) o `suspendedForever`, y un motivo que la persona ve (`suspensionReason`). Los campos están ocultos, así que solo los superusuarios los ven y los cambian. Mientras la suspensión está vigente (`pb_hooks/suspension.pb.js`):
+
+- La cuenta no puede iniciar sesión ni renovarla: el servidor responde 403 con el código `account_suspended` y `suspension` (`until`, `forever`, `reason`), solo después de la contraseña correcta. La app muestra "Tu cuenta está suspendida hasta el…" con el motivo.
+- Una sesión que ya estaba abierta deja de servir en la siguiente petición (con la misma respuesta), y la app cierra la sesión y muestra el mismo mensaje.
+- Se borran sus tokens de push, así que no recibe push.
+- Su perfil y su contenido se quedan; el contenido se quita [revisando los reportes](#revisar-reportes) o, en casos graves, borrando la cuenta.
+
+Al pasar `suspendedUntil`, la cuenta vuelve a funcionar sola. Para quitar la suspensión antes, vacía `suspendedUntil` y apaga `suspendedForever`.
 
 ## Mensajes directos
 

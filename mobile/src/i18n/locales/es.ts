@@ -575,6 +575,11 @@ const es: Resources = {
     nearbyRadius_other: 'A {{count}} km',
   },
   auth: {
+    suspended: {
+      until: 'Tu cuenta está suspendida hasta el {{date}}.',
+      forever: 'Tu cuenta está suspendida de forma permanente.',
+      reason: 'Motivo: {{reason}}',
+    },
     signUp: {
       title: 'Crear cuenta',
       username: 'Nombre de usuario',
@@ -666,6 +671,7 @@ const es: Resources = {
     alreadyReposted: 'Ya republicaste esta publicación.',
     alreadyReported: 'Ya reportaste esto.',
     blocked: 'No puedes hacerlo porque hay un bloqueo.',
+    suspended: 'Tu cuenta está suspendida.',
   },
   legal: {
     draft: 'Borrador. La versión definitiva se publicará antes del lanzamiento.',
