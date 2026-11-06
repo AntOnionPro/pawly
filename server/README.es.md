@@ -140,6 +140,17 @@ Cada reporte guarda una copia de lo reportado (etapa 7): el tipo (`targetKind`),
 
 La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
 
+## Filtro de contenido
+
+`blocked_terms` guarda las palabras y frases que el servidor revisa en los textos que la gente guarda (etapa 7, `pb_hooks/content_filter.pb.js`): nombres de usuario y biografías, nombres y razas de mascotas, publicaciones, comentarios, mensajes, fichas de adopción y reportes de rescate. Cada término (`term`) tiene una acción (`action`):
+
+- `block`: el texto no se guarda. El servidor responde 400 con el código `content_blocked` en el campo, y la app dice "Tu texto tiene palabras que no se permiten en Pawly." y conserva lo escrito.
+- `review`: el texto se guarda, y el servidor lo manda a la [cola de moderación](#revisar-reportes) con un reporte automático: sin `reporter`, con el motivo del término (`reason`) y un `details` que dice qué término y qué campo coincidieron. Mientras esté pendiente, volver a guardar el mismo contenido no agrega otro. Una mascota se reporta a través de su dueño.
+
+Los términos se comparan sin importar mayúsculas, acentos, letras repetidas ("puuuto") ni sustituciones comunes (0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s), y solo como palabras o frases completas, así que las palabras inocentes que contienen uno ("computadora") no se marcan. Al editar, solo se revisan los textos que cambiaron, y los superusuarios no pasan por el filtro.
+
+La migración agrega una lista inicial en español e inglés: insultos graves (`block`) y frases de venta de animales (`review`, `animal_sale`) o de peleas de animales (`review`, `animal_abuse`). Para cambiarla, abre `blocked_terms` en el panel de administración y agrega, edita o borra términos; los cambios aplican al momento. El filtro solo revisa texto: las fotos y los videos se moderan con los reportes.
+
 ## Suspender cuentas
 
 Los superusuarios suspenden una cuenta desde el panel de administración (etapa 7), en la colección `users`: `suspendedUntil` (una fecha) o `suspendedForever`, y un motivo que la persona ve (`suspensionReason`). Los campos están ocultos, así que solo los superusuarios los ven y los cambian. Mientras la suspensión está vigente (`pb_hooks/suspension.pb.js`):

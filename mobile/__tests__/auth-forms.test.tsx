@@ -114,6 +114,21 @@ describe('SignUpForm', () => {
     expect(screen.getByText('Ya existe una cuenta con ese correo.')).toBeOnTheScreen();
     expect(handlers.onSignedUp).not.toHaveBeenCalled();
   });
+
+  it('explains when the username is not allowed', async () => {
+    const auth = authValue({
+      signUp: jest
+        .fn()
+        .mockRejectedValue(serverError(400, { username: { code: 'content_blocked' } })),
+    });
+    await renderWith(<SignUpForm {...props()} />, auth);
+    await screen.findByLabelText('Nombre de usuario');
+    await fillValidForm();
+    await fireEvent.press(screen.getByRole('button', { name: 'Crear cuenta' }));
+    expect(
+      screen.getByText('Tu texto tiene palabras que no se permiten en Pawly.'),
+    ).toBeOnTheScreen();
+  });
 });
 
 describe('SignInForm', () => {

@@ -26,7 +26,7 @@ Current stage: **Stage 7, Moderation (in progress).** Latest release: `v0.7.0` (
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7 issues: report review in the admin panel ([#74](https://github.com/AntOnionPro/pawly/issues/74), done), account suspension ([#75](https://github.com/AntOnionPro/pawly/issues/75), done), content filter ([#76](https://github.com/AntOnionPro/pawly/issues/76)) and anti-spam limits ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Reports are reviewed and accounts are suspended in the PocketBase admin panel; the server README explains how to [review reports](server/README.md#reviewing-reports) and [suspend accounts](server/README.md#account-suspension).
+Stage 7 issues: report review in the admin panel ([#74](https://github.com/AntOnionPro/pawly/issues/74), done), account suspension ([#75](https://github.com/AntOnionPro/pawly/issues/75), done), content filter ([#76](https://github.com/AntOnionPro/pawly/issues/76), done) and anti-spam limits ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Reports are reviewed and accounts are suspended in the PocketBase admin panel; the server README explains how to [review reports](server/README.md#reviewing-reports), [suspend accounts](server/README.md#account-suspension) and change the [content filter](server/README.md#content-filter).
 
 ## Features
 

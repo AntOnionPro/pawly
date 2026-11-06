@@ -140,6 +140,17 @@ Each report keeps a copy of what was reported (stage 7): its kind (`targetKind`)
 
 The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
 
+## Content filter
+
+`blocked_terms` holds the words and phrases the server checks in the texts people save (stage 7, `pb_hooks/content_filter.pb.js`): usernames and bios, pet names and breeds, posts, comments, messages, adoption listings and rescue reports. Each `term` has an `action`:
+
+- `block`: the text is not saved. The server answers 400 with the code `content_blocked` on the field, and the app says "Your text has words that are not allowed in Pawly." and keeps what was written.
+- `review`: the text is saved, and the server sends it to the [moderation queue](#reviewing-reports) with an automatic report: no `reporter`, the term's `reason`, and `details` that say which term and field matched. While it is pending, saving the same content again does not add another one. A pet is reported through its owner.
+
+Terms are compared without case, accents, repeated letters ("puuuto") or common look-alikes (0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s), and only as whole words or phrases, so innocent words that contain one ("computadora") are not marked. On an update, only the texts that changed are checked, and superusers are not filtered.
+
+The migration adds a starting list in Spanish and English: serious insults and slurs (`block`), and phrases about selling animals (`review`, `animal_sale`) or animal fights (`review`, `animal_abuse`). To change it, open `blocked_terms` in the admin panel and add, edit or delete terms; changes apply at once. The filter only reads text: photos and videos are moderated through reports.
+
 ## Account suspension
 
 Superusers suspend an account from the admin panel (stage 7), in the `users` collection: `suspendedUntil` (a date) or `suspendedForever`, and a `suspensionReason` the person sees. The fields are hidden, so only superusers see and change them. While the suspension is in force (`pb_hooks/suspension.pb.js`):

@@ -41,7 +41,8 @@ export type ErrorKey =
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
   | 'errors.blocked'
-  | 'errors.suspended';
+  | 'errors.suspended'
+  | 'errors.contentBlocked';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
@@ -120,6 +121,8 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.dateInvalid';
     case 'blocked':
       return 'errors.blocked';
+    case 'content_blocked':
+      return 'errors.contentBlocked';
     case 'validation_too_many_files':
       return 'errors.tooManyFiles';
     case 'validation_invalid_mime_type':
