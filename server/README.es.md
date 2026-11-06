@@ -151,6 +151,29 @@ Los términos se comparan sin importar mayúsculas, acentos, letras repetidas ("
 
 La migración agrega una lista inicial en español e inglés: insultos graves (`block`) y frases de venta de animales (`review`, `animal_sale`) o de peleas de animales (`review`, `animal_abuse`). Para cambiarla, abre `blocked_terms` en el panel de administración y agrega, edita o borra términos; los cambios aplican al momento. El filtro solo revisa texto: las fotos y los videos se moderan con los reportes.
 
+## Límites contra spam
+
+Cada cuenta solo puede crear cierta cantidad de cosas en un periodo (etapa 7, `pb_hooks/limits.pb.js`; la tabla es `LIMITS` en `pb_hooks/lib/limits.js`). Las cuentas de menos de 24 horas tienen la mitad de cada límite (redondeada hacia arriba), y los superusuarios no tienen límites:
+
+| Qué | Límite |
+| --- | --- |
+| Publicaciones (incluidas las republicaciones) | 10 por hora y 30 por día |
+| Comentarios | 30 cada 10 minutos y 300 por día |
+| Mensajes directos | 60 cada 10 minutos y 600 por día |
+| Conversaciones nuevas (`startedBy`, lo pone el servidor) | 20 por día |
+| Seguimientos | 60 por hora y 300 por día |
+| Reportes | 20 por día |
+| Fichas de adopción | 5 por día |
+| Solicitudes de adopción | 10 por día |
+| Reportes de rescate | 10 por día |
+| Ofertas de "Puedo ayudar" | 20 por día |
+
+El mismo comentario o mensaje de 20 caracteres o más solo se puede enviar 3 veces en 10 minutos; los cortos ("¡Qué linda!") no cuentan.
+
+Por conexión (dirección IP), el limitador de PocketBase cubre el inicio de sesión (20 por minuto, con cualquier método), el registro (10 por hora) y pedir el cambio de contraseña, el correo de verificación o un código (10 por hora cada uno). Sus reglas están en el panel de administración (Settings → Rate limits) y parten de `pb_migrations/…_rate_limits.js`. Son holgadas porque en las redes móviles muchos celulares comparten una dirección. Detrás de Cloudflare Tunnel (etapa 8) la dirección real llega en el encabezado `CF-Connecting-IP`, que está marcado como confiable.
+
+Al pasar un límite, el servidor responde 429 (por cuenta, con el código `rate_limited`), y la app dice "Vas muy rápido. Intenta de nuevo en unos minutos." sin perder lo escrito. Los límites buscan ser holgados para el uso normal; se ajustan después de la beta (etapa 9). `PAWLY_LIMITS=off` apaga los dos: lo usan las pruebas (salvo `test/limits.test.mjs`), porque crean muchas cuentas y registros muy rápido.
+
 ## Suspender cuentas
 
 Los superusuarios suspenden una cuenta desde el panel de administración (etapa 7), en la colección `users`: `suspendedUntil` (una fecha) o `suspendedForever`, y un motivo que la persona ve (`suspensionReason`). Los campos están ocultos, así que solo los superusuarios los ven y los cambian. Mientras la suspensión está vigente (`pb_hooks/suspension.pb.js`):

@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 7, Moderación (en progreso).** Última release: `v0.7.0` (etapa 6). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 7, Moderación (terminada, falta la release `v0.8.0` a `main`).** La etapa 8 empieza cuando esa release esté mergeada. Última release: `v0.7.0` (etapa 6). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -20,13 +20,13 @@ Etapa actual: **etapa 7, Moderación (en progreso).** Última release: `v0.7.0` 
 | 4 | Mensajes y notificaciones | Hecho |
 | 5 | Adopción | Hecho |
 | 6 | Rescate | Hecho |
-| 7 | Moderación | En progreso |
+| 7 | Moderación | Hecho |
 | 8 | Infraestructura y web | Sin empezar |
 | 9 | Lanzamiento | Sin empezar |
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 7: revisión de reportes en el panel de administración ([#74](https://github.com/AntOnionPro/pawly/issues/74), hecho), suspender cuentas ([#75](https://github.com/AntOnionPro/pawly/issues/75), hecho), filtro de contenido ([#76](https://github.com/AntOnionPro/pawly/issues/76), hecho) y límites contra spam ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Los reportes se revisan y las cuentas se suspenden en el panel de PocketBase; el README del servidor explica cómo [revisar reportes](server/README.es.md#revisar-reportes), [suspender cuentas](server/README.es.md#suspender-cuentas) y cambiar el [filtro de contenido](server/README.es.md#filtro-de-contenido).
+Entregado en la etapa 7: revisión de reportes en el panel de administración ([#74](https://github.com/AntOnionPro/pawly/issues/74)), suspender cuentas ([#75](https://github.com/AntOnionPro/pawly/issues/75)), filtro de contenido ([#76](https://github.com/AntOnionPro/pawly/issues/76)) y límites contra spam ([#77](https://github.com/AntOnionPro/pawly/issues/77)). La moderación se hace en el panel de PocketBase; el README del servidor explica cómo [revisar reportes](server/README.es.md#revisar-reportes), [suspender cuentas](server/README.es.md#suspender-cuentas), cambiar el [filtro de contenido](server/README.es.md#filtro-de-contenido) y los [límites contra spam](server/README.es.md#límites-contra-spam).
 
 ## Funcionalidades
 

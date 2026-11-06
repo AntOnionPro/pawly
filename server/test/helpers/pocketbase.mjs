@@ -80,8 +80,9 @@ async function launch(dirs, env) {
 }
 
 /**
- * Starts PocketBase. `env` adds environment variables; by default push notifications go to an
- * address where nothing listens, so tests never call Expo.
+ * Starts PocketBase. `env` adds environment variables. By default push notifications go to an
+ * address where nothing listens, so tests never call Expo, and the limits against spam are off
+ * (tests create many accounts and records quickly); `{ PAWLY_LIMITS: 'on' }` turns them on.
  */
 export async function startPocketBase({ env = {} } = {}) {
   if (!existsSync(binary)) {
@@ -93,15 +94,19 @@ export async function startPocketBase({ env = {} } = {}) {
     `--migrationsDir=${path.join(serverDir, 'pb_migrations')}`,
     `--hooksDir=${path.join(serverDir, 'pb_hooks')}`,
   ];
-  execFileSync(binary, ['superuser', 'upsert', SUPERUSER.email, SUPERUSER.password, ...dirs], {
-    stdio: 'ignore',
-  });
-
-  const { proc, baseUrl, log } = await launch(dirs, {
+  const environment = {
     ...process.env,
     PAWLY_PUSH_URL: 'http://127.0.0.1:9/push',
+    PAWLY_LIMITS: 'off',
     ...env,
+  };
+  // This also applies the migrations, with the same environment as the server.
+  execFileSync(binary, ['superuser', 'upsert', SUPERUSER.email, SUPERUSER.password, ...dirs], {
+    stdio: 'ignore',
+    env: environment,
   });
+
+  const { proc, baseUrl, log } = await launch(dirs, environment);
 
   async function api(urlPath, { method = 'GET', body, token } = {}) {
     const headers = {};

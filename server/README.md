@@ -151,6 +151,29 @@ Terms are compared without case, accents, repeated letters ("puuuto") or common 
 
 The migration adds a starting list in Spanish and English: serious insults and slurs (`block`), and phrases about selling animals (`review`, `animal_sale`) or animal fights (`review`, `animal_abuse`). To change it, open `blocked_terms` in the admin panel and add, edit or delete terms; changes apply at once. The filter only reads text: photos and videos are moderated through reports.
 
+## Limits against spam
+
+Each account can only create so much in a period (stage 7, `pb_hooks/limits.pb.js`; the table is `LIMITS` in `pb_hooks/lib/limits.js`). Accounts less than 24 hours old get half of each limit (rounded up), and superusers have none:
+
+| What | Limit |
+| --- | --- |
+| Posts (reposts included) | 10 per hour and 30 per day |
+| Comments | 30 per 10 minutes and 300 per day |
+| Direct messages | 60 per 10 minutes and 600 per day |
+| New conversations (`startedBy`, set by the server) | 20 per day |
+| Follows | 60 per hour and 300 per day |
+| Reports | 20 per day |
+| Adoption listings | 5 per day |
+| Adoption requests | 10 per day |
+| Rescue reports | 10 per day |
+| "I can help" offers | 20 per day |
+
+The same comment or message of 20 characters or more can only be sent 3 times in 10 minutes; short ones ("So cute!") are not affected.
+
+Per connection (IP address), PocketBase's rate limiter covers signing in (20 per minute, any method), signing up (10 per hour) and asking for a password reset, a verification email or a code (10 per hour each). Its rules are in the admin panel (Settings → Rate limits) and start from `pb_migrations/…_rate_limits.js`. They are generous because many phones can share one address on mobile networks. Behind Cloudflare Tunnel (stage 8) the real address comes in the `CF-Connecting-IP` header, which is set as trusted.
+
+Over a limit, the server answers 429 (per account, with the code `rate_limited`), and the app says "You are going too fast. Try again in a few minutes." without losing what was written. The limits are meant to be loose for normal use; adjust them after the beta (stage 9). `PAWLY_LIMITS=off` turns both off: the tests do it (except `test/limits.test.mjs`), since they create many accounts and records quickly.
+
 ## Account suspension
 
 Superusers suspend an account from the admin panel (stage 7), in the `users` collection: `suspendedUntil` (a date) or `suspendedForever`, and a `suspensionReason` the person sees. The fields are hidden, so only superusers see and change them. While the suspension is in force (`pb_hooks/suspension.pb.js`):

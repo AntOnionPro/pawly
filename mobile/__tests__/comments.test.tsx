@@ -248,6 +248,21 @@ describe('post page comments', () => {
     expect(field.props.value).toBe('Algo feo');
   });
 
+  it('explains when a limit against spam stops a comment, and keeps the text', async () => {
+    jest
+      .mocked(api.addComment)
+      .mockRejectedValue(serverError(429, { limit: { code: 'rate_limited', message: 'x' } }));
+    await renderWith(<PostDetailScreen />, signedIn());
+    await screen.findByText('Comentario c1');
+    const field = screen.getByLabelText('Comentario');
+    await fireEvent.changeText(field, 'Hola otra vez');
+    await fireEvent.press(screen.getByRole('button', { name: 'Enviar comentario' }));
+    expect(
+      await screen.findByText('Vas muy rápido. Intenta de nuevo en unos minutos.'),
+    ).toBeOnTheScreen();
+    expect(field.props.value).toBe('Hola otra vez');
+  });
+
   it('lets the author edit their comment, which then shows as edited', async () => {
     jest
       .mocked(api.updateComment)

@@ -6,7 +6,7 @@ import {
   type QueryClient,
 } from '@tanstack/react-query';
 
-import { requestErrorKind, toFieldErrors, type ErrorKey } from '@/api/errors';
+import { requestErrorKey, requestErrorKind, toFieldErrors, type ErrorKey } from '@/api/errors';
 import { useAuth } from '@/auth/AuthProvider';
 import { updateCachedPost } from '@/features/posts/cache';
 
@@ -108,5 +108,7 @@ export function commentErrorKey(error: unknown): ErrorKey {
   const fields = toFieldErrors(error);
   const fieldError = fields.text ?? Object.values(fields)[0];
   if (fieldError) return fieldError;
-  return requestErrorKind(error) === 'network' ? 'errors.network' : 'errors.generic';
+  const kind = requestErrorKind(error);
+  const key = kind === 'network' || kind === 'rateLimited' ? requestErrorKey(kind) : null;
+  return key ?? 'errors.generic';
 }
