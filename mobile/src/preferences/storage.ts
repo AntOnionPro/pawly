@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { isLanguage, type LanguagePreference } from '@/i18n';
+import { PALETTE_NAMES, type PaletteName } from '@/theme/colors';
 import { FONT_PREFERENCES, type FontPreference } from '@/theme/fonts';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
@@ -14,6 +15,8 @@ export interface Preferences {
   language: LanguagePreference;
   nearbyRadiusKm: NearbyRadius;
   font: FontPreference;
+  /** Palette of the light theme. */
+  palette: PaletteName;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -21,6 +24,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   language: 'system',
   nearbyRadiusKm: 5,
   font: 'ubuntu',
+  palette: 'pink',
 };
 
 export const PREFERENCES_KEY = 'pawly:preferences';
@@ -37,7 +41,7 @@ export function parsePreferences(raw: string | null): Preferences {
     if (typeof data !== 'object' || data === null) {
       return DEFAULT_PREFERENCES;
     }
-    const { theme, language, nearbyRadiusKm, font } = data as Record<string, unknown>;
+    const { theme, language, nearbyRadiusKm, font, palette } = data as Record<string, unknown>;
     return {
       theme: THEMES.includes(theme as ThemePreference)
         ? (theme as ThemePreference)
@@ -50,6 +54,9 @@ export function parsePreferences(raw: string | null): Preferences {
       font: FONT_PREFERENCES.includes(font as FontPreference)
         ? (font as FontPreference)
         : DEFAULT_PREFERENCES.font,
+      palette: PALETTE_NAMES.includes(palette as PaletteName)
+        ? (palette as PaletteName)
+        : DEFAULT_PREFERENCES.palette,
     };
   } catch {
     return DEFAULT_PREFERENCES;

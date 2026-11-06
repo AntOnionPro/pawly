@@ -9,6 +9,8 @@ import { ThemedText } from './ThemedText';
 export interface Option<T extends string> {
   value: T;
   label: string;
+  /** A color shown before the label (for example, a palette). */
+  swatch?: string;
 }
 
 interface OptionGroupProps<T extends string> {
@@ -16,6 +18,8 @@ interface OptionGroupProps<T extends string> {
   options: readonly Option<T>[];
   selected: T;
   onSelect: (value: T) => void;
+  /** A short explanation below the options. */
+  footer?: string;
 }
 
 /** Grouped list of mutually exclusive options, like the system settings screens. */
@@ -24,6 +28,7 @@ export function OptionGroup<T extends string>({
   options,
   selected,
   onSelect,
+  footer,
 }: OptionGroupProps<T>) {
   const colors = useThemeColors();
   return (
@@ -52,12 +57,25 @@ export function OptionGroup<T extends string>({
                 },
                 pressed && styles.pressed,
               ]}>
+              {option.swatch ? (
+                <View
+                  style={[
+                    styles.swatch,
+                    { backgroundColor: option.swatch, borderColor: colors.border },
+                  ]}
+                />
+              ) : null}
               <ThemedText style={styles.label}>{option.label}</ThemedText>
               {isSelected ? <Icon name="check" size={20} color={colors.accent} /> : null}
             </Pressable>
           );
         })}
       </View>
+      {footer ? (
+        <ThemedText variant="caption" color="textSecondary" style={styles.title}>
+          {footer}
+        </ThemedText>
+      ) : null}
     </View>
   );
 }
@@ -78,5 +96,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   label: { flex: 1 },
+  swatch: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginRight: spacing.md,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   pressed: { opacity: 0.6 },
 });

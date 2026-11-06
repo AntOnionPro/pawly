@@ -559,6 +559,15 @@ const es: Resources = {
       light: 'Claro',
       dark: 'Oscuro',
     },
+    palette: {
+      title: 'Color',
+      pink: 'Rosa',
+      orange: 'Naranja',
+      green: 'Verde',
+      blue: 'Azul',
+      purple: 'Morado',
+      hint: 'Se usa en el tema claro. El tema oscuro es negro y blanco.',
+    },
     font: {
       title: 'Letra',
       ubuntu: 'Ubuntu',

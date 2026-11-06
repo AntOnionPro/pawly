@@ -27,7 +27,7 @@ Etapa actual: **etapa 7.5, Diseño y detalles (en progreso).** Las etapas 8 y 9 
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87), hecho), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) y botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)). Se publica como `v0.8.5`.
+Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87), hecho), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88), hecho), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) y botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)). Se publica como `v0.8.5`.
 
 ## Funcionalidades
 
@@ -89,7 +89,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos. Los usuarios pu
 
 #### Ajustes
 
-- Idioma, tema, letra, preferencias de notificaciones, radio de cercanía, usuarios bloqueados, cambiar contraseña, eliminar cuenta, términos y aviso de privacidad, cerrar sesión.
+- Idioma, tema, paleta de color, letra, preferencias de notificaciones, radio de cercanía, usuarios bloqueados, cambiar contraseña, eliminar cuenta, términos y aviso de privacidad, cerrar sesión.
 
 ### Fase 2
 
@@ -112,19 +112,22 @@ Los reportes se ven en una lista y en un mapa de casos cercanos. Los usuarios pu
 - Solo íconos en la interfaz, nunca emojis. Aspecto nativo en cada plataforma: SF Symbols en iOS y Material Symbols en Android.
 - Logo: un gato que forma la letra P (`mobile/assets/brand/logo.svg`), en rosa `#FF2981`, que no cambia con la paleta elegida. El ícono de la app es el logo blanco sobre ese rosa (con versiones oscura y tintada en iOS y una monocromática en Android), e Inicio muestra "Pawly" escrito con esa P (`mobile/assets/brand/wordmark.svg`) en el color de acento.
 - Letra: Ubuntu (ligera, normal, media y negrita), también en las barras de arriba y en la de pestañas. En ajustes se puede cambiar por la letra del celular (San Francisco en iOS, Roboto en Android). Lo que dibuja el sistema (avisos, teclado, menú de compartir) siempre usa la letra del sistema.
-- Llegan en la etapa 7.5: paletas del tema claro a elegir en ajustes (rosa, naranja, verde, azul y morado).
 - La reacción es una huella, no un corazón.
 - La versión web para computadora es la de menor prioridad.
 
 ### Colores
 
-Tema claro:
+Tema claro: cada persona elige su paleta en ajustes (rosa por defecto). Cada paleta tiene un fondo muy claro (primario), un color muy oscuro para texto, íconos y barras (secundario) y un acento para la huella activa, el botón principal y la pestaña activa (terciario):
 
-| Rol | Color | Uso |
-| --- | --- | --- |
-| Primario | `#FFF5F7` (rosa pastel muy clarito) | Fondo |
-| Secundario | `#4A0818` (vino oscuro) | Texto, íconos y barras |
-| Terciario | `#D84080` (rosa) | Acentos: huella activa, botón principal, pestaña activa |
+| Paleta | Primario (fondo) | Secundario (texto) | Terciario (acento) | Acento sobre fondo | Blanco sobre acento |
+| --- | --- | --- | --- | --- | --- |
+| Rosa (por defecto) | `#FFF5F7` | `#4A0818` | `#D84080` | 3.96:1 | 4.23:1 |
+| Naranja | `#FFF7F0` | `#4A1C04` | `#D2560F` | 3.90:1 | 4.14:1 |
+| Verde | `#F2FAF4` | `#0E3B1F` | `#2E8A4F` | 4.06:1 | 4.32:1 |
+| Azul | `#F2F7FF` | `#0B2447` | `#2F6BD8` | 4.63:1 | 4.98:1 |
+| Morado | `#F8F5FF` | `#2E1065` | `#7C3AED` | 5.29:1 | 5.70:1 |
+
+El texto secundario, los bordes y el indicador de pestaña son mezclas de estos colores (`mobile/src/theme/colors.ts`). No hay amarillo: un acento amarillo vivo no se distingue sobre un fondo claro (2.1:1).
 
 Tema oscuro:
 
@@ -136,9 +139,9 @@ Tema oscuro:
 | `#3A3A3C` | Bordes y separadores |
 | `#8E8E93` | Texto secundario |
 
-El rosa y el vino no se usan en el tema oscuro. El tema sigue la configuración del sistema y se puede cambiar en ajustes.
+Las paletas no se usan en el tema oscuro, que siempre es negro y blanco. El tema sigue la configuración del sistema y se puede cambiar en ajustes.
 
-Contraste: `#D84080` sobre `#FFF5F7` da 3.96:1, suficiente para íconos y textos grandes o en negrita, pero no para texto pequeño (que necesita 4.5:1). El texto pequeño va en `#4A0818` (14.7:1).
+Contraste: todos los acentos dan al menos 3:1 sobre su fondo, suficiente para íconos y textos grandes o en negrita, pero no para texto pequeño (que necesita 4.5:1). El texto pequeño va en el color secundario (11.9:1 o más). `mobile/__tests__/contrast.test.ts` revisa todas las paletas.
 
 ### Idiomas
 

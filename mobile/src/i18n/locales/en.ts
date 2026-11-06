@@ -556,6 +556,15 @@ const en = {
       light: 'Light',
       dark: 'Dark',
     },
+    palette: {
+      title: 'Color',
+      pink: 'Pink',
+      orange: 'Orange',
+      green: 'Green',
+      blue: 'Blue',
+      purple: 'Purple',
+      hint: 'Used in the light theme. The dark theme is black and white.',
+    },
     font: {
       title: 'Font',
       ubuntu: 'Ubuntu',

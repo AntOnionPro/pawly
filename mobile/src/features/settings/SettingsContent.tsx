@@ -6,6 +6,7 @@ import { OptionGroup, type Option } from '@/components/OptionGroup';
 import type { LanguagePreference } from '@/i18n';
 import { usePreferences } from '@/preferences/PreferencesProvider';
 import { NEARBY_RADII, type ThemePreference } from '@/preferences/storage';
+import { LIGHT_PALETTES, PALETTE_NAMES, type PaletteName } from '@/theme/colors';
 import type { FontPreference } from '@/theme/fonts';
 
 export interface AccountActions {
@@ -25,14 +26,30 @@ interface SettingsContentProps {
 /** Account, theme, language and legal documents. Rendered by the `/settings` route. */
 export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) {
   const { t } = useTranslation();
-  const { theme, language, nearbyRadiusKm, font, setTheme, setLanguage, setNearbyRadius, setFont } =
-    usePreferences();
+  const {
+    theme,
+    language,
+    nearbyRadiusKm,
+    font,
+    palette,
+    setTheme,
+    setLanguage,
+    setNearbyRadius,
+    setFont,
+    setPalette,
+  } = usePreferences();
 
   const themeOptions: Option<ThemePreference>[] = [
     { value: 'system', label: t('settings.theme.system') },
     { value: 'light', label: t('settings.theme.light') },
     { value: 'dark', label: t('settings.theme.dark') },
   ];
+
+  const paletteOptions: Option<PaletteName>[] = PALETTE_NAMES.map((name) => ({
+    value: name,
+    label: t(`settings.palette.${name}`),
+    swatch: LIGHT_PALETTES[name].accent,
+  }));
 
   const fontOptions: Option<FontPreference>[] = [
     { value: 'ubuntu', label: t('settings.font.ubuntu') },
@@ -81,6 +98,13 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
         options={themeOptions}
         selected={theme}
         onSelect={setTheme}
+      />
+      <OptionGroup
+        title={t('settings.palette.title')}
+        options={paletteOptions}
+        selected={palette}
+        onSelect={setPalette}
+        footer={t('settings.palette.hint')}
       />
       <OptionGroup
         title={t('settings.font.title')}

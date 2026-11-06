@@ -6,6 +6,7 @@ import { Appearance } from 'react-native';
 import { SettingsContent } from '@/features/settings/SettingsContent';
 import { PreferencesProvider, usePreferences } from '@/preferences/PreferencesProvider';
 import { PREFERENCES_KEY } from '@/preferences/storage';
+import { lightThemes } from '@/theme/colors';
 
 jest.mock('expo-localization', () => {
   const locales = jest.fn(() => [{ languageCode: 'es', languageTag: 'es-MX' }]);
@@ -32,6 +33,7 @@ async function renderSettings() {
 const themeGroup = () => within(screen.getByLabelText(/^(Tema|Theme)$/));
 const languageGroup = () => within(screen.getByLabelText(/^(Idioma|Language)$/));
 const fontGroup = () => within(screen.getByLabelText(/^(Letra|Font)$/));
+const paletteGroup = () => within(screen.getByLabelText(/^Color$/));
 
 describe('SettingsContent', () => {
   beforeEach(async () => {
@@ -74,6 +76,27 @@ describe('SettingsContent', () => {
       language: 'en',
       nearbyRadiusKm: 5,
       font: 'ubuntu',
+      palette: 'pink',
+    });
+  });
+
+  it('offers the palettes with their color, and switches and saves the choice', async () => {
+    await renderSettings();
+    expect(paletteGroup().getByRole('radio', { name: 'Rosa', checked: true })).toBeOnTheScreen();
+    for (const name of ['Naranja', 'Verde', 'Azul', 'Morado']) {
+      expect(paletteGroup().getByRole('radio', { name })).toBeOnTheScreen();
+    }
+    expect(paletteGroup().queryByRole('radio', { name: 'Amarillo' })).toBeNull();
+    expect(
+      screen.getByText('Se usa en el tema claro. El tema oscuro es negro y blanco.'),
+    ).toBeOnTheScreen();
+
+    await fireEvent.press(paletteGroup().getByRole('radio', { name: 'Verde' }));
+    expect(paletteGroup().getByRole('radio', { name: 'Verde', checked: true })).toBeOnTheScreen();
+    // The light theme changes at once: the label text takes the green palette's color.
+    expect(screen.getByText('Color')).toHaveStyle({ color: lightThemes.green.textSecondary });
+    expect(JSON.parse((await AsyncStorage.getItem(PREFERENCES_KEY)) ?? '{}')).toMatchObject({
+      palette: 'green',
     });
   });
 
