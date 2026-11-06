@@ -260,6 +260,7 @@ describe('follow-up notifications', () => {
       adoption: ADOPTED,
       followupMilestone: 'month1',
       rescueId: '',
+      distanceKm: 0,
       read: true,
       created: new Date().toISOString(),
       ...overrides,

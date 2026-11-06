@@ -54,6 +54,7 @@ function notification(
     adoptionId: '',
     followupMilestone: '',
     rescueId: '',
+    distanceKm: 0,
     read: false,
     created: new Date().toISOString(),
     ...overrides,

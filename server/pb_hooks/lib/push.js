@@ -4,6 +4,14 @@
 const EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send';
 const MAX_BODY = 120;
 
+/** What a nearby rescue case is, at the start of its alert. */
+const NEARBY_ES = {
+  help: 'Animal que necesita ayuda',
+  lost: 'Mascota perdida',
+  found: 'Animal encontrado',
+};
+const NEARBY_EN = { help: 'Animal in need of help', lost: 'Lost pet', found: 'Found animal' };
+
 /** Texts in each app language. */
 const TEXTS = {
   es: {
@@ -20,6 +28,7 @@ const TEXTS = {
     followup_posted: (u, _, pet) => `@${u} compartió cómo está ${pet}.`,
     milestones: { week1: '1 semana', month1: '1 mes', month3: '3 meses', month6: '6 meses' },
     rescue_help: (u) => `@${u} puede ayudar con tu caso de rescate.`,
+    rescue_nearby: (_u, _, kind, km) => `${NEARBY_ES[kind] || NEARBY_ES.help} a ${km} km de ti.`,
     sharedPost: 'Compartió una publicación',
   },
   en: {
@@ -36,6 +45,7 @@ const TEXTS = {
     followup_posted: (u, _, pet) => `@${u} shared how ${pet} is doing.`,
     milestones: { week1: '1 week', month1: '1 month', month3: '3 months', month6: '6 months' },
     rescue_help: (u) => `@${u} can help with your rescue case.`,
+    rescue_nearby: (_u, _, kind, km) => `${NEARBY_EN[kind] || NEARBY_EN.help} ${km} km from you.`,
     sharedPost: 'Shared a post',
   },
 };

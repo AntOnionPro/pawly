@@ -3,7 +3,8 @@
 /**
  * Notifies `recipient` that `actor` did something (`type`), unless it is about themselves, the
  * recipient blocked the actor, or (with `once`) the same notification already exists. `post`,
- * `comment`, `adoption`, `followup` and `rescue` say what it is about. Never throws: a notification must
+ * `comment`, `adoption`, `followup` and `rescue` say what it is about (and `distanceKm`, how far
+ * a nearby case is). Never throws: a notification must
  * not make the user's action fail.
  */
 function notify(
@@ -17,6 +18,7 @@ function notify(
     adoption = '',
     followup = '',
     rescue = '',
+    distanceKm = 0,
     once = false,
   },
 ) {
@@ -45,6 +47,7 @@ function notify(
     record.set('adoption', adoption);
     record.set('followup', followup);
     record.set('rescue', rescue);
+    record.set('distanceKm', distanceKm);
     record.set('read', false);
     app.save(record);
   } catch (error) {

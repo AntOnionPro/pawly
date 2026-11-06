@@ -140,7 +140,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted` o `rescue_help`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`, `rescue`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help` o `rescue_nearby`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`, `rescue`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 
@@ -216,6 +216,12 @@ Un reporte nuevo siempre está `open`. La app busca los reportes cercanos pidien
 ### Puedo ayudar
 
 `rescue_helpers` guarda a las personas (`helper`) que se ofrecieron a ayudar con un reporte de un animal que necesita ayuda, con un mensaje opcional (`message`, hasta 500 caracteres). Una oferta por persona y reporte, nunca en tu propio reporte, en uno cerrado ni con un bloqueo de por medio (`own_report`, `report_closed`, `not_help`, `already_helping`, `blocked`). Quien ayuda retira su oferta borrándola, y nadie la edita. Solo quien ayuda y quien reportó ven una oferta; todos ven cuántas hay en `helperCount` del reporte, que solo escribe el servidor. La primera oferta pasa un reporte abierto a `in_progress`, y quien reportó recibe una notificación `rescue_help` (con el reporte en `rescue`; preferencia de push `rescueOff`).
+
+### Avisos cercanos
+
+`rescue_alerts` guarda, para cada persona que activó los avisos de casos de rescate cercanos, una ubicación aproximada (`latitude`, `longitude`, que el servidor redondea a unos 500 m) y su radio cercano (`radiusKm`: 1, 5, 10 o 25; si no, `invalid_radius`). Una por persona; solo su dueño la ve, la cambia y la borra, y se borra con la cuenta. La app la actualiza al abrirse y la borra al apagar los avisos (`pb_hooks/rescue_alerts.pb.js`, `pb_hooks/lib/geo.js`).
+
+Cuando alguien crea un reporte de rescate, cada persona cuyo radio lo incluye recibe una notificación `rescue_nearby` con el reporte en `rescue` y a qué distancia está (`distanceKm`), en la app y por push ("Mascota perdida a 2 km de ti."). Nunca quien reporta, nadie con un bloqueo de por medio, y una sola vez por reporte: editar el reporte no vuelve a avisar.
 
 ## Contadores
 

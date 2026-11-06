@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { createQueryClient } from '@/api/queryClient';
 import { AuthProvider, useAuth } from '@/auth/AuthProvider';
 import { usePushRegistration, usePushTaps } from '@/features/push/hooks';
+import { useRescueAlertSync } from '@/features/rescue/alertHooks';
 import {
   PreferencesProvider,
   useColorSchemeName,
@@ -30,10 +31,14 @@ export default function RootLayout() {
   );
 }
 
-/** Keeps this phone registered for push and opens what a tapped push is about. */
+/**
+ * Keeps this phone registered for push, opens what a tapped push is about, and keeps the
+ * nearby rescue alert's location up to date.
+ */
 function PushHandlers() {
   usePushRegistration();
   usePushTaps();
+  useRescueAlertSync();
   return null;
 }
 

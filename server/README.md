@@ -140,7 +140,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notifications
 
-`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted` or `rescue_help`), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help` or `rescue_nearby`), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
 
 ## Push notifications
 
@@ -216,6 +216,12 @@ A new report is always `open`. The app finds nearby reports by asking for an are
 ### I can help
 
 `rescue_helpers` holds the people (`helper`) who offered to help with a report of an animal that needs help, with an optional `message` (up to 500 characters). One offer per person and report, never on your own report, on a closed one or across a block (`own_report`, `report_closed`, `not_help`, `already_helping`, `blocked`). The helper withdraws by deleting the offer, and nobody edits it. Only the helper and the reporter see an offer; everyone sees how many there are in the report's `helperCount`, which only the server writes. The first offer moves an open report to `in_progress`, and the reporter gets a `rescue_help` notification (with the related `rescue`; push preference `rescueOff`).
+
+### Nearby alerts
+
+`rescue_alerts` holds, for each person who turned on alerts for nearby rescue cases, an approximate location (`latitude`, `longitude`, rounded by the server to about 500 m) and their nearby radius (`radiusKm`: 1, 5, 10 or 25; `invalid_radius` otherwise). One per person; only its owner sees, changes and deletes it, and it goes away with the account. The app updates it when it opens and deletes it when the alerts are turned off (`pb_hooks/rescue_alerts.pb.js`, `pb_hooks/lib/geo.js`).
+
+When someone creates a rescue report, everyone whose radius includes it gets a `rescue_nearby` notification with the related `rescue` and how far it is (`distanceKm`), in the app and by push ("Lost pet 2 km from you."). Never the reporter, nobody across a block, and once per report: editing the report does not alert again.
 
 ## Counters
 

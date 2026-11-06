@@ -217,6 +217,7 @@ describe('help notifications', () => {
           adoptionId: '',
           followupMilestone: '',
           rescueId: 'r1',
+          distanceKm: 0,
           rescue: REPORT,
           read: true,
           created: new Date().toISOString(),
