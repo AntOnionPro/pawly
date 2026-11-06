@@ -349,6 +349,7 @@ describe('adoption notifications', () => {
       adoptionId: 'a1',
       adoption: LISTING,
       followupMilestone: '',
+      rescueId: '',
       read: true,
       created: new Date().toISOString(),
     };

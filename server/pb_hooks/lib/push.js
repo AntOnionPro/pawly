@@ -19,6 +19,7 @@ const TEXTS = {
       `Ya pasó ${when} desde que adoptaste a ${pet}. Comparte una foto o video para @${u}.`,
     followup_posted: (u, _, pet) => `@${u} compartió cómo está ${pet}.`,
     milestones: { week1: '1 semana', month1: '1 mes', month3: '3 meses', month6: '6 meses' },
+    rescue_help: (u) => `@${u} puede ayudar con tu caso de rescate.`,
     sharedPost: 'Compartió una publicación',
   },
   en: {
@@ -34,6 +35,7 @@ const TEXTS = {
       `It has been ${when} since you adopted ${pet}. Share a photo or video for @${u}.`,
     followup_posted: (u, _, pet) => `@${u} shared how ${pet} is doing.`,
     milestones: { week1: '1 week', month1: '1 month', month3: '3 months', month6: '6 months' },
+    rescue_help: (u) => `@${u} can help with your rescue case.`,
     sharedPost: 'Shared a post',
   },
 };
@@ -54,6 +56,7 @@ const PREFERENCE = {
   adopted: 'adoption',
   followup_due: 'adoption',
   followup_posted: 'adoption',
+  rescue_help: 'rescue',
 };
 
 /** Whether `userId` wants pushes of `type` (paw, comment, follow, repost, message, adoption…). */

@@ -64,6 +64,7 @@ function report(id: string, overrides: Partial<api.RescueReport> = {}): api.Resc
     petId: '',
     lastSeenAt: '',
     status: 'open',
+    helperCount: 0,
     created: new Date().toISOString(),
     ...overrides,
   };

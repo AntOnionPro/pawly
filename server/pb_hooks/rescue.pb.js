@@ -77,3 +77,66 @@ function validateRescue(e) {
 
 onRecordCreateRequest(validateRescue, 'rescue_reports');
 onRecordUpdateRequest(validateRescue, 'rescue_reports');
+
+// "I can help": only for open or in-progress reports of animals that need help, never on your
+// own report, across a block or twice. The message is trimmed.
+onRecordCreateRequest((e) => {
+  const { hasBlock } = require(`${__hooks}/lib/moderation.js`);
+  const fail = (code, message) => {
+    throw new BadRequestError('Invalid offer to help.', {
+      report: new ValidationError(code, message),
+    });
+  };
+  const record = e.record;
+  record.set('message', record.getString('message').trim());
+  let report = null;
+  try {
+    report = e.app.findRecordById('rescue_reports', record.getString('report'));
+  } catch {
+    // A missing report is rejected by the relation field itself.
+  }
+  if (report) {
+    const helper = record.getString('helper');
+    if (report.getString('kind') !== 'help') {
+      fail('not_help', 'Only animals that need help take offers.');
+    }
+    if (report.getString('status') === 'closed') fail('report_closed', 'This case is closed.');
+    if (report.getString('reporter') === helper) {
+      fail('own_report', 'You cannot offer help with your own report.');
+    }
+    if (hasBlock(e.app, helper, report.getString('reporter'))) {
+      fail('blocked', 'You cannot do this because of a block.');
+    }
+    const existing = e.app.findRecordsByFilter(
+      'rescue_helpers',
+      'report = {:report} && helper = {:helper}',
+      '',
+      1,
+      0,
+      { report: report.id, helper },
+    );
+    if (existing.length > 0) fail('already_helping', 'You already offered to help.');
+  }
+  e.next();
+}, 'rescue_helpers');
+
+// The first offer moves an open report to in progress, and the reporter is told.
+onRecordAfterCreateSuccess((e) => {
+  e.next();
+  const { notify } = require(`${__hooks}/lib/notifications.js`);
+  try {
+    const report = e.app.findRecordById('rescue_reports', e.record.getString('report'));
+    if (report.getString('status') === 'open') {
+      report.set('status', 'in_progress');
+      e.app.save(report);
+    }
+    notify(e.app, {
+      recipient: report.getString('reporter'),
+      actor: e.record.getString('helper'),
+      type: 'rescue_help',
+      rescue: report.id,
+    });
+  } catch (error) {
+    console.log(`[pawly-rescue] help offer: ${error}`);
+  }
+}, 'rescue_helpers');

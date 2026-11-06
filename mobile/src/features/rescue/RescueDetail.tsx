@@ -16,6 +16,7 @@ import { notify } from '@/utils/notify';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
 import type { RescueReport, RescueStatus } from './api';
+import { HelpSection } from './HelpSection';
 import { useSetRescueStatus } from './hooks';
 import { PointMap } from './maps';
 import { KIND_ICONS, useRescueDetail } from './RescueCard';
@@ -102,6 +103,7 @@ export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: Rescue
         {[detail, date].filter(Boolean).join(' · ')}
       </ThemedText>
       <ThemedText>{report.description}</ThemedText>
+      <HelpSection report={report} />
 
       <View style={[styles.place, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <PointMap point={report} kind={report.kind} />

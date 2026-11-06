@@ -58,6 +58,9 @@ onRecordAfterCreateSuccess((e) => {
     let pet = '';
     let milestone = '';
     let data = { type, postId, actorId: actor };
+    if (notification.getString('rescue')) {
+      data = { type, rescueId: notification.getString('rescue'), actorId: actor };
+    }
     if (adoptionId) {
       const adoption = e.app.findRecordById('adoptions', adoptionId);
       const petId = adoption.getString('pet');
