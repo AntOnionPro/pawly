@@ -214,6 +214,30 @@ describe('report screen', () => {
     expect(mockRouter.back).not.toHaveBeenCalled();
   });
 
+  it('reports adoption listings too', async () => {
+    jest.mocked(api.sendReport).mockResolvedValue(undefined);
+    mockParams = { kind: 'adoption', id: 'a1' };
+    await renderWith(<ReportScreen />, signedIn());
+    expect(screen.getByText('¿Por qué reportas esta ficha de adopción?')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByLabelText('Venta de animales'));
+    await fireEvent.press(screen.getByRole('button', { name: 'Enviar reporte' }));
+    await waitFor(() =>
+      expect(api.sendReport).toHaveBeenCalledWith(
+        expect.anything(),
+        'u1',
+        { kind: 'adoption', id: 'a1' },
+        'animal_sale',
+        '',
+      ),
+    );
+  });
+
+  it('reports rescue cases too', async () => {
+    mockParams = { kind: 'rescue', id: 'r1' };
+    await renderWith(<ReportScreen />, signedIn());
+    expect(screen.getByText('¿Por qué reportas este caso de rescate?')).toBeOnTheScreen();
+  });
+
   it('sends visitors to sign in', async () => {
     await renderWith(<ReportScreen />, authValue());
     expect(mockRouter.redirectedTo).toBe('/sign-in');

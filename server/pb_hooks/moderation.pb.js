@@ -2,40 +2,119 @@
 
 // Reports and blocks. Each handler runs on its own, so shared code lives in lib/moderation.js.
 
-// A report is about exactly one post, comment, user or message, and nobody reports themselves
-// or their own content.
+// A report is about exactly one post, comment, user, message, adoption listing or rescue
+// report, and nobody reports themselves or their own content. It keeps a copy of what was
+// reported, and starts pending.
 onRecordCreateRequest((e) => {
+  const { REPORT_KINDS, reportTarget } = require(`${__hooks}/lib/moderation.js`);
   const record = e.record;
-  const targets = ['post', 'comment', 'user', 'message'].filter(
-    (field) => record.getString(field) !== '',
-  );
+  const targets = REPORT_KINDS.filter((field) => record.getString(field) !== '');
   if (targets.length !== 1) {
     throw new BadRequestError('Invalid report.', {
-      post: new ValidationError('report_target', 'Report one post, comment, user or message.'),
+      post: new ValidationError(
+        'report_target',
+        'Report one post, comment, user, message, adoption listing or rescue report.',
+      ),
     });
   }
-  const target = targets[0];
-  let owner = '';
-  try {
-    if (target === 'user') owner = record.getString('user');
-    if (target === 'post') {
-      owner = e.app.findRecordById('posts', record.getString('post')).getString('author');
-    }
-    if (target === 'comment') {
-      owner = e.app.findRecordById('comments', record.getString('comment')).getString('author');
-    }
-    if (target === 'message') {
-      owner = e.app.findRecordById('messages', record.getString('message')).getString('sender');
-    }
-  } catch {
-    // A missing target is rejected by its relation field.
-  }
-  if (owner && owner === record.getString('reporter')) {
+  const target = reportTarget(e.app, record);
+  if (target.author && target.author === record.getString('reporter')) {
     throw new BadRequestError('Invalid report.', {
-      [target]: new ValidationError('report_own', 'You cannot report yourself or your content.'),
+      [target.kind]: new ValidationError(
+        'report_own',
+        'You cannot report yourself or your content.',
+      ),
     });
   }
+  record.set('targetKind', target.kind);
+  record.set('targetId', target.id);
+  record.set('targetAuthor', target.author);
+  record.set('targetText', target.text);
+  record.set('status', 'pending');
+  record.set('reviewedAt', '');
+  record.set('reviewNote', '');
   e.next();
+}, 'reports');
+
+// Reviewing a report (only superusers can update reports, from the admin panel). Only the
+// review changes: `status`, `reviewNote` and `reviewedAt`, which the server sets.
+// - "actioned" on content deletes it and tells its author; on a user it only closes the report
+//   (the suspension is done on the user).
+// - The other pending reports about the same thing get the same status, and everyone who
+//   reported it is told the result.
+onRecordUpdateRequest((e) => {
+  const { REPORT_KINDS, removeContent } = require(`${__hooks}/lib/moderation.js`);
+  const { notifyFromPawly } = require(`${__hooks}/lib/notifications.js`);
+  const record = e.record;
+  const original = record.original();
+  const fixed = [
+    'reporter',
+    ...REPORT_KINDS,
+    'reason',
+    'details',
+    'targetKind',
+    'targetId',
+    'targetAuthor',
+    'targetText',
+  ];
+  for (const field of fixed) record.set(field, original.get(field));
+
+  const before = original.getString('status') || 'pending';
+  const status = record.getString('status') || 'pending';
+  record.set('status', status);
+  if (status === 'pending') {
+    record.set('reviewedAt', '');
+  } else if (before === 'pending' || !original.getString('reviewedAt')) {
+    record.set('reviewedAt', new DateTime());
+  } else {
+    record.set('reviewedAt', original.get('reviewedAt'));
+  }
+  const reviewed = before === 'pending' && status !== 'pending';
+  const kind = record.getString('targetKind');
+  const targetId = record.getString('targetId');
+
+  let removed = false;
+  if (reviewed && status === 'actioned' && kind !== 'user') {
+    removed = removeContent(e.app, kind, targetId);
+    // Deleting the content empties the relation of every report about it.
+    if (removed) record.set(kind, '');
+  }
+
+  e.next();
+  if (!reviewed) return;
+
+  const others = e.app.findRecordsByFilter(
+    'reports',
+    "targetKind = {:kind} && targetId = {:id} && status = 'pending' && id != {:me}",
+    '',
+    0,
+    0,
+    { kind, id: targetId, me: record.id },
+  );
+  for (const other of others) {
+    other.set('status', status);
+    other.set('reviewedAt', record.get('reviewedAt'));
+    e.app.save(other);
+  }
+
+  const reporters = new Set(
+    [record, ...others].map((report) => report.getString('reporter')).filter(Boolean),
+  );
+  for (const reporter of reporters) {
+    notifyFromPawly(e.app, {
+      recipient: reporter,
+      type: status === 'actioned' ? 'report_actioned' : 'report_dismissed',
+      contentKind: kind,
+    });
+  }
+  if (removed) {
+    notifyFromPawly(e.app, {
+      recipient: record.getString('targetAuthor'),
+      type: 'content_removed',
+      contentKind: kind,
+      reportReason: record.getString('reason'),
+    });
+  }
 }, 'reports');
 
 // Nobody follows across a block, in either direction.

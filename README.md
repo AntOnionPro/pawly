@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 6, Rescue (done, pending the `v0.7.0` release to `main`).** Stage 7 starts after that release is merged. Latest release: `v0.6.0` (stage 5). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 7, Moderation (in progress).** Latest release: `v0.7.0` (stage 6). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -20,13 +20,13 @@ Current stage: **Stage 6, Rescue (done, pending the `v0.7.0` release to `main`).
 | 4 | Messages and notifications | Done |
 | 5 | Adoption | Done |
 | 6 | Rescue | Done |
-| 7 | Moderation | Not started |
+| 7 | Moderation | In progress |
 | 8 | Infrastructure and web | Not started |
 | 9 | Launch | Not started |
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 6 delivered: rescue reports and the Rescue tab ([#65](https://github.com/AntOnionPro/pawly/issues/65)), map and nearby cases ([#66](https://github.com/AntOnionPro/pawly/issues/66)), the "I can help" button ([#67](https://github.com/AntOnionPro/pawly/issues/67)) and alerts for nearby rescue cases ([#68](https://github.com/AntOnionPro/pawly/issues/68)). The map uses native maps (`react-native-maps`: Apple Maps on iOS, Google Maps on Android). Push on Android needs a development build (stage 8).
+Stage 7 issues: report review in the admin panel ([#74](https://github.com/AntOnionPro/pawly/issues/74), done), account suspension ([#75](https://github.com/AntOnionPro/pawly/issues/75)), content filter ([#76](https://github.com/AntOnionPro/pawly/issues/76)) and anti-spam limits ([#77](https://github.com/AntOnionPro/pawly/issues/77)). Reports are reviewed in the PocketBase admin panel; the [server README](server/README.md#reviewing-reports) explains how.
 
 ## Features
 
@@ -79,7 +79,7 @@ Reports appear as a list and on a map of nearby cases. Users can opt in to push 
 
 #### Moderation
 
-- Report posts, comments, messages and users. Block users.
+- Report posts, comments, messages, users, adoption listings and rescue reports. Block users.
 - Content filter, and an admin panel to review reports.
 
 #### Notifications

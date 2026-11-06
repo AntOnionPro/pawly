@@ -6,6 +6,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { ThemedText } from '@/components/ThemedText';
+import { useReportAction } from '@/features/moderation/hooks';
 import { petPhotoUrl } from '@/features/pets/api';
 import { MediaCarousel } from '@/features/posts/MediaCarousel';
 import { UserLink } from '@/features/users/UserLink';
@@ -62,8 +63,9 @@ export function AdoptionDetail({
   action,
 }: AdoptionDetailProps) {
   const { t } = useTranslation();
-  const { client } = useAuth();
+  const { client, user } = useAuth();
   const colors = useThemeColors();
+  const report = useReportAction();
   const pet = adoption.pet;
   const ageText = useAgeText(pet?.birthDate ?? '');
   const petPhoto = pet ? petPhotoUrl(client, pet) : null;
@@ -145,6 +147,14 @@ export function AdoptionDetail({
       ) : null}
       {onEdit ? (
         <Button variant="secondary" icon="edit" label={t('adoption.edit')} onPress={onEdit} />
+      ) : null}
+      {user?.id !== adoption.publisherId ? (
+        <Button
+          variant="link"
+          icon="flag"
+          label={t('report.adoption')}
+          onPress={() => report({ kind: 'adoption', id: adoption.id })}
+        />
       ) : null}
     </View>
   );

@@ -124,7 +124,19 @@ The "Following" feed lists posts with the filter `author.follows_via_following.f
 
 ## Reports and blocks
 
-The `reports` collection holds reports (stage 3): the `reporter` reports exactly one `post`, `comment` or `user`, with a `reason` (`spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, or `adoption_followup` for a missed [adoption follow-up](#adoption-follow-up)) and optional `details`. Only superusers see them, in the admin panel; reviewing them comes in stage 7. Each user reports the same thing once, and nobody reports themselves or their own content.
+The `reports` collection holds reports (stage 3): the `reporter` reports exactly one `post`, `comment`, `user`, `message`, `adoption` listing or `rescue` report, with a `reason` (`spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, or `adoption_followup` for a missed [adoption follow-up](#adoption-follow-up)) and optional `details`. Only superusers see them, in the admin panel. Each user reports the same thing once, and nobody reports themselves or their own content.
+
+Each report keeps a copy of what was reported (stage 7): its kind (`targetKind`), id (`targetId`), author or reported user (`targetAuthor`) and text (`targetText`), so it stays in the history after the content is deleted. It starts `pending`, and only superusers change its `status` (`actioned` or `dismissed`) and `reviewNote`; the server sets `reviewedAt`, and nothing else about a report can change. Deleting the content or the account of whoever reported only empties that relation; deleting the account of the reported person (`targetAuthor`) deletes the reports about them.
+
+### Reviewing reports
+
+1. Open the admin panel (`/_/`) and the `moderation_queue` collection. It has one row per reported content with pending reports: its `kind`, `target` (id), `author`, how many reports are `pending`, their `reasons`, the latest copy of the `text`, and the dates of the first and last report. Sort it by `pending`, from most to fewest.
+2. To see the content itself, open its collection (`posts`, `comments`, `messages`, `users`, `adoptions` or `rescue_reports`) and search for the `target` id. If it was already deleted, the copy in `text` remains.
+3. Open the `reports` collection, filter by `targetId = "<target>" && status = "pending"`, open one report and change its `status`. Optionally write a `reviewNote` (only superusers see it). Save it.
+   - `actioned` on a post, comment, message, listing or rescue report deletes the content and tells its author in the app ("We removed your post…", with the reason). On a user, it only closes the report: suspend the account on the user.
+   - `dismissed` keeps the content.
+   - In both cases, every other pending report about the same content gets the same status, and everyone who reported it is told the result in the app. These notices from Pawly have no `actor` and no push.
+4. Setting a report back to `pending` clears `reviewedAt` and does nothing else.
 
 The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
 
@@ -140,7 +152,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notifications
 
-`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help` or `rescue_nearby`), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help`, `rescue_nearby`, or `content_removed`, `report_actioned` and `report_dismissed` for a [report review](#reviewing-reports), which have no `actor` and say what was reported in `contentKind` and why it was removed in `reportReason`), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
 
 ## Push notifications
 

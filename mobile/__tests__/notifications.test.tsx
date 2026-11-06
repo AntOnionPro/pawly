@@ -55,6 +55,8 @@ function notification(
     followupMilestone: '',
     rescueId: '',
     distanceKm: 0,
+    contentKind: '',
+    reportReason: '',
     read: false,
     created: new Date().toISOString(),
     ...overrides,
@@ -100,6 +102,26 @@ describe('notification API helpers', () => {
     expect(mapped).toMatchObject({ type: 'comment', postId: 'post1', commentText: '¡Qué linda!' });
     expect(mapped.actor?.username).toBe('sol');
     expect(mapped.post?.media).toEqual(['a.jpg']);
+  });
+
+  it('maps a notice from Pawly, without an actor', () => {
+    const mapped = actual.toNotification({
+      id: 'n1',
+      collectionId: 'notifications',
+      collectionName: 'notifications',
+      type: 'content_removed',
+      actor: '',
+      contentKind: 'adoption',
+      reportReason: 'animal_sale',
+      read: false,
+    });
+    expect(mapped).toMatchObject({
+      type: 'content_removed',
+      actorId: '',
+      contentKind: 'adoption',
+      reportReason: 'animal_sale',
+    });
+    expect(mapped.actor).toBeUndefined();
   });
 
   it('lists, counts and marks as read', async () => {
@@ -183,6 +205,46 @@ describe('notification list', () => {
     await renderWith(<NotificationList />, signedIn());
     await screen.findByText('@sol republicó tu publicación.');
     expect(api.markAllNotificationsRead).not.toHaveBeenCalled();
+  });
+
+  it('shows report reviews as notices from Pawly', async () => {
+    const fromPawly = { actorId: '', actor: undefined, postId: '' };
+    jest.mocked(api.listNotifications).mockResolvedValue({
+      items: [
+        notification('n1', 'content_removed', {
+          ...fromPawly,
+          contentKind: 'comment',
+          reportReason: 'offensive',
+        }),
+        notification('n2', 'report_actioned', { ...fromPawly, contentKind: 'post' }),
+        notification('n3', 'report_dismissed', { ...fromPawly, contentKind: 'user', read: true }),
+      ],
+      page: 1,
+      hasMore: false,
+    });
+    await renderWith(<NotificationList />, signedIn());
+    const removed =
+      'Quitamos tu comentario porque no cumple las reglas de Pawly. Motivo: Ofensivo.';
+    expect(await screen.findByText(removed)).toBeOnTheScreen();
+    expect(screen.getAllByLabelText('Pawly')).toHaveLength(3);
+
+    // The removed content leads to the rules; the review results are only notices.
+    await fireEvent.press(screen.getByRole('link', { name: new RegExp(`^Nueva, ${removed}`) }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith({
+      pathname: '/legal/[doc]',
+      params: { doc: 'terms' },
+    });
+    expect(
+      screen.getByLabelText(
+        /^Nueva, Revisamos tu reporte y tomamos medidas\. Gracias por cuidar Pawly\./,
+      ),
+    ).toBeOnTheScreen();
+    expect(
+      screen.getByText(
+        'Revisamos tu reporte y no encontramos algo que vaya contra las reglas de Pawly.',
+      ),
+    ).toBeOnTheScreen();
+    expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 
   it('hides notifications from blocked users and says when there are none', async () => {

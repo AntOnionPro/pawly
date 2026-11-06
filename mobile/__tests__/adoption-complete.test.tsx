@@ -295,6 +295,8 @@ describe('the congratulations', () => {
           followupMilestone: '',
           rescueId: '',
           distanceKm: 0,
+          contentKind: '',
+          reportReason: '',
           read: true,
           created: new Date().toISOString(),
         },

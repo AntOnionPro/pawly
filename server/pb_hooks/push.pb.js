@@ -46,6 +46,8 @@ onRecordAfterCreateSuccess((e) => {
     const notification = e.record;
     const type = notification.getString('type');
     const actor = notification.getString('actor');
+    // Notices from Pawly itself (report reviews) stay in the app.
+    if (!actor) return;
     const username = e.app.findRecordById('users', actor).getString('username');
     let comment = '';
     if (notification.getString('comment')) {

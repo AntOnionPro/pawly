@@ -246,6 +246,35 @@ describe('listing page', () => {
     expect(onPressUser).toHaveBeenCalledWith('u2');
     await fireEvent.press(screen.getByRole('button', { name: 'Ver el perfil de Firulais' }));
     expect(onPressPet).toHaveBeenCalledWith('p1');
+
+    // Visitors who want to report it go to sign in.
+    await fireEvent.press(screen.getByRole('button', { name: 'Reportar ficha' }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith('/sign-in');
+  });
+
+  it('lets others report the listing', async () => {
+    await renderWith(
+      <AdoptionDetail adoption={adoption('a1')} onPressPet={jest.fn()} onPressUser={jest.fn()} />,
+      signedIn(),
+    );
+    await fireEvent.press(await screen.findByRole('button', { name: 'Reportar ficha' }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith({
+      pathname: '/report',
+      params: { kind: 'adoption', id: 'a1' },
+    });
+  });
+
+  it('does not let the publisher report their own listing', async () => {
+    await renderWith(
+      <AdoptionDetail
+        adoption={adoption('a1', { publisherId: 'u1', publisher: TEST_USER })}
+        onPressPet={jest.fn()}
+        onPressUser={jest.fn()}
+      />,
+      signedIn(),
+    );
+    expect(await screen.findByRole('header', { name: 'Firulais' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Reportar ficha' })).toBeNull();
   });
 });
 
