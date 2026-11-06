@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 5, Adoption (done, pending the `v0.6.0` release to `main`).** Stage 6 starts after that release is merged. Latest release: `v0.5.0` (stage 4). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 6, Rescue (in progress).** Latest release: `v0.6.0` (stage 5). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -19,14 +19,14 @@ Current stage: **Stage 5, Adoption (done, pending the `v0.6.0` release to `main`
 | 3 | Social interaction | Done |
 | 4 | Messages and notifications | Done |
 | 5 | Adoption | Done |
-| 6 | Rescue | Not started |
+| 6 | Rescue | In progress |
 | 7 | Moderation | Not started |
 | 8 | Infrastructure and web | Not started |
 | 9 | Launch | Not started |
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 5 delivered: adoption listings and the Adoption tab ([#56](https://github.com/AntOnionPro/pawly/issues/56)), adoption requests ([#57](https://github.com/AntOnionPro/pawly/issues/57)), marking a pet as adopted and moving its profile ([#58](https://github.com/AntOnionPro/pawly/issues/58)) and the follow-up after adoption ([#59](https://github.com/AntOnionPro/pawly/issues/59)). Push on Android needs a development build (stage 8).
+Stage 6 issues: rescue reports and the Rescue tab ([#65](https://github.com/AntOnionPro/pawly/issues/65), done), map and nearby cases ([#66](https://github.com/AntOnionPro/pawly/issues/66)), the "I can help" button ([#67](https://github.com/AntOnionPro/pawly/issues/67)) and alerts for nearby rescue cases ([#68](https://github.com/AntOnionPro/pawly/issues/68)). The map uses native maps (`react-native-maps`: Apple Maps on iOS, Google Maps on Android).
 
 ## Features
 
@@ -220,7 +220,7 @@ External costs:
 - Logo and app icon (the app uses Expo placeholders).
 - App identifiers for the stores (iOS bundle ID and Android package name).
 - Domain name.
-- Spanish text for the iOS photo library permission (the build uses English until stage 9).
+- Spanish text for the iOS photo library and location permissions (the build uses English until stage 9).
 - Map provider.
 - Email (SMTP) provider.
 - Video limits (size and duration).

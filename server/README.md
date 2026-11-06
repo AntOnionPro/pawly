@@ -194,6 +194,25 @@ The adopter gets an `adopted` notification. Earlier posts that tag the pet keep 
 - **Updates:** a post by the adopter that tags the pet counts as the update (`post`) of the follow-up whose window is open, from its date until 14 days later. The previous owner gets a `followup_posted` notification.
 - **Overdue:** a follow-up without an update 14 days after its date is overdue. Then the previous owner can report the adopter with the reason `adoption_followup`; anyone else, or before that, fails with `followup_not_overdue`.
 
+## Rescue reports
+
+`rescue_reports` holds the rescue reports (stage 6): the `reporter` reports a stray that needs help (`kind` `help`), a lost pet (`lost`) or a found animal (`found`).
+
+| Field         | Rules                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------- |
+| `reporter`    | The signed-in user; cannot be changed. Deleting the account deletes their reports.                |
+| `kind`        | `help`, `lost` or `found`; cannot be changed.                                                     |
+| `description` | Required, up to 2,200 characters.                                                                 |
+| `media`       | Up to 10 photos or videos, with the same limits and thumbnails as posts.                          |
+| `latitude`    | GPS location with `longitude`; both are required (not both 0).                                    |
+| `place`       | Place reference in text, up to 120 characters.                                                    |
+| `urgency`     | `low`, `medium` or `high`. Required for `help`; empty for the other kinds.                        |
+| `pet`         | Only for `lost`: one of the reporter's pets (optional).                                           |
+| `lastSeenAt`  | Only for `lost`, required: when the pet was last seen (not in the future).                        |
+| `status`      | `open` (open, lost or found), `in_progress` (only for `help`) or `closed` (resolved or reunited). |
+
+A new report is always `open`. Anyone can see and list them; only the reporter edits, changes the status and deletes them. Texts are trimmed. The rules live in `pb_hooks/rescue.pb.js`; field errors use the codes `location_required`, `date_future`, `pet_not_owned`, `invalid_status` and `photo_too_large`.
+
 ## Counters
 
 Each post has a `pawCount`, a `commentCount` and a `repostCount`, and each user a `followerCount` and a `followingCount`. Counters like these are written only by the server (`pb_hooks/counters.pb.js`): requests cannot set them, and they are recalculated from the source table after every change, so they never drift.

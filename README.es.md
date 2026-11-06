@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 5, Adopción (terminada, falta la release `v0.6.0` a `main`).** La etapa 6 empieza cuando esa release esté mergeada. Última release: `v0.5.0` (etapa 4). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 6, Rescate (en progreso).** Última release: `v0.6.0` (etapa 5). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -19,14 +19,14 @@ Etapa actual: **etapa 5, Adopción (terminada, falta la release `v0.6.0` a `main
 | 3 | Interacción social | Hecho |
 | 4 | Mensajes y notificaciones | Hecho |
 | 5 | Adopción | Hecho |
-| 6 | Rescate | Sin empezar |
+| 6 | Rescate | En progreso |
 | 7 | Moderación | Sin empezar |
 | 8 | Infraestructura y web | Sin empezar |
 | 9 | Lanzamiento | Sin empezar |
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Entregado en la etapa 5: fichas de adopción y pestaña Adopción ([#56](https://github.com/AntOnionPro/pawly/issues/56)), solicitudes de adopción ([#57](https://github.com/AntOnionPro/pawly/issues/57)), marcar como adoptada y traspasar el perfil ([#58](https://github.com/AntOnionPro/pawly/issues/58)) y seguimiento posadopción ([#59](https://github.com/AntOnionPro/pawly/issues/59)). El push en Android necesita un build de desarrollo (etapa 8).
+Issues de la etapa 6: reportes de rescate y pestaña Rescate ([#65](https://github.com/AntOnionPro/pawly/issues/65), hecho), mapa y casos cercanos ([#66](https://github.com/AntOnionPro/pawly/issues/66)), botón "Puedo ayudar" ([#67](https://github.com/AntOnionPro/pawly/issues/67)) y avisos de casos de rescate cercanos ([#68](https://github.com/AntOnionPro/pawly/issues/68)). El mapa usa mapas nativos (`react-native-maps`: Apple Maps en iOS y Google Maps en Android).
 
 ## Funcionalidades
 
@@ -220,7 +220,7 @@ Costos externos:
 - Logo e ícono de la app (la app usa los provisionales de Expo).
 - Identificadores de la app para las tiendas (bundle ID de iOS y nombre de paquete de Android).
 - Nombre de dominio.
-- Texto en español del permiso de fotos en iOS (la build usa inglés hasta la etapa 9).
+- Texto en español de los permisos de fotos y de ubicación en iOS (la build usa inglés hasta la etapa 9).
 - Proveedor de mapas.
 - Proveedor de email (SMTP).
 - Límites de video (tamaño y duración).

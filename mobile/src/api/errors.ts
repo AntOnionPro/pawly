@@ -34,6 +34,7 @@ export type ErrorKey =
   | 'errors.adoptionClosed'
   | 'errors.requestNotAccepted'
   | 'errors.followupNotOverdue'
+  | 'errors.locationRequired'
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
   | 'errors.blocked';
@@ -96,6 +97,10 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.requestNotAccepted';
     case 'followup_not_overdue':
       return 'errors.followupNotOverdue';
+    case 'location_required':
+      return 'errors.locationRequired';
+    case 'date_future':
+      return 'errors.dateInvalid';
     case 'blocked':
       return 'errors.blocked';
     case 'validation_too_many_files':
