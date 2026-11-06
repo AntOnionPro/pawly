@@ -1,8 +1,9 @@
 import type { TextStyle } from 'react-native';
 
 /**
- * Type scale. Uses the system font on every platform (San Francisco on iOS, Roboto on Android)
- * so the app feels native.
+ * Type scale: sizes and weights. The font family is applied on top (`fontFor` in fonts.ts):
+ * Ubuntu by default, or the system font (San Francisco on iOS, Roboto on Android) if chosen
+ * in settings.
  */
 export const typography = {
   title: { fontSize: 28, lineHeight: 34, fontWeight: '700' },

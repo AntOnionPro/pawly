@@ -120,7 +120,7 @@ mobile/
 │   ├── features/       Screen content grouped by feature (auth, profile, account, pets, posts, comments, follows, search, moderation, messages, notifications, push, adoption, rescue, users, legal, settings)
 │   ├── i18n/           Translations (Spanish and English)
 │   ├── preferences/    Theme and language chosen by the user, saved on the phone
-│   ├── theme/          Colors, icons, typography and contrast helpers
+│   ├── theme/          Colors, icons, typography (Ubuntu or the system font) and contrast helpers
 │   └── utils/          Small helpers (confirmation dialog, photo picker, file upload)
 ├── __tests__/          Jest tests
 ├── test-utils/         Shared test helpers (providers and a fake session)

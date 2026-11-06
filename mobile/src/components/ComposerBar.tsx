@@ -8,7 +8,7 @@ import {
   type TextInputInstance,
 } from 'react-native';
 
-import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { useFontStyle, useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing, typography } from '@/theme/typography';
 
 import { FieldError } from './FieldError';
@@ -46,6 +46,7 @@ export function ComposerBar({
   inputRef,
 }: ComposerBarProps) {
   const colors = useThemeColors();
+  const fontStyle = useFontStyle();
   const canSend = value.trim().length > 0 && !sending;
   return (
     <View style={[styles.bar, { borderTopColor: colors.border }]}>
@@ -64,6 +65,7 @@ export function ComposerBar({
           style={[
             styles.input,
             typography.body,
+            fontStyle,
             { color: colors.text, backgroundColor: colors.surface, borderColor: colors.border },
           ]}
         />

@@ -1,4 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, type Theme } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -12,9 +13,11 @@ import { useRescueAlertSync } from '@/features/rescue/alertHooks';
 import {
   PreferencesProvider,
   useColorSchemeName,
+  useFontStyle,
   usePreferences,
   useThemeColors,
 } from '@/preferences/PreferencesProvider';
+import { UBUNTU_FILES } from '@/theme/fonts';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -48,9 +51,12 @@ function RootNavigator() {
   const scheme = useColorSchemeName();
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const loaded = ready && status !== 'loading';
+  const titleFont = useFontStyle('600');
+  // If the Ubuntu files cannot be loaded, the system font is used.
+  const [fontsLoaded, fontError] = useFonts(UBUNTU_FILES);
+  const loaded = ready && status !== 'loading' && (fontsLoaded || fontError !== null);
 
-  // Keep the splash screen until the saved theme, language and session are applied.
+  // Keep the splash screen until the fonts, saved theme, language and session are applied.
   useEffect(() => {
     if (loaded) {
       void SplashScreen.hideAsync();
@@ -83,6 +89,7 @@ function RootNavigator() {
       <Stack
         screenOptions={{
           headerTintColor: colors.text,
+          headerTitleStyle: { fontFamily: titleFont.fontFamily, color: colors.text },
           // Only the arrow: the previous screen's title can be an internal name like "(tabs)".
           headerBackButtonDisplayMode: 'minimal',
         }}>

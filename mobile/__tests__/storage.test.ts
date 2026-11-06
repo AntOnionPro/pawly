@@ -18,9 +18,12 @@ describe('parsePreferences', () => {
       theme: 'dark',
       language: 'es',
       nearbyRadiusKm: 5,
+      font: 'ubuntu',
     });
     expect(parsePreferences('{"nearbyRadiusKm":25}').nearbyRadiusKm).toBe(25);
     expect(parsePreferences('{"nearbyRadiusKm":3}').nearbyRadiusKm).toBe(5);
+    expect(parsePreferences('{"font":"system"}').font).toBe('system');
+    expect(parsePreferences('{"font":"comic"}').font).toBe('ubuntu');
   });
 
   it('replaces unknown values with the defaults', () => {
@@ -44,11 +47,16 @@ describe('loadPreferences / savePreferences', () => {
   });
 
   it('saves and loads the preferences', async () => {
-    await savePreferences({ theme: 'light', language: 'en', nearbyRadiusKm: 10 });
+    await savePreferences({ theme: 'light', language: 'en', nearbyRadiusKm: 10, font: 'system' });
     expect(await AsyncStorage.getItem(PREFERENCES_KEY)).toBe(
-      '{"theme":"light","language":"en","nearbyRadiusKm":10}',
+      '{"theme":"light","language":"en","nearbyRadiusKm":10,"font":"system"}',
     );
-    expect(await loadPreferences()).toEqual({ theme: 'light', language: 'en', nearbyRadiusKm: 10 });
+    expect(await loadPreferences()).toEqual({
+      theme: 'light',
+      language: 'en',
+      nearbyRadiusKm: 10,
+      font: 'system',
+    });
   });
 
   it('falls back to the defaults if storage fails', async () => {

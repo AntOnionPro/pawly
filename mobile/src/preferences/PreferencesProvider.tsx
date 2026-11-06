@@ -10,10 +10,11 @@ import {
   type PropsWithChildren,
 } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { Appearance, Platform, useColorScheme } from 'react-native';
+import { Appearance, Platform, useColorScheme, type TextStyle } from 'react-native';
 
 import { createI18n, resolveLanguage, type LanguagePreference } from '@/i18n';
 import { colors, type ColorSchemeName, type ThemeColors } from '@/theme/colors';
+import { fontFor, type FontPreference } from '@/theme/fonts';
 
 import {
   DEFAULT_PREFERENCES,
@@ -30,6 +31,7 @@ interface PreferencesContextValue extends Preferences {
   setTheme: (theme: ThemePreference) => void;
   setLanguage: (language: LanguagePreference) => void;
   setNearbyRadius: (radiusKm: NearbyRadius) => void;
+  setFont: (font: FontPreference) => void;
 }
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
@@ -87,6 +89,7 @@ export function PreferencesProvider({ children }: PropsWithChildren) {
       setTheme: (theme) => update({ theme }),
       setLanguage: (lang) => update({ language: lang }),
       setNearbyRadius: (radiusKm) => update({ nearbyRadiusKm: radiusKm }),
+      setFont: (font) => update({ font }),
     }),
     [preferences, ready, update],
   );
@@ -118,4 +121,9 @@ export function useColorSchemeName(): ColorSchemeName {
 
 export function useThemeColors(): ThemeColors {
   return colors[useColorSchemeName()];
+}
+
+/** The style that sets the chosen font for a text of the given weight (see `fontFor`). */
+export function useFontStyle(weight?: TextStyle['fontWeight']): TextStyle {
+  return fontFor(usePreferences().font, weight);
 }

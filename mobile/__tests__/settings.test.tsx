@@ -31,6 +31,7 @@ async function renderSettings() {
 // Option groups are labelled containers (not focusable themselves), so find them by label.
 const themeGroup = () => within(screen.getByLabelText(/^(Tema|Theme)$/));
 const languageGroup = () => within(screen.getByLabelText(/^(Idioma|Language)$/));
+const fontGroup = () => within(screen.getByLabelText(/^(Letra|Font)$/));
 
 describe('SettingsContent', () => {
   beforeEach(async () => {
@@ -72,6 +73,22 @@ describe('SettingsContent', () => {
       theme: 'system',
       language: 'en',
       nearbyRadiusKm: 5,
+      font: 'ubuntu',
+    });
+  });
+
+  it('uses Ubuntu by default and switches to the system font', async () => {
+    await renderSettings();
+    expect(fontGroup().getByRole('radio', { name: 'Ubuntu', checked: true })).toBeOnTheScreen();
+    expect(screen.getByText('Letra')).toHaveStyle({ fontFamily: 'Ubuntu_500Medium' });
+
+    await fireEvent.press(fontGroup().getByRole('radio', { name: 'Del sistema' }));
+    expect(
+      fontGroup().getByRole('radio', { name: 'Del sistema', checked: true }),
+    ).toBeOnTheScreen();
+    expect(screen.getByText('Letra')).not.toHaveStyle({ fontFamily: 'Ubuntu_500Medium' });
+    expect(JSON.parse((await AsyncStorage.getItem(PREFERENCES_KEY)) ?? '{}')).toMatchObject({
+      font: 'system',
     });
   });
 

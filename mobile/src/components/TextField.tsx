@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
-import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { useFontStyle, useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing, typography } from '@/theme/typography';
 
 import { FieldError } from './FieldError';
@@ -14,6 +14,7 @@ interface TextFieldProps extends Omit<TextInputProps, 'style'> {
 
 export function TextField({ label, hint, error, ...input }: TextFieldProps) {
   const colors = useThemeColors();
+  const fontStyle = useFontStyle();
   return (
     <View style={styles.container}>
       <ThemedText variant="label" color="textSecondary">
@@ -27,6 +28,7 @@ export function TextField({ label, hint, error, ...input }: TextFieldProps) {
         style={[
           styles.input,
           typography.body,
+          fontStyle,
           {
             color: colors.text,
             backgroundColor: colors.surface,

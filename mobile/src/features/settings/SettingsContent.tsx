@@ -6,6 +6,7 @@ import { OptionGroup, type Option } from '@/components/OptionGroup';
 import type { LanguagePreference } from '@/i18n';
 import { usePreferences } from '@/preferences/PreferencesProvider';
 import { NEARBY_RADII, type ThemePreference } from '@/preferences/storage';
+import type { FontPreference } from '@/theme/fonts';
 
 export interface AccountActions {
   onNotifications: () => void;
@@ -24,13 +25,18 @@ interface SettingsContentProps {
 /** Account, theme, language and legal documents. Rendered by the `/settings` route. */
 export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) {
   const { t } = useTranslation();
-  const { theme, language, nearbyRadiusKm, setTheme, setLanguage, setNearbyRadius } =
+  const { theme, language, nearbyRadiusKm, font, setTheme, setLanguage, setNearbyRadius, setFont } =
     usePreferences();
 
   const themeOptions: Option<ThemePreference>[] = [
     { value: 'system', label: t('settings.theme.system') },
     { value: 'light', label: t('settings.theme.light') },
     { value: 'dark', label: t('settings.theme.dark') },
+  ];
+
+  const fontOptions: Option<FontPreference>[] = [
+    { value: 'ubuntu', label: t('settings.font.ubuntu') },
+    { value: 'system', label: t('settings.font.system') },
   ];
 
   // Language names stay in their own language so people can always find theirs.
@@ -75,6 +81,12 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
         options={themeOptions}
         selected={theme}
         onSelect={setTheme}
+      />
+      <OptionGroup
+        title={t('settings.font.title')}
+        options={fontOptions}
+        selected={font}
+        onSelect={setFont}
       />
       <OptionGroup
         title={t('settings.language.title')}
