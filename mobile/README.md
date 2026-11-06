@@ -100,6 +100,12 @@ EXPO_PUBLIC_EAS_PROJECT_ID=your-project-id
 
 Run `npm run check` before opening a pull request.
 
+## Location and maps
+
+- **Location:** `expo-location`, only while the app is in use. Reports take the phone's GPS point, and the Rescue tab uses it to show nearby cases. The web uses the browser's location.
+- **Maps:** native maps with `react-native-maps` (Apple Maps on iOS, Google Maps on Android). They work in Expo Go on both phones. The web has no map: it shows the list and an "Open in maps" link.
+- **Android builds:** a development or store build of Android needs a Google Maps API key (free for mobile maps) in `app.json`. It comes with stage 8.
+
 ## Structure
 
 ```text

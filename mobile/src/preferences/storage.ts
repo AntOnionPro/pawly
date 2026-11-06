@@ -4,12 +4,21 @@ import { isLanguage, type LanguagePreference } from '@/i18n';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
+/** How far (in km) rescue cases count as nearby. */
+export const NEARBY_RADII = [1, 5, 10, 25] as const;
+export type NearbyRadius = (typeof NEARBY_RADII)[number];
+
 export interface Preferences {
   theme: ThemePreference;
   language: LanguagePreference;
+  nearbyRadiusKm: NearbyRadius;
 }
 
-export const DEFAULT_PREFERENCES: Preferences = { theme: 'system', language: 'system' };
+export const DEFAULT_PREFERENCES: Preferences = {
+  theme: 'system',
+  language: 'system',
+  nearbyRadiusKm: 5,
+};
 
 export const PREFERENCES_KEY = 'pawly:preferences';
 
@@ -25,13 +34,16 @@ export function parsePreferences(raw: string | null): Preferences {
     if (typeof data !== 'object' || data === null) {
       return DEFAULT_PREFERENCES;
     }
-    const { theme, language } = data as Record<string, unknown>;
+    const { theme, language, nearbyRadiusKm } = data as Record<string, unknown>;
     return {
       theme: THEMES.includes(theme as ThemePreference)
         ? (theme as ThemePreference)
         : DEFAULT_PREFERENCES.theme,
       language:
         language === 'system' || isLanguage(language) ? language : DEFAULT_PREFERENCES.language,
+      nearbyRadiusKm: NEARBY_RADII.includes(nearbyRadiusKm as NearbyRadius)
+        ? (nearbyRadiusKm as NearbyRadius)
+        : DEFAULT_PREFERENCES.nearbyRadiusKm,
     };
   } catch {
     return DEFAULT_PREFERENCES;

@@ -26,7 +26,7 @@ Current stage: **Stage 6, Rescue (in progress).** Latest release: `v0.6.0` (stag
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 6 issues: rescue reports and the Rescue tab ([#65](https://github.com/AntOnionPro/pawly/issues/65), done), map and nearby cases ([#66](https://github.com/AntOnionPro/pawly/issues/66)), the "I can help" button ([#67](https://github.com/AntOnionPro/pawly/issues/67)) and alerts for nearby rescue cases ([#68](https://github.com/AntOnionPro/pawly/issues/68)). The map uses native maps (`react-native-maps`: Apple Maps on iOS, Google Maps on Android).
+Stage 6 issues: rescue reports and the Rescue tab ([#65](https://github.com/AntOnionPro/pawly/issues/65), done), map and nearby cases ([#66](https://github.com/AntOnionPro/pawly/issues/66), done), the "I can help" button ([#67](https://github.com/AntOnionPro/pawly/issues/67)) and alerts for nearby rescue cases ([#68](https://github.com/AntOnionPro/pawly/issues/68)). The map uses native maps (`react-native-maps`: Apple Maps on iOS, Google Maps on Android).
 
 ## Features
 
@@ -221,7 +221,6 @@ External costs:
 - App identifiers for the stores (iOS bundle ID and Android package name).
 - Domain name.
 - Spanish text for the iOS photo library and location permissions (the build uses English until stage 9).
-- Map provider.
 - Email (SMTP) provider.
 - Video limits (size and duration).
 - Minimum supported iOS and Android versions.

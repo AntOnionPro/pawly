@@ -181,6 +181,19 @@ const es: Resources = {
     reportedBy: 'Reportado por @{{username}}',
     reportLost: 'Reportar como perdida',
     failed: 'No se pudo guardar el cambio.',
+    list: 'Lista',
+    map: 'Mapa',
+    mapLabel: 'Mapa de casos de rescate',
+    nearbyHeading: 'Casos a {{radius}} km de ti',
+    nearbyEmpty: 'No hay casos abiertos a {{radius}} km de ti.',
+    changeRadius: 'Cambiar distancia',
+    locationOff: 'Usa tu ubicación para ver los casos cercanos, del más cercano al más lejano.',
+    locationOffDenied:
+      'Para ver los casos cercanos, activa el permiso de ubicación de Pawly en los ajustes del celular.',
+    enableLocation: 'Usar mi ubicación',
+    distanceM: 'a {{distance}} m',
+    distanceKm: 'a {{distance}} km',
+    pickHint: 'Toca el mapa o mueve el marcador para ajustar el lugar.',
   },
   profile: {
     title: 'Perfil',
@@ -508,6 +521,9 @@ const es: Resources = {
     },
     account: 'Cuenta',
     legal: 'Legal',
+    nearby: 'Casos de rescate cercanos',
+    nearbyRadius_one: 'A {{count}} km',
+    nearbyRadius_other: 'A {{count}} km',
   },
   auth: {
     signUp: {

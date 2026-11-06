@@ -26,7 +26,7 @@ Etapa actual: **etapa 6, Rescate (en progreso).** Última release: `v0.6.0` (eta
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 6: reportes de rescate y pestaña Rescate ([#65](https://github.com/AntOnionPro/pawly/issues/65), hecho), mapa y casos cercanos ([#66](https://github.com/AntOnionPro/pawly/issues/66)), botón "Puedo ayudar" ([#67](https://github.com/AntOnionPro/pawly/issues/67)) y avisos de casos de rescate cercanos ([#68](https://github.com/AntOnionPro/pawly/issues/68)). El mapa usa mapas nativos (`react-native-maps`: Apple Maps en iOS y Google Maps en Android).
+Issues de la etapa 6: reportes de rescate y pestaña Rescate ([#65](https://github.com/AntOnionPro/pawly/issues/65), hecho), mapa y casos cercanos ([#66](https://github.com/AntOnionPro/pawly/issues/66), hecho), botón "Puedo ayudar" ([#67](https://github.com/AntOnionPro/pawly/issues/67)) y avisos de casos de rescate cercanos ([#68](https://github.com/AntOnionPro/pawly/issues/68)). El mapa usa mapas nativos (`react-native-maps`: Apple Maps en iOS y Google Maps en Android).
 
 ## Funcionalidades
 
@@ -221,7 +221,6 @@ Costos externos:
 - Identificadores de la app para las tiendas (bundle ID de iOS y nombre de paquete de Android).
 - Nombre de dominio.
 - Texto en español de los permisos de fotos y de ubicación en iOS (la build usa inglés hasta la etapa 9).
-- Proveedor de mapas.
 - Proveedor de email (SMTP).
 - Límites de video (tamaño y duración).
 - Versiones mínimas soportadas de iOS y Android.

@@ -24,6 +24,7 @@ jest.mock('expo-localization', () => ({
 jest.mock('expo-router', () => ({ useRouter: () => mockRouter }));
 jest.mock('expo-location', () => ({
   requestForegroundPermissionsAsync: jest.fn(),
+  getForegroundPermissionsAsync: jest.fn(async () => ({ status: 'undetermined' })),
   getCurrentPositionAsync: jest.fn(),
   Accuracy: { Balanced: 3 },
 }));
@@ -195,7 +196,7 @@ describe('Rescue tab', () => {
     expect(await screen.findByText('Perrito herido junto al mercado')).toBeOnTheScreen();
     expect(screen.getByText('Necesita ayuda')).toBeOnTheScreen();
     expect(screen.getByText('Urgencia alta')).toBeOnTheScreen();
-    expect(screen.getByText('Mercado de Coyoacán')).toBeOnTheScreen();
+    expect(screen.getByText(/^Mercado de Coyoacán · /)).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole('link', { name: /^Necesita ayuda, Urgencia alta/ }));
     expect(mockRouter.push).toHaveBeenCalledWith({
       pathname: '/rescue/[id]',

@@ -19,6 +19,7 @@ import { MediaStrip } from '@/features/posts/MediaStrip';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
 import { confirm } from '@/utils/confirm';
+import type { Point } from '@/utils/geo';
 import { getCurrentLocation } from '@/utils/location';
 
 import {
@@ -33,6 +34,7 @@ import {
   type Urgency,
 } from './api';
 import { useDeleteRescueReport, useSaveRescueReport } from './hooks';
+import { mapsAvailable, PickMap } from './maps';
 
 /** A file in the form: a stored one (`stored` is its name) or a new one from the gallery. */
 type FormMedia = ComposerMedia & { stored?: string };
@@ -53,7 +55,7 @@ export function validateRescue(values: FormValues): FieldErrors {
 
 type LocationState = 'idle' | 'locating' | 'denied' | 'unavailable';
 
-/** The report's GPS point, taken from the phone. */
+/** The report's GPS point: taken from the phone, and adjusted on the map (not on the web). */
 function LocationField({
   values,
   accuracy,
@@ -63,7 +65,7 @@ function LocationField({
   values: FormValues;
   accuracy: number | null;
   error: string | null;
-  onLocated: (latitude: number, longitude: number, accuracy: number | null) => void;
+  onLocated: (point: Point, accuracy: number | null) => void;
 }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -75,9 +77,12 @@ function LocationField({
     const result = await getCurrentLocation();
     if (result.ok) {
       setState('idle');
-      onLocated(result.coords.latitude, result.coords.longitude, result.coords.accuracy ?? null);
+      onLocated(
+        { latitude: result.coords.latitude, longitude: result.coords.longitude },
+        result.coords.accuracy ?? null,
+      );
     } else {
-      setState(result.reason);
+      setState(result.reason === 'unavailable' ? 'unavailable' : 'denied');
     }
   }
 
@@ -121,6 +126,22 @@ function LocationField({
           onPress={() => void locate()}
           loading={state === 'locating'}
         />
+        {mapsAvailable ? (
+          <>
+            <PickMap
+              point={
+                located
+                  ? { latitude: values.latitude as number, longitude: values.longitude as number }
+                  : null
+              }
+              kind={values.kind}
+              onChange={(point) => onLocated(point, null)}
+            />
+            <ThemedText variant="caption" color="textSecondary">
+              {t('rescue.pickHint')}
+            </ThemedText>
+          </>
+        ) : null}
       </View>
       <FieldError message={error} />
     </View>
@@ -320,7 +341,7 @@ export function RescueForm({ report, kind, petId, onSaved, onDeleted }: RescueFo
         values={values}
         accuracy={accuracy}
         error={message('latitude')}
-        onLocated={(latitude, longitude, meters) => {
+        onLocated={({ latitude, longitude }, meters) => {
           setValues((current) => ({ ...current, latitude, longitude }));
           setAccuracy(meters);
           setErrors((current) => ({ ...current, latitude: undefined }));

@@ -19,6 +19,7 @@ import {
   DEFAULT_PREFERENCES,
   loadPreferences,
   savePreferences,
+  type NearbyRadius,
   type Preferences,
   type ThemePreference,
 } from './storage';
@@ -28,6 +29,7 @@ interface PreferencesContextValue extends Preferences {
   ready: boolean;
   setTheme: (theme: ThemePreference) => void;
   setLanguage: (language: LanguagePreference) => void;
+  setNearbyRadius: (radiusKm: NearbyRadius) => void;
 }
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
@@ -84,6 +86,7 @@ export function PreferencesProvider({ children }: PropsWithChildren) {
       ready,
       setTheme: (theme) => update({ theme }),
       setLanguage: (lang) => update({ language: lang }),
+      setNearbyRadius: (radiusKm) => update({ nearbyRadiusKm: radiusKm }),
     }),
     [preferences, ready, update],
   );

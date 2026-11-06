@@ -43,22 +43,42 @@ export function useRescueDetail(report: RescueReport): string {
   return '';
 }
 
+/** "350 m away", "1.2 km away", "12 km away". */
+export function useDistanceText(km: number | undefined): string {
+  const { t } = useTranslation();
+  if (km === undefined) return '';
+  if (km < 1) {
+    return t('rescue.distanceM', { distance: Math.max(10, Math.round((km * 1000) / 10) * 10) });
+  }
+  // A decimal point, as written in Mexico (and in English).
+  const rounded = km < 10 ? Math.round(km * 10) / 10 : Math.round(km);
+  return t('rescue.distanceKm', { distance: String(rounded) });
+}
+
+interface RescueCardProps {
+  report: RescueReport;
+  /** How far the case is from the person looking, when known. */
+  distanceKm?: number;
+  onPress: () => void;
+}
+
 /** Row of the Rescue tab: photo, kind, urgency or date, description, place and time. */
-export function RescueCard({ report, onPress }: { report: RescueReport; onPress: () => void }) {
+export function RescueCard({ report, distanceKm, onPress }: RescueCardProps) {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const photo = useRescuePhoto(report);
   const detail = useRescueDetail(report);
-  const date = useRelativeDate(report.created);
+  const relative = useRelativeDate(report.created);
+  const distance = useDistanceText(distanceKm);
+  // How far, where and when, in one line under the description.
+  const where = [distance, report.place, relative].filter(Boolean).join(' · ');
   const kind = t(`rescue.kinds.${report.kind}`);
   const urgent = report.kind === 'help' && report.urgency === 'high';
 
   return (
     <Pressable
       accessibilityRole="link"
-      accessibilityLabel={[kind, detail, report.description, report.place, date]
-        .filter(Boolean)
-        .join(', ')}
+      accessibilityLabel={[kind, detail, report.description, where].filter(Boolean).join(', ')}
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
@@ -81,9 +101,6 @@ export function RescueCard({ report, onPress }: { report: RescueReport; onPress:
             color={urgent ? colors.accent : colors.text}
           />
           <ThemedText style={styles.kindText}>{kind}</ThemedText>
-          <ThemedText variant="caption" color="textSecondary" style={styles.date}>
-            {date}
-          </ThemedText>
         </View>
         {detail ? (
           <ThemedText variant="caption" style={urgent ? styles.urgent : undefined}>
@@ -91,18 +108,16 @@ export function RescueCard({ report, onPress }: { report: RescueReport; onPress:
           </ThemedText>
         ) : null}
         <ThemedText numberOfLines={2}>{report.description}</ThemedText>
-        {report.place ? (
-          <View style={styles.place}>
-            <Icon name="location" size={14} color={colors.textSecondary} />
-            <ThemedText
-              variant="caption"
-              color="textSecondary"
-              numberOfLines={1}
-              style={styles.placeText}>
-              {report.place}
-            </ThemedText>
-          </View>
-        ) : null}
+        <View style={styles.place}>
+          <Icon name="location" size={14} color={colors.textSecondary} />
+          <ThemedText
+            variant="caption"
+            color="textSecondary"
+            numberOfLines={1}
+            style={styles.placeText}>
+            {where}
+          </ThemedText>
+        </View>
       </View>
     </Pressable>
   );
@@ -129,7 +144,6 @@ const styles = StyleSheet.create({
   text: { flex: 1, gap: 2 },
   kind: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   kindText: { fontWeight: '700' },
-  date: { marginLeft: 'auto' },
   urgent: { fontWeight: '700' },
   place: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   placeText: { flex: 1 },
