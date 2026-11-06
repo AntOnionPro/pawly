@@ -158,6 +158,13 @@ describe('FeedList', () => {
     expect(screen.getByText('Ya viste todo.')).toBeOnTheScreen();
   });
 
+  it('has the Pawly wordmark as its header, in the accent color', async () => {
+    jest.mocked(api.listPosts).mockResolvedValue({ items: [], page: 1, hasMore: false });
+    await renderWith(<FeedList />, authValue());
+    const wordmark = await screen.findByRole('header', { name: 'Pawly' });
+    expect(wordmark).toHaveStyle({ tintColor: '#D84080' });
+  });
+
   it('invites to post when the feed is empty', async () => {
     jest.mocked(api.listPosts).mockResolvedValue({ items: [], page: 1, hasMore: false });
     await renderWith(<FeedList />, authValue());

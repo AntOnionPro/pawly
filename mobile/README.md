@@ -124,7 +124,7 @@ mobile/
 │   └── utils/          Small helpers (confirmation dialog, photo picker, file upload)
 ├── __tests__/          Jest tests
 ├── test-utils/         Shared test helpers (providers and a fake session)
-└── assets/             Icons and splash screen (placeholders until there is a logo)
+└── assets/             App icons, splash screen and wordmark (PNG), and in brand/ the logo and wordmark in vector (SVG)
 ```
 
 ## Conventions
