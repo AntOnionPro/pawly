@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { createQueryClient } from '@/api/queryClient';
 import { AuthProvider, useAuth } from '@/auth/AuthProvider';
 import { usePushRegistration, usePushTaps } from '@/features/push/hooks';
+import { useRescueAlertSync } from '@/features/rescue/alertHooks';
 import {
   PreferencesProvider,
   useColorSchemeName,
@@ -30,10 +31,14 @@ export default function RootLayout() {
   );
 }
 
-/** Keeps this phone registered for push and opens what a tapped push is about. */
+/**
+ * Keeps this phone registered for push, opens what a tapped push is about, and keeps the
+ * nearby rescue alert's location up to date.
+ */
 function PushHandlers() {
   usePushRegistration();
   usePushTaps();
+  useRescueAlertSync();
   return null;
 }
 
@@ -115,6 +120,9 @@ function RootNavigator() {
           name="adoption/[id]/complete"
           options={{ title: t('adoption.markAdopted') }}
         />
+        <Stack.Screen name="rescue/new" options={{ title: t('rescue.newTitle') }} />
+        <Stack.Screen name="rescue/[id]/index" options={{ title: t('rescue.detailTitle') }} />
+        <Stack.Screen name="rescue/[id]/edit" options={{ title: t('rescue.edit') }} />
         <Stack.Screen name="post/[id]/index" options={{ title: t('posts.title') }} />
         <Stack.Screen name="post/[id]/edit" options={{ title: t('posts.edit') }} />
         <Stack.Screen name="post/[id]/repost" options={{ title: t('reposts.title') }} />

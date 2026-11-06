@@ -1,7 +1,7 @@
 /// <reference path="../pb_data/types.d.ts" />
 
 // Counters stored on records: paw prints, comments and reposts per post, followers and
-// follows per user.
+// follows per user, and people who offered to help per rescue report.
 // Only the server writes them: users cannot set them in their requests, and they are
 // recalculated from the source table after every change, so they never drift.
 // (Each handler runs on its own, so code outside a handler is not shared between them.)
@@ -108,3 +108,30 @@ onRecordAfterCreateSuccess(recountFollows, 'follows');
 onRecordAfterDeleteSuccess(recountFollows, 'follows');
 onRecordAfterCreateSuccess(recountReposts, 'posts');
 onRecordAfterDeleteSuccess(recountReposts, 'posts');
+
+// Users cannot set how many people offered to help with a rescue report.
+onRecordCreateRequest((e) => {
+  if (!e.hasSuperuserAuth()) e.record.set('helperCount', 0);
+  e.next();
+}, 'rescue_reports');
+
+onRecordUpdateRequest((e) => {
+  if (!e.hasSuperuserAuth()) {
+    e.record.set('helperCount', e.record.original().getInt('helperCount'));
+  }
+  e.next();
+}, 'rescue_reports');
+
+function recountHelpers(e) {
+  e.next();
+  e.app
+    .db()
+    .newQuery(
+      'UPDATE rescue_reports SET helperCount = (SELECT COUNT(*) FROM rescue_helpers WHERE report = {:report}) WHERE id = {:report}',
+    )
+    .bind({ report: e.record.getString('report') })
+    .execute();
+}
+
+onRecordAfterCreateSuccess(recountHelpers, 'rescue_helpers');
+onRecordAfterDeleteSuccess(recountHelpers, 'rescue_helpers');

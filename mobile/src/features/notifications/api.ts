@@ -4,6 +4,7 @@ import type { RecordModel } from 'pocketbase';
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toAdoption, type Adoption } from '@/features/adoption/api';
 import { toFollowup, type Milestone } from '@/features/adoption/followups';
+import { toRescueReport, type RescueReport } from '@/features/rescue/api';
 import { toPost, type Post } from '@/features/posts/api';
 
 export const NOTIFICATIONS = 'notifications';
@@ -19,7 +20,9 @@ export type NotificationType =
   | 'request_rejected'
   | 'adopted'
   | 'followup_due'
-  | 'followup_posted';
+  | 'followup_posted'
+  | 'rescue_help'
+  | 'rescue_nearby';
 
 /** Named so it does not clash with the browser's `Notification`. */
 export interface AppNotification {
@@ -36,6 +39,11 @@ export interface AppNotification {
   adoption?: Adoption;
   /** For follow-up notifications: 1 week, 1 month, 3 months or 6 months. */
   followupMilestone: Milestone | '';
+  /** The rescue report, for rescue notifications (when expanded). */
+  rescueId: string;
+  rescue?: RescueReport;
+  /** For nearby rescue alerts: how far the case was, in km. */
+  distanceKm: number;
   read: boolean;
   created: string;
 }
@@ -57,6 +65,8 @@ const TYPES: readonly NotificationType[] = [
   'adopted',
   'followup_due',
   'followup_posted',
+  'rescue_help',
+  'rescue_nearby',
 ];
 
 export function toNotification(record: RecordModel): AppNotification {
@@ -66,6 +76,7 @@ export function toNotification(record: RecordModel): AppNotification {
     comment?: RecordModel;
     adoption?: RecordModel;
     followup?: RecordModel;
+    rescue?: RecordModel;
   };
   const type = TYPES.find((value) => value === record.type) ?? 'paw';
   return {
@@ -79,6 +90,9 @@ export function toNotification(record: RecordModel): AppNotification {
     adoptionId: String(record.adoption ?? ''),
     adoption: expand.adoption ? toAdoption(expand.adoption) : undefined,
     followupMilestone: expand.followup ? toFollowup(expand.followup).milestone : '',
+    rescueId: String(record.rescue ?? ''),
+    rescue: expand.rescue ? toRescueReport(expand.rescue) : undefined,
+    distanceKm: Number(record.distanceKm ?? 0),
     read: Boolean(record.read),
     created: String(record.created ?? ''),
   };
@@ -94,7 +108,7 @@ export async function listNotifications(
   const result = await client.collection(NOTIFICATIONS).getList(page, perPage, {
     filter: client.filter('recipient = {:me}', { me }),
     sort: '-created,-id',
-    expand: 'actor,post,comment,adoption.pet,followup',
+    expand: 'actor,post,comment,adoption.pet,followup,rescue',
     skipTotal: true,
   });
   return {

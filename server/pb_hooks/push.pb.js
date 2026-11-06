@@ -58,6 +58,15 @@ onRecordAfterCreateSuccess((e) => {
     let pet = '';
     let milestone = '';
     let data = { type, postId, actorId: actor };
+    let nearby = null;
+    if (notification.getString('rescue')) {
+      data = { type, rescueId: notification.getString('rescue'), actorId: actor };
+      if (type === 'rescue_nearby') {
+        // The text says the kind of case and how far it is.
+        const report = e.app.findRecordById('rescue_reports', notification.getString('rescue'));
+        nearby = [report.getString('kind'), String(notification.getFloat('distanceKm'))];
+      }
+    }
     if (adoptionId) {
       const adoption = e.app.findRecordById('adoptions', adoptionId);
       const petId = adoption.getString('pet');
@@ -82,7 +91,9 @@ onRecordAfterCreateSuccess((e) => {
       notification.getString('recipient'),
       (t) => ({
         title: 'Pawly',
-        body: t[type](username, comment, pet, milestone ? t.milestones[milestone] : ''),
+        body: nearby
+          ? t[type](username, comment, nearby[0], nearby[1])
+          : t[type](username, comment, pet, milestone ? t.milestones[milestone] : ''),
       }),
       data,
     );

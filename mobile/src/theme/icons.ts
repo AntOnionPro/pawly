@@ -77,6 +77,17 @@ export const icons = {
     sf: { default: 'mappin.and.ellipse', selected: 'mappin.and.ellipse' },
     md: 'location_on',
   },
+  lost: {
+    sf: { default: 'magnifyingglass.circle', selected: 'magnifyingglass.circle.fill' },
+    md: 'travel_explore',
+  },
+  found: {
+    sf: { default: 'checkmark.circle', selected: 'checkmark.circle.fill' },
+    md: 'check_circle',
+  },
+  locate: { sf: { default: 'location', selected: 'location.fill' }, md: 'my_location' },
+  map: { sf: { default: 'map', selected: 'map.fill' }, md: 'map' },
+  list: { sf: { default: 'list.bullet', selected: 'list.bullet' }, md: 'list' },
   requests: {
     sf: { default: 'list.bullet.clipboard', selected: 'list.bullet.clipboard.fill' },
     md: 'assignment',

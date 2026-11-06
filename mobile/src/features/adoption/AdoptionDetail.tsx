@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
-import { avatarUrl, useAuth, type User } from '@/auth/AuthProvider';
-import { Avatar } from '@/components/Avatar';
+import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { ThemedText } from '@/components/ThemedText';
 import { petPhotoUrl } from '@/features/pets/api';
 import { MediaCarousel } from '@/features/posts/MediaCarousel';
+import { UserLink } from '@/features/users/UserLink';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
 
@@ -50,23 +50,6 @@ function Section({ title, text }: { title: string; text: string }) {
       </ThemedText>
       <ThemedText>{text}</ThemedText>
     </View>
-  );
-}
-
-/** Row with a user's photo and a sentence about them; opens their profile. */
-function UserLink({ user, label, onPress }: { user: User; label: string; onPress: () => void }) {
-  const { client } = useAuth();
-  const colors = useThemeColors();
-  return (
-    <Pressable
-      accessibilityRole="link"
-      accessibilityLabel={label}
-      onPress={onPress}
-      style={({ pressed }) => [styles.publisher, pressed && styles.pressed]}>
-      <Avatar uri={avatarUrl(client, user, '100x100')} username={user.username} size={40} />
-      <ThemedText style={styles.publisherText}>{label}</ThemedText>
-      <Icon name="chevron" size={16} color={colors.textSecondary} />
-    </Pressable>
   );
 }
 
@@ -185,7 +168,4 @@ const styles = StyleSheet.create({
   factLabel: { flex: 1 },
   factValue: { flex: 1, textAlign: 'right', fontWeight: '600' },
   section: { gap: spacing.xs },
-  publisher: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, minHeight: 48 },
-  publisherText: { flex: 1 },
-  pressed: { opacity: 0.6 },
 });

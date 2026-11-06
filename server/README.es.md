@@ -140,7 +140,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due` o `followup_posted`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help` o `rescue_nearby`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`, `rescue`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 
@@ -193,6 +193,35 @@ El adoptante recibe una notificación `adopted`. Las publicaciones anteriores qu
 - **Recordatorios:** una tarea diaria (15:00 UTC, 9:00 en la Ciudad de México) envía al adoptante una notificación `followup_due` el día de cada seguimiento, una sola vez (`remindedAt`). `POST /api/pawly/followups/run` la corre al momento, opcionalmente como si fuera `{ "now": "<fecha ISO>" }`; solo los superusuarios pueden llamarla, y las pruebas la usan con fechas simuladas.
 - **Actualizaciones:** una publicación del adoptante que etiqueta a la mascota cuenta como la actualización (`post`) del seguimiento cuya ventana está abierta, desde su fecha hasta 14 días después. El dueño anterior recibe una notificación `followup_posted`.
 - **Vencidos:** un seguimiento sin actualización 14 días después de su fecha está vencido. Entonces el dueño anterior puede reportar al adoptante con el motivo `adoption_followup`; cualquier otra persona, o antes de eso, falla con `followup_not_overdue`.
+
+## Reportes de rescate
+
+`rescue_reports` guarda los reportes de rescate (etapa 6): quien reporta (`reporter`) avisa de un animal callejero que necesita ayuda (`kind` `help`), una mascota perdida (`lost`) o un animal encontrado (`found`).
+
+| Campo         | Reglas                                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------------------------ |
+| `reporter`    | El usuario con sesión; no se puede cambiar. Borrar la cuenta borra sus reportes.                             |
+| `kind`        | `help`, `lost` o `found`; no se puede cambiar.                                                               |
+| `description` | Obligatorio, hasta 2,200 caracteres.                                                                         |
+| `media`       | Hasta 10 fotos o videos, con los mismos límites y miniaturas que las publicaciones.                          |
+| `latitude`    | Ubicación GPS junto con `longitude`; las dos son obligatorias (no ambas en 0).                               |
+| `place`       | Referencia del lugar en texto, hasta 120 caracteres.                                                         |
+| `urgency`     | `low`, `medium` o `high`. Obligatoria en `help`; vacía en los demás tipos.                                   |
+| `pet`         | Solo en `lost`: una mascota de quien reporta (opcional).                                                     |
+| `lastSeenAt`  | Solo en `lost`, obligatoria: cuándo se vio por última vez (no puede ser futura).                             |
+| `status`      | `open` (abierto, perdido o encontrado), `in_progress` (solo en `help`) o `closed` (resuelto o reencontrado). |
+
+Un reporte nuevo siempre está `open`. La app busca los reportes cercanos pidiendo un área (`latitude` y `longitude` entre dos valores, con un índice) y se queda con los que caen dentro del radio. Cualquiera los ve y los lista; solo quien reporta los edita, cambia su estado y los borra. Los textos se recortan. Las reglas están en `pb_hooks/rescue.pb.js`; los errores de campo usan los códigos `location_required`, `date_future`, `pet_not_owned`, `invalid_status` y `photo_too_large`.
+
+### Puedo ayudar
+
+`rescue_helpers` guarda a las personas (`helper`) que se ofrecieron a ayudar con un reporte de un animal que necesita ayuda, con un mensaje opcional (`message`, hasta 500 caracteres). Una oferta por persona y reporte, nunca en tu propio reporte, en uno cerrado ni con un bloqueo de por medio (`own_report`, `report_closed`, `not_help`, `already_helping`, `blocked`). Quien ayuda retira su oferta borrándola, y nadie la edita. Solo quien ayuda y quien reportó ven una oferta; todos ven cuántas hay en `helperCount` del reporte, que solo escribe el servidor. La primera oferta pasa un reporte abierto a `in_progress`, y quien reportó recibe una notificación `rescue_help` (con el reporte en `rescue`; preferencia de push `rescueOff`).
+
+### Avisos cercanos
+
+`rescue_alerts` guarda, para cada persona que activó los avisos de casos de rescate cercanos, una ubicación aproximada (`latitude`, `longitude`, que el servidor redondea a unos 500 m) y su radio cercano (`radiusKm`: 1, 5, 10 o 25; si no, `invalid_radius`). Una por persona; solo su dueño la ve, la cambia y la borra, y se borra con la cuenta. La app la actualiza al abrirse y la borra al apagar los avisos (`pb_hooks/rescue_alerts.pb.js`, `pb_hooks/lib/geo.js`).
+
+Cuando alguien crea un reporte de rescate, cada persona cuyo radio lo incluye recibe una notificación `rescue_nearby` con el reporte en `rescue` y a qué distancia está (`distanceKm`), en la app y por push ("Mascota perdida a 2 km de ti."). Nunca quien reporta, nadie con un bloqueo de por medio, y una sola vez por reporte: editar el reporte no vuelve a avisar.
 
 ## Contadores
 

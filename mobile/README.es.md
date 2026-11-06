@@ -100,6 +100,12 @@ EXPO_PUBLIC_EAS_PROJECT_ID=tu-id-de-proyecto
 
 Corre `npm run check` antes de abrir un pull request.
 
+## Ubicación y mapas
+
+- **Ubicación:** `expo-location`, solo mientras la app está en uso. Los reportes toman el punto GPS del celular, y la pestaña Rescate lo usa para mostrar los casos cercanos. En la web se usa la ubicación del navegador.
+- **Mapas:** mapas nativos con `react-native-maps` (Apple Maps en iOS y Google Maps en Android). Funcionan en Expo Go en los dos celulares. La web no tiene mapa: muestra la lista y un enlace "Abrir en mapas".
+- **Builds de Android:** un build de desarrollo o de tienda en Android necesita una clave de la API de Google Maps (gratis para mapas en celulares) en `app.json`. Llega con la etapa 8.
+
 ## Estructura
 
 ```text
@@ -111,7 +117,7 @@ mobile/
 │   ├── api/            Cliente de PocketBase, URL del servidor, mensajes de error y caché de React Query
 │   ├── auth/           Sesión (AuthProvider) y validación de formularios
 │   ├── components/     Interfaz reutilizable (Icon, ThemedText, Screen, OptionGroup…)
-│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, moderation, messages, notifications, push, adoption, users, legal, settings)
+│   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, moderation, messages, notifications, push, adoption, rescue, users, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
 │   ├── theme/          Colores, íconos, tipografía y utilidades de contraste
