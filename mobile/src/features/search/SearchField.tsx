@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { Icon } from '@/components/Icon';
-import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { useFontStyle, useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing, typography } from '@/theme/typography';
 
 /** Search box with a magnifying glass; by default it gets the keyboard when the screen opens. */
@@ -21,6 +21,7 @@ export function SearchField({
 }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const fontStyle = useFontStyle();
   return (
     <View style={[styles.box, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Icon name="search" size={20} color={colors.textSecondary} />
@@ -36,7 +37,7 @@ export function SearchField({
         autoCorrect={false}
         returnKeyType="search"
         clearButtonMode="while-editing"
-        style={[styles.input, typography.body, { color: colors.text }]}
+        style={[styles.input, typography.body, fontStyle, { color: colors.text }]}
       />
     </View>
   );

@@ -8,7 +8,7 @@ import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
 import { IconButton } from '@/components/IconButton';
 import { ThemedText } from '@/components/ThemedText';
-import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { useFontStyle, useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing, typography } from '@/theme/typography';
 import { confirm } from '@/utils/confirm';
 import { notify } from '@/utils/notify';
@@ -39,6 +39,7 @@ export function CommentItem({
   const { t } = useTranslation();
   const { client } = useAuth();
   const colors = useThemeColors();
+  const fontStyle = useFontStyle();
   const date = useRelativeDate(comment.created);
   const update = useUpdateComment(comment.postId);
   const remove = useDeleteComment(comment.postId);
@@ -133,6 +134,7 @@ export function CommentItem({
               style={[
                 styles.input,
                 typography.body,
+                fontStyle,
                 { color: colors.text, backgroundColor: colors.surface, borderColor: colors.border },
               ]}
             />

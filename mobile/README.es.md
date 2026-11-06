@@ -120,7 +120,7 @@ mobile/
 │   ├── features/       Contenido de pantallas por funcionalidad (auth, profile, account, pets, posts, comments, follows, search, moderation, messages, notifications, push, adoption, rescue, users, legal, settings)
 │   ├── i18n/           Traducciones (español e inglés)
 │   ├── preferences/    Tema e idioma elegidos por el usuario, guardados en el celular
-│   ├── theme/          Colores, íconos, tipografía y utilidades de contraste
+│   ├── theme/          Colores, íconos, tipografía (Ubuntu o la letra del sistema) y utilidades de contraste
 │   └── utils/          Utilidades pequeñas (diálogo de confirmación, selector de fotos, subida de archivos)
 ├── __tests__/          Pruebas de Jest
 ├── test-utils/         Utilidades de prueba compartidas (providers y sesión simulada)

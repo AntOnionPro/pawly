@@ -1,6 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { usePreferences, useThemeColors } from '@/preferences/PreferencesProvider';
+import { fontFor } from '@/theme/fonts';
 import type { IconName } from '@/theme/icons';
 import { radius, spacing, typography } from '@/theme/typography';
 
@@ -27,6 +28,8 @@ export function Button({
   accessibilityHint,
 }: ButtonProps) {
   const colors = useThemeColors();
+  const { font } = usePreferences();
+  const text = variant === 'link' ? typography.link : typography.button;
   const inactive = disabled || loading;
   const foreground = variant === 'primary' ? colors.onAccent : colors.text;
 
@@ -54,13 +57,7 @@ export function Button({
       ) : (
         <View style={styles.content}>
           {icon ? <Icon name={icon} size={20} color={foreground} /> : null}
-          <Text
-            style={[
-              variant === 'link' ? typography.link : typography.button,
-              { color: foreground },
-            ]}>
-            {label}
-          </Text>
+          <Text style={[text, fontFor(font, text.fontWeight), { color: foreground }]}>{label}</Text>
         </View>
       )}
     </Pressable>

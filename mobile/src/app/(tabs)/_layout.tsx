@@ -1,20 +1,24 @@
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useTranslation } from 'react-i18next';
 
-import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { useFontStyle, useThemeColors } from '@/preferences/PreferencesProvider';
 import { icons } from '@/theme/icons';
 
 /** Native bottom bar: UITabBar on iOS and Material navigation bar on Android. */
 export default function TabsLayout() {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const { fontFamily } = useFontStyle('500');
 
   return (
     <NativeTabs
       backgroundColor={colors.surface}
       tintColor={colors.accent}
       iconColor={{ default: colors.textSecondary, selected: colors.accent }}
-      labelStyle={{ default: { color: colors.textSecondary }, selected: { color: colors.text } }}
+      labelStyle={{
+        default: { color: colors.textSecondary, fontFamily },
+        selected: { color: colors.text, fontFamily },
+      }}
       indicatorColor={colors.tabIndicator}
       rippleColor={colors.tabIndicator}>
       <NativeTabs.Trigger name="index">

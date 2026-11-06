@@ -556,6 +556,11 @@ const en = {
       light: 'Light',
       dark: 'Dark',
     },
+    font: {
+      title: 'Font',
+      ubuntu: 'Ubuntu',
+      system: 'System',
+    },
     language: {
       title: 'Language',
       system: 'System',

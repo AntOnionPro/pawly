@@ -559,6 +559,11 @@ const es: Resources = {
       light: 'Claro',
       dark: 'Oscuro',
     },
+    font: {
+      title: 'Letra',
+      ubuntu: 'Ubuntu',
+      system: 'Del sistema',
+    },
     language: {
       title: 'Idioma',
       system: 'Sistema',
