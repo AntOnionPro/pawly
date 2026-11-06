@@ -194,6 +194,25 @@ El adoptante recibe una notificación `adopted`. Las publicaciones anteriores qu
 - **Actualizaciones:** una publicación del adoptante que etiqueta a la mascota cuenta como la actualización (`post`) del seguimiento cuya ventana está abierta, desde su fecha hasta 14 días después. El dueño anterior recibe una notificación `followup_posted`.
 - **Vencidos:** un seguimiento sin actualización 14 días después de su fecha está vencido. Entonces el dueño anterior puede reportar al adoptante con el motivo `adoption_followup`; cualquier otra persona, o antes de eso, falla con `followup_not_overdue`.
 
+## Reportes de rescate
+
+`rescue_reports` guarda los reportes de rescate (etapa 6): quien reporta (`reporter`) avisa de un animal callejero que necesita ayuda (`kind` `help`), una mascota perdida (`lost`) o un animal encontrado (`found`).
+
+| Campo         | Reglas                                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------------------------ |
+| `reporter`    | El usuario con sesión; no se puede cambiar. Borrar la cuenta borra sus reportes.                             |
+| `kind`        | `help`, `lost` o `found`; no se puede cambiar.                                                               |
+| `description` | Obligatorio, hasta 2,200 caracteres.                                                                         |
+| `media`       | Hasta 10 fotos o videos, con los mismos límites y miniaturas que las publicaciones.                          |
+| `latitude`    | Ubicación GPS junto con `longitude`; las dos son obligatorias (no ambas en 0).                               |
+| `place`       | Referencia del lugar en texto, hasta 120 caracteres.                                                         |
+| `urgency`     | `low`, `medium` o `high`. Obligatoria en `help`; vacía en los demás tipos.                                   |
+| `pet`         | Solo en `lost`: una mascota de quien reporta (opcional).                                                     |
+| `lastSeenAt`  | Solo en `lost`, obligatoria: cuándo se vio por última vez (no puede ser futura).                             |
+| `status`      | `open` (abierto, perdido o encontrado), `in_progress` (solo en `help`) o `closed` (resuelto o reencontrado). |
+
+Un reporte nuevo siempre está `open`. Cualquiera los ve y los lista; solo quien reporta los edita, cambia su estado y los borra. Los textos se recortan. Las reglas están en `pb_hooks/rescue.pb.js`; los errores de campo usan los códigos `location_required`, `date_future`, `pet_not_owned`, `invalid_status` y `photo_too_large`.
+
 ## Contadores
 
 Cada publicación tiene un `pawCount`, un `commentCount` y un `repostCount`, y cada usuario un `followerCount` y un `followingCount`. Los contadores como estos solo los escribe el servidor (`pb_hooks/counters.pb.js`): las peticiones no pueden fijarlos y se recalculan desde la tabla de origen después de cada cambio, así nunca se desfasan.

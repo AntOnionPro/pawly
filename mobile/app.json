@@ -50,6 +50,14 @@
         {
           "color": "#D84080"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Pawly uses your location to place rescue reports and to show cases near you.",
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false
+        }
       ]
     ],
     "experiments": {
