@@ -361,6 +361,12 @@ describe('report page', () => {
     expect(onPressUser).toHaveBeenCalledWith('u2');
     expect(screen.getByRole('button', { name: 'Mensaje' })).toBeOnTheScreen();
     expect(screen.queryByRole('button', { name: 'Marcar como resuelto' })).toBeNull();
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Reportar caso' }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith({
+      pathname: '/report',
+      params: { kind: 'rescue', id: 'r1' },
+    });
   });
 
   it('lets the reporter move the case along', async () => {
@@ -371,6 +377,7 @@ describe('report page', () => {
       signedIn(),
     );
     expect(screen.queryByRole('button', { name: 'Mensaje' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Reportar caso' })).toBeNull();
     await fireEvent.press(await screen.findByRole('button', { name: 'Marcar en curso' }));
     await waitFor(() =>
       expect(api.setRescueStatus).toHaveBeenCalledWith(expect.anything(), 'r1', 'in_progress'),

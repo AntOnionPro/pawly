@@ -354,11 +354,15 @@ const es: Resources = {
     comment: 'Reportar comentario',
     user: 'Reportar',
     message: 'Reportar mensaje',
+    adoption: 'Reportar ficha',
+    rescue: 'Reportar caso',
     question: {
       post: '¿Por qué reportas esta publicación?',
       comment: '¿Por qué reportas este comentario?',
       user: '¿Por qué reportas a este usuario?',
       message: '¿Por qué reportas este mensaje?',
+      adoption: '¿Por qué reportas esta ficha de adopción?',
+      rescue: '¿Por qué reportas este caso de rescate?',
     },
     reason: 'Motivo',
     reasons: {
@@ -425,6 +429,19 @@ const es: Resources = {
     followupPosted: '@{{username}} compartió cómo está {{pet}}.',
     rescueHelp: '@{{username}} puede ayudar con tu caso de rescate.',
     rescueNearby: '{{what}} a {{km}} km de ti.',
+    contentRemoved: {
+      post: 'Quitamos tu publicación porque no cumple las reglas de Pawly. Motivo: {{reason}}.',
+      comment: 'Quitamos tu comentario porque no cumple las reglas de Pawly. Motivo: {{reason}}.',
+      message: 'Quitamos tu mensaje porque no cumple las reglas de Pawly. Motivo: {{reason}}.',
+      adoption:
+        'Quitamos tu ficha de adopción porque no cumple las reglas de Pawly. Motivo: {{reason}}.',
+      rescue:
+        'Quitamos tu reporte de rescate porque no cumple las reglas de Pawly. Motivo: {{reason}}.',
+    },
+    reportActioned: 'Revisamos tu reporte y tomamos medidas. Gracias por cuidar Pawly.',
+    reportDismissed:
+      'Revisamos tu reporte y no encontramos algo que vaya contra las reglas de Pawly.',
+    fromPawly: 'Pawly',
   },
   rescueAlerts: {
     title: 'Casos de rescate cercanos',
@@ -558,6 +575,11 @@ const es: Resources = {
     nearbyRadius_other: 'A {{count}} km',
   },
   auth: {
+    suspended: {
+      until: 'Tu cuenta está suspendida hasta el {{date}}.',
+      forever: 'Tu cuenta está suspendida de forma permanente.',
+      reason: 'Motivo: {{reason}}',
+    },
     signUp: {
       title: 'Crear cuenta',
       username: 'Nombre de usuario',
@@ -649,6 +671,9 @@ const es: Resources = {
     alreadyReposted: 'Ya republicaste esta publicación.',
     alreadyReported: 'Ya reportaste esto.',
     blocked: 'No puedes hacerlo porque hay un bloqueo.',
+    suspended: 'Tu cuenta está suspendida.',
+    contentBlocked: 'Tu texto tiene palabras que no se permiten en Pawly.',
+    rateLimited: 'Vas muy rápido. Intenta de nuevo en unos minutos.',
   },
   legal: {
     draft: 'Borrador. La versión definitiva se publicará antes del lanzamiento.',
@@ -675,7 +700,7 @@ const es: Resources = {
         'Pawly es responsable de tus datos personales, conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares. Los datos de contacto se publicarán con la versión definitiva.',
       dataTitle: 'Qué datos recabamos',
       dataBody:
-        'Tu correo, nombre de usuario, fecha de nacimiento, foto de perfil y bio; tus mascotas, publicaciones, comentarios y mensajes; y la ubicación GPS de los reportes de rescate que crees. Solo si activas los avisos de casos de rescate cercanos, también una ubicación aproximada (redondeada a unos 500 m) y la distancia que elijas; se actualiza al abrir la app y se borra al apagar los avisos.',
+        'Tu correo, nombre de usuario, fecha de nacimiento, foto de perfil y bio; tus mascotas, publicaciones, comentarios y mensajes; y la ubicación GPS de los reportes de rescate que crees. Solo si activas los avisos de casos de rescate cercanos, también una ubicación aproximada (redondeada a unos 500 m) y la distancia que elijas; se actualiza al abrir la app y se borra al apagar los avisos. Si alguien reporta algo que publicaste, guardamos una copia con el reporte para revisarlo; se borra con tu cuenta.',
       purposesTitle: 'Para qué los usamos',
       purposesBody:
         'Para crear y operar tu cuenta, comprobar la edad mínima, mantener Pawly seguro y moderar el contenido. Tu correo y tu fecha de nacimiento nunca se muestran a otras personas.',

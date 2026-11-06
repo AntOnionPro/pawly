@@ -124,9 +124,66 @@ El feed "Siguiendo" lista las publicaciones con el filtro `author.follows_via_fo
 
 ## Reportes y bloqueos
 
-La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`) o un usuario (`user`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, o `adoption_followup` para un [seguimiento posadopción](#seguimiento-posadopción) no cumplido) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración; su revisión llega en la etapa 7. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
+La colección `reports` guarda los reportes (etapa 3): `reporter` reporta exactamente una publicación (`post`), un comentario (`comment`), un usuario (`user`), un mensaje (`message`), una ficha de adopción (`adoption`) o un reporte de rescate (`rescue`), con un motivo (`reason`: `spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, o `adoption_followup` para un [seguimiento posadopción](#seguimiento-posadopción) no cumplido) y un detalle opcional (`details`). Solo los superusuarios los ven, en el panel de administración. Cada usuario reporta lo mismo una sola vez, y nadie se reporta a sí mismo ni a su contenido.
+
+Cada reporte guarda una copia de lo reportado (etapa 7): el tipo (`targetKind`), el id (`targetId`), el autor o el usuario reportado (`targetAuthor`) y el texto (`targetText`), así que sigue en el historial aunque el contenido se borre. Empieza pendiente (`pending`), y solo los superusuarios cambian su estado (`status`: `actioned` o `dismissed`) y su nota (`reviewNote`); el servidor pone la fecha de revisión (`reviewedAt`), y nada más del reporte puede cambiar. Borrar el contenido o la cuenta de quien reportó solo vacía esa relación; borrar la cuenta de la persona reportada (`targetAuthor`) borra los reportes sobre ella.
+
+### Revisar reportes
+
+1. Abre el panel de administración (`/_/`) y la colección `moderation_queue`. Tiene una fila por contenido reportado con reportes pendientes: su tipo (`kind`), su id (`target`), su autor (`author`), cuántos reportes están pendientes (`pending`), sus motivos (`reasons`), la copia más reciente del texto (`text`) y las fechas del primer y del último reporte. Ordénala por `pending`, de más a menos.
+2. Para ver el contenido, abre su colección (`posts`, `comments`, `messages`, `users`, `adoptions` o `rescue_reports`) y busca el id de `target`. Si ya se borró, queda la copia en `text`.
+3. Abre la colección `reports`, filtra con `targetId = "<target>" && status = "pending"`, abre un reporte y cambia su `status`. Si quieres, escribe una nota en `reviewNote` (solo la ven los superusuarios). Guárdalo.
+   - `actioned` en una publicación, comentario, mensaje, ficha o reporte de rescate borra el contenido y se lo avisa a su autor en la app ("Quitamos tu publicación…", con el motivo). En un usuario solo cierra el reporte: la [suspensión](#suspender-cuentas) se hace en el usuario.
+   - `dismissed` deja el contenido.
+   - En los dos casos, los demás reportes pendientes del mismo contenido quedan con el mismo estado, y todos los que lo reportaron reciben el resultado en la app. Estos avisos de Pawly no tienen `actor` ni push.
+4. Regresar un reporte a `pending` borra `reviewedAt` y no hace nada más.
 
 La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo quien bloquea ve y quita sus bloqueos. Mientras exista un bloqueo, ninguno puede seguir al otro y el bloqueado no puede comentar en las publicaciones de quien lo bloqueó; además, bloquear elimina los seguimientos entre ambos (`pb_hooks/moderation.pb.js`). La app oculta el contenido de los usuarios bloqueados.
+
+## Filtro de contenido
+
+`blocked_terms` guarda las palabras y frases que el servidor revisa en los textos que la gente guarda (etapa 7, `pb_hooks/content_filter.pb.js`): nombres de usuario y biografías, nombres y razas de mascotas, publicaciones, comentarios, mensajes, fichas de adopción y reportes de rescate. Cada término (`term`) tiene una acción (`action`):
+
+- `block`: el texto no se guarda. El servidor responde 400 con el código `content_blocked` en el campo, y la app dice "Tu texto tiene palabras que no se permiten en Pawly." y conserva lo escrito.
+- `review`: el texto se guarda, y el servidor lo manda a la [cola de moderación](#revisar-reportes) con un reporte automático: sin `reporter`, con el motivo del término (`reason`) y un `details` que dice qué término y qué campo coincidieron. Mientras esté pendiente, volver a guardar el mismo contenido no agrega otro. Una mascota se reporta a través de su dueño.
+
+Los términos se comparan sin importar mayúsculas, acentos, letras repetidas ("puuuto") ni sustituciones comunes (0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s), y solo como palabras o frases completas, así que las palabras inocentes que contienen uno ("computadora") no se marcan. Al editar, solo se revisan los textos que cambiaron, y los superusuarios no pasan por el filtro.
+
+La migración agrega una lista inicial en español e inglés: insultos graves (`block`) y frases de venta de animales (`review`, `animal_sale`) o de peleas de animales (`review`, `animal_abuse`). Para cambiarla, abre `blocked_terms` en el panel de administración y agrega, edita o borra términos; los cambios aplican al momento. El filtro solo revisa texto: las fotos y los videos se moderan con los reportes.
+
+## Límites contra spam
+
+Cada cuenta solo puede crear cierta cantidad de cosas en un periodo (etapa 7, `pb_hooks/limits.pb.js`; la tabla es `LIMITS` en `pb_hooks/lib/limits.js`). Las cuentas de menos de 24 horas tienen la mitad de cada límite (redondeada hacia arriba), y los superusuarios no tienen límites:
+
+| Qué | Límite |
+| --- | --- |
+| Publicaciones (incluidas las republicaciones) | 10 por hora y 30 por día |
+| Comentarios | 30 cada 10 minutos y 300 por día |
+| Mensajes directos | 60 cada 10 minutos y 600 por día |
+| Conversaciones nuevas (`startedBy`, lo pone el servidor) | 20 por día |
+| Seguimientos | 60 por hora y 300 por día |
+| Reportes | 20 por día |
+| Fichas de adopción | 5 por día |
+| Solicitudes de adopción | 10 por día |
+| Reportes de rescate | 10 por día |
+| Ofertas de "Puedo ayudar" | 20 por día |
+
+El mismo comentario o mensaje de 20 caracteres o más solo se puede enviar 3 veces en 10 minutos; los cortos ("¡Qué linda!") no cuentan.
+
+Por conexión (dirección IP), el limitador de PocketBase cubre el inicio de sesión (20 por minuto, con cualquier método), el registro (10 por hora) y pedir el cambio de contraseña, el correo de verificación o un código (10 por hora cada uno). Sus reglas están en el panel de administración (Settings → Rate limits) y parten de `pb_migrations/…_rate_limits.js`. Son holgadas porque en las redes móviles muchos celulares comparten una dirección. Detrás de Cloudflare Tunnel (etapa 8) la dirección real llega en el encabezado `CF-Connecting-IP`, que está marcado como confiable.
+
+Al pasar un límite, el servidor responde 429 (por cuenta, con el código `rate_limited`), y la app dice "Vas muy rápido. Intenta de nuevo en unos minutos." sin perder lo escrito. Los límites buscan ser holgados para el uso normal; se ajustan después de la beta (etapa 9). `PAWLY_LIMITS=off` apaga los dos: lo usan las pruebas (salvo `test/limits.test.mjs`), porque crean muchas cuentas y registros muy rápido.
+
+## Suspender cuentas
+
+Los superusuarios suspenden una cuenta desde el panel de administración (etapa 7), en la colección `users`: `suspendedUntil` (una fecha) o `suspendedForever`, y un motivo que la persona ve (`suspensionReason`). Los campos están ocultos, así que solo los superusuarios los ven y los cambian. Mientras la suspensión está vigente (`pb_hooks/suspension.pb.js`):
+
+- La cuenta no puede iniciar sesión ni renovarla: el servidor responde 403 con el código `account_suspended` y `suspension` (`until`, `forever`, `reason`), solo después de la contraseña correcta. La app muestra "Tu cuenta está suspendida hasta el…" con el motivo.
+- Una sesión que ya estaba abierta deja de servir en la siguiente petición (con la misma respuesta), y la app cierra la sesión y muestra el mismo mensaje.
+- Se borran sus tokens de push, así que no recibe push.
+- Su perfil y su contenido se quedan; el contenido se quita [revisando los reportes](#revisar-reportes) o, en casos graves, borrando la cuenta.
+
+Al pasar `suspendedUntil`, la cuenta vuelve a funcionar sola. Para quitar la suspensión antes, vacía `suspendedUntil` y apaga `suspendedForever`.
 
 ## Mensajes directos
 
@@ -140,7 +197,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help` o `rescue_nearby`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`, `rescue`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help`, `rescue_nearby`, o `content_removed`, `report_actioned` y `report_dismissed` para la [revisión de un reporte](#revisar-reportes), que no tienen `actor` y dicen qué se reportó en `contentKind` y por qué se quitó en `reportReason`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`, `rescue`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 

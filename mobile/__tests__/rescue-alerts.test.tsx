@@ -224,6 +224,8 @@ describe('nearby notifications', () => {
           rescueId: 'r1',
           rescue: report as unknown as RescueReport,
           distanceKm: 2,
+          contentKind: '',
+          reportReason: '',
           read: true,
           created: new Date().toISOString(),
         },

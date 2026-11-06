@@ -350,11 +350,15 @@ const en = {
     comment: 'Report comment',
     user: 'Report',
     message: 'Report message',
+    adoption: 'Report listing',
+    rescue: 'Report case',
     question: {
       post: 'Why are you reporting this post?',
       comment: 'Why are you reporting this comment?',
       user: 'Why are you reporting this user?',
       message: 'Why are you reporting this message?',
+      adoption: 'Why are you reporting this adoption listing?',
+      rescue: 'Why are you reporting this rescue case?',
     },
     reason: 'Reason',
     reasons: {
@@ -421,6 +425,20 @@ const en = {
     followupPosted: '@{{username}} shared how {{pet}} is doing.',
     rescueHelp: '@{{username}} can help with your rescue case.',
     rescueNearby: '{{what}} {{km}} km from you.',
+    contentRemoved: {
+      post: 'We removed your post because it does not follow the Pawly rules. Reason: {{reason}}.',
+      comment:
+        'We removed your comment because it does not follow the Pawly rules. Reason: {{reason}}.',
+      message:
+        'We removed your message because it does not follow the Pawly rules. Reason: {{reason}}.',
+      adoption:
+        'We removed your adoption listing because it does not follow the Pawly rules. Reason: {{reason}}.',
+      rescue:
+        'We removed your rescue report because it does not follow the Pawly rules. Reason: {{reason}}.',
+    },
+    reportActioned: 'We reviewed your report and took action. Thank you for looking after Pawly.',
+    reportDismissed: 'We reviewed your report and found nothing against the Pawly rules.',
+    fromPawly: 'Pawly',
   },
   rescueAlerts: {
     title: 'Nearby rescue cases',
@@ -554,6 +572,11 @@ const en = {
     nearbyRadius_other: 'Within {{count}} km',
   },
   auth: {
+    suspended: {
+      until: 'Your account is suspended until {{date}}.',
+      forever: 'Your account is permanently suspended.',
+      reason: 'Reason: {{reason}}',
+    },
     signUp: {
       title: 'Create account',
       username: 'Username',
@@ -643,6 +666,9 @@ const en = {
     alreadyReposted: 'You already reposted this post.',
     alreadyReported: 'You already reported this.',
     blocked: 'You cannot do this because of a block.',
+    suspended: 'Your account is suspended.',
+    contentBlocked: 'Your text has words that are not allowed in Pawly.',
+    rateLimited: 'You are going too fast. Try again in a few minutes.',
   },
   legal: {
     draft: 'Draft. The final version will be published before launch.',
@@ -669,7 +695,7 @@ const en = {
         'Pawly is responsible for your personal data, under Mexico’s Federal Law on Protection of Personal Data Held by Private Parties. The contact details will be published with the final version.',
       dataTitle: 'What data we collect',
       dataBody:
-        'Your email, username, date of birth, profile photo and bio; your pets, posts, comments and messages; and the GPS location of the rescue reports you create. Only if you turn on alerts for nearby rescue cases, also an approximate location (rounded to about 500 m) and the distance you choose; it is updated when you open the app and deleted when you turn the alerts off.',
+        'Your email, username, date of birth, profile photo and bio; your pets, posts, comments and messages; and the GPS location of the rescue reports you create. Only if you turn on alerts for nearby rescue cases, also an approximate location (rounded to about 500 m) and the distance you choose; it is updated when you open the app and deleted when you turn the alerts off. If someone reports something you posted, we keep a copy with the report to review it; it is deleted with your account.',
       purposesTitle: 'What we use it for',
       purposesBody:
         'To create and run your account, to check the minimum age, to keep Pawly safe and to moderate content. Your email and date of birth are never shown to other people.',

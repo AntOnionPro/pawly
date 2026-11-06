@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 6, Rescate (terminada, falta la release `v0.7.0` a `main`).** La etapa 7 empieza cuando esa release esté mergeada. Última release: `v0.6.0` (etapa 5). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 7, Moderación (terminada, falta la release `v0.8.0` a `main`).** La etapa 8 empieza cuando esa release esté mergeada. Última release: `v0.7.0` (etapa 6). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -20,13 +20,13 @@ Etapa actual: **etapa 6, Rescate (terminada, falta la release `v0.7.0` a `main`)
 | 4 | Mensajes y notificaciones | Hecho |
 | 5 | Adopción | Hecho |
 | 6 | Rescate | Hecho |
-| 7 | Moderación | Sin empezar |
+| 7 | Moderación | Hecho |
 | 8 | Infraestructura y web | Sin empezar |
 | 9 | Lanzamiento | Sin empezar |
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Entregado en la etapa 6: reportes de rescate y pestaña Rescate ([#65](https://github.com/AntOnionPro/pawly/issues/65)), mapa y casos cercanos ([#66](https://github.com/AntOnionPro/pawly/issues/66)), botón "Puedo ayudar" ([#67](https://github.com/AntOnionPro/pawly/issues/67)) y avisos de casos de rescate cercanos ([#68](https://github.com/AntOnionPro/pawly/issues/68)). El mapa usa mapas nativos (`react-native-maps`: Apple Maps en iOS y Google Maps en Android). El push en Android necesita un build de desarrollo (etapa 8).
+Entregado en la etapa 7: revisión de reportes en el panel de administración ([#74](https://github.com/AntOnionPro/pawly/issues/74)), suspender cuentas ([#75](https://github.com/AntOnionPro/pawly/issues/75)), filtro de contenido ([#76](https://github.com/AntOnionPro/pawly/issues/76)) y límites contra spam ([#77](https://github.com/AntOnionPro/pawly/issues/77)). La moderación se hace en el panel de PocketBase; el README del servidor explica cómo [revisar reportes](server/README.es.md#revisar-reportes), [suspender cuentas](server/README.es.md#suspender-cuentas), cambiar el [filtro de contenido](server/README.es.md#filtro-de-contenido) y los [límites contra spam](server/README.es.md#límites-contra-spam).
 
 ## Funcionalidades
 
@@ -79,7 +79,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos. Los usuarios pu
 
 #### Moderación
 
-- Reportar publicaciones, comentarios, mensajes y usuarios. Bloquear usuarios.
+- Reportar publicaciones, comentarios, mensajes, usuarios, fichas de adopción y reportes de rescate. Bloquear usuarios.
 - Filtro de contenido y un panel de administración para revisar los reportes.
 
 #### Notificaciones

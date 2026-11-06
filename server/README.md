@@ -124,9 +124,66 @@ The "Following" feed lists posts with the filter `author.follows_via_following.f
 
 ## Reports and blocks
 
-The `reports` collection holds reports (stage 3): the `reporter` reports exactly one `post`, `comment` or `user`, with a `reason` (`spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, or `adoption_followup` for a missed [adoption follow-up](#adoption-follow-up)) and optional `details`. Only superusers see them, in the admin panel; reviewing them comes in stage 7. Each user reports the same thing once, and nobody reports themselves or their own content.
+The `reports` collection holds reports (stage 3): the `reporter` reports exactly one `post`, `comment`, `user`, `message`, `adoption` listing or `rescue` report, with a `reason` (`spam`, `offensive`, `animal_abuse`, `animal_sale`, `other`, or `adoption_followup` for a missed [adoption follow-up](#adoption-follow-up)) and optional `details`. Only superusers see them, in the admin panel. Each user reports the same thing once, and nobody reports themselves or their own content.
+
+Each report keeps a copy of what was reported (stage 7): its kind (`targetKind`), id (`targetId`), author or reported user (`targetAuthor`) and text (`targetText`), so it stays in the history after the content is deleted. It starts `pending`, and only superusers change its `status` (`actioned` or `dismissed`) and `reviewNote`; the server sets `reviewedAt`, and nothing else about a report can change. Deleting the content or the account of whoever reported only empties that relation; deleting the account of the reported person (`targetAuthor`) deletes the reports about them.
+
+### Reviewing reports
+
+1. Open the admin panel (`/_/`) and the `moderation_queue` collection. It has one row per reported content with pending reports: its `kind`, `target` (id), `author`, how many reports are `pending`, their `reasons`, the latest copy of the `text`, and the dates of the first and last report. Sort it by `pending`, from most to fewest.
+2. To see the content itself, open its collection (`posts`, `comments`, `messages`, `users`, `adoptions` or `rescue_reports`) and search for the `target` id. If it was already deleted, the copy in `text` remains.
+3. Open the `reports` collection, filter by `targetId = "<target>" && status = "pending"`, open one report and change its `status`. Optionally write a `reviewNote` (only superusers see it). Save it.
+   - `actioned` on a post, comment, message, listing or rescue report deletes the content and tells its author in the app ("We removed your post…", with the reason). On a user, it only closes the report: [suspend the account](#account-suspension) on the user.
+   - `dismissed` keeps the content.
+   - In both cases, every other pending report about the same content gets the same status, and everyone who reported it is told the result in the app. These notices from Pawly have no `actor` and no push.
+4. Setting a report back to `pending` clears `reviewedAt` and does nothing else.
 
 The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the blocker sees and removes their blocks. While a block exists, neither user can follow the other and the blocked user cannot comment on the blocker's posts; blocking also removes the follows between both (`pb_hooks/moderation.pb.js`). The app hides the content of blocked users.
+
+## Content filter
+
+`blocked_terms` holds the words and phrases the server checks in the texts people save (stage 7, `pb_hooks/content_filter.pb.js`): usernames and bios, pet names and breeds, posts, comments, messages, adoption listings and rescue reports. Each `term` has an `action`:
+
+- `block`: the text is not saved. The server answers 400 with the code `content_blocked` on the field, and the app says "Your text has words that are not allowed in Pawly." and keeps what was written.
+- `review`: the text is saved, and the server sends it to the [moderation queue](#reviewing-reports) with an automatic report: no `reporter`, the term's `reason`, and `details` that say which term and field matched. While it is pending, saving the same content again does not add another one. A pet is reported through its owner.
+
+Terms are compared without case, accents, repeated letters ("puuuto") or common look-alikes (0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s), and only as whole words or phrases, so innocent words that contain one ("computadora") are not marked. On an update, only the texts that changed are checked, and superusers are not filtered.
+
+The migration adds a starting list in Spanish and English: serious insults and slurs (`block`), and phrases about selling animals (`review`, `animal_sale`) or animal fights (`review`, `animal_abuse`). To change it, open `blocked_terms` in the admin panel and add, edit or delete terms; changes apply at once. The filter only reads text: photos and videos are moderated through reports.
+
+## Limits against spam
+
+Each account can only create so much in a period (stage 7, `pb_hooks/limits.pb.js`; the table is `LIMITS` in `pb_hooks/lib/limits.js`). Accounts less than 24 hours old get half of each limit (rounded up), and superusers have none:
+
+| What | Limit |
+| --- | --- |
+| Posts (reposts included) | 10 per hour and 30 per day |
+| Comments | 30 per 10 minutes and 300 per day |
+| Direct messages | 60 per 10 minutes and 600 per day |
+| New conversations (`startedBy`, set by the server) | 20 per day |
+| Follows | 60 per hour and 300 per day |
+| Reports | 20 per day |
+| Adoption listings | 5 per day |
+| Adoption requests | 10 per day |
+| Rescue reports | 10 per day |
+| "I can help" offers | 20 per day |
+
+The same comment or message of 20 characters or more can only be sent 3 times in 10 minutes; short ones ("So cute!") are not affected.
+
+Per connection (IP address), PocketBase's rate limiter covers signing in (20 per minute, any method), signing up (10 per hour) and asking for a password reset, a verification email or a code (10 per hour each). Its rules are in the admin panel (Settings → Rate limits) and start from `pb_migrations/…_rate_limits.js`. They are generous because many phones can share one address on mobile networks. Behind Cloudflare Tunnel (stage 8) the real address comes in the `CF-Connecting-IP` header, which is set as trusted.
+
+Over a limit, the server answers 429 (per account, with the code `rate_limited`), and the app says "You are going too fast. Try again in a few minutes." without losing what was written. The limits are meant to be loose for normal use; adjust them after the beta (stage 9). `PAWLY_LIMITS=off` turns both off: the tests do it (except `test/limits.test.mjs`), since they create many accounts and records quickly.
+
+## Account suspension
+
+Superusers suspend an account from the admin panel (stage 7), in the `users` collection: `suspendedUntil` (a date) or `suspendedForever`, and a `suspensionReason` the person sees. The fields are hidden, so only superusers see and change them. While the suspension is in force (`pb_hooks/suspension.pb.js`):
+
+- The account cannot sign in or renew its session: the server answers 403 with the code `account_suspended` and `suspension` (`until`, `forever`, `reason`), only after the right password. The app shows "Your account is suspended until…" with the reason.
+- A session that was already open stops working on its next request (same answer), and the app signs out and shows the same message.
+- Its push tokens are deleted, so it gets no pushes.
+- Its profile and content stay; remove the content by [reviewing reports](#reviewing-reports) or, in serious cases, delete the account.
+
+When `suspendedUntil` passes, the account works again by itself. To lift a suspension earlier, empty `suspendedUntil` and turn off `suspendedForever`.
 
 ## Direct messages
 
@@ -140,7 +197,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notifications
 
-`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help` or `rescue_nearby`), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help`, `rescue_nearby`, or `content_removed`, `report_actioned` and `report_dismissed` for a [report review](#reviewing-reports), which have no `actor` and say what was reported in `contentKind` and why it was removed in `reportReason`), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
 
 ## Push notifications
 

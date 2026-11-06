@@ -40,13 +40,29 @@ export type ErrorKey =
   | 'errors.reportClosed'
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
-  | 'errors.blocked';
+  | 'errors.blocked'
+  | 'errors.suspended'
+  | 'errors.contentBlocked'
+  | 'errors.rateLimited';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
 /** What went wrong with a request, for the message shown above a form. */
 export type RequestErrorKind =
-  'network' | 'invalidCredentials' | 'unverified' | 'validation' | 'unknown';
+  | 'network'
+  | 'invalidCredentials'
+  | 'unverified'
+  | 'suspended'
+  | 'rateLimited'
+  | 'validation'
+  | 'unknown';
+
+/** Whether the server refused the request because the account is suspended. */
+export function isSuspendedError(error: unknown): boolean {
+  if (!(error instanceof ClientResponseError) || error.status !== 403) return false;
+  const data = (error.response?.data ?? {}) as { account?: { code?: string } };
+  return data.account?.code === 'account_suspended';
+}
 
 function codeToKey(field: string, code: string): ErrorKey {
   switch (code) {
@@ -112,6 +128,8 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.dateInvalid';
     case 'blocked':
       return 'errors.blocked';
+    case 'content_blocked':
+      return 'errors.contentBlocked';
     case 'validation_too_many_files':
       return 'errors.tooManyFiles';
     case 'validation_invalid_mime_type':
@@ -131,7 +149,8 @@ export function toFieldErrors(error: unknown): FieldErrors {
   const data = (error.response?.data ?? {}) as Record<string, { code?: string } | undefined>;
   const result: FieldErrors = {};
   for (const [field, detail] of Object.entries(data)) {
-    if (detail?.code) {
+    // A suspension or a limit is about the whole request, not about a field.
+    if (detail?.code && detail.code !== 'account_suspended' && detail.code !== 'rate_limited') {
       result[field] = codeToKey(field, detail.code);
     }
   }
@@ -144,6 +163,9 @@ export function requestErrorKind(error: unknown): RequestErrorKind {
   }
   // status 0: the request never reached the server (offline, wrong address, server down).
   if (error.status === 0) return 'network';
+  if (isSuspendedError(error)) return 'suspended';
+  // Too many requests: a limit against spam (per account or per connection).
+  if (error.status === 429) return 'rateLimited';
   if (Object.keys(toFieldErrors(error)).length > 0) return 'validation';
   if (error.status === 403) return 'unverified';
   if (error.status === 400) return 'invalidCredentials';
@@ -159,6 +181,10 @@ export function requestErrorKey(kind: RequestErrorKind): ErrorKey | null {
       return 'errors.invalidCredentials';
     case 'unverified':
       return 'errors.unverified';
+    case 'suspended':
+      return 'errors.suspended';
+    case 'rateLimited':
+      return 'errors.rateLimited';
     case 'unknown':
       return 'errors.generic';
     default:

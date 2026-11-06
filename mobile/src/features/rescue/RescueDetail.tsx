@@ -6,6 +6,7 @@ import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { ThemedText } from '@/components/ThemedText';
 import { MessageButton } from '@/features/messages/MessageButton';
+import { useReportAction } from '@/features/moderation/hooks';
 import { petPhotoUrl } from '@/features/pets/api';
 import { MediaCarousel } from '@/features/posts/MediaCarousel';
 import { UserLink } from '@/features/users/UserLink';
@@ -68,6 +69,7 @@ export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: Rescue
   const colors = useThemeColors();
   const detail = useRescueDetail(report);
   const date = useRelativeDate(report.created);
+  const reportAction = useReportAction();
   const reporter = report.reporter;
   const isReporter = user?.id === report.reporterId;
   const petPhoto = report.pet ? petPhotoUrl(client, report.pet) : null;
@@ -138,6 +140,14 @@ export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: Rescue
       {isReporter ? <StatusActions report={report} /> : null}
       {onEdit ? (
         <Button variant="secondary" icon="edit" label={t('rescue.edit')} onPress={onEdit} />
+      ) : null}
+      {!isReporter ? (
+        <Button
+          variant="link"
+          icon="flag"
+          label={t('report.rescue')}
+          onPress={() => reportAction({ kind: 'rescue', id: report.id })}
+        />
       ) : null}
     </View>
   );

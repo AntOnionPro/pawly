@@ -20,7 +20,16 @@ export const REPORT_REASONS: readonly ReportReason[] = [
   'other',
 ];
 
-export type ReportKind = 'post' | 'comment' | 'user' | 'message';
+export type ReportKind = 'post' | 'comment' | 'user' | 'message' | 'adoption' | 'rescue';
+
+const REPORT_KINDS: readonly ReportKind[] = [
+  'post',
+  'comment',
+  'user',
+  'message',
+  'adoption',
+  'rescue',
+];
 
 export interface ReportTarget {
   kind: ReportKind;
@@ -32,10 +41,13 @@ export function isReportReason(value: unknown): value is ReportReason {
 }
 
 export function isReportKind(value: unknown): value is ReportKind {
-  return value === 'post' || value === 'comment' || value === 'user' || value === 'message';
+  return REPORT_KINDS.includes(value as ReportKind);
 }
 
-/** Reports a post, a comment, a user or a message. Only the administrators see reports. */
+/**
+ * Reports a post, a comment, a user, a message, an adoption listing or a rescue report. Only
+ * the administrators see reports.
+ */
 export async function sendReport(
   client: PocketBase,
   reporterId: string,

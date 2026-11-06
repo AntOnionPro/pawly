@@ -4,6 +4,12 @@ import type { RecordModel } from 'pocketbase';
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toAdoption, type Adoption } from '@/features/adoption/api';
 import { toFollowup, type Milestone } from '@/features/adoption/followups';
+import {
+  isReportKind,
+  isReportReason,
+  type ReportKind,
+  type ReportReason,
+} from '@/features/moderation/api';
 import { toRescueReport, type RescueReport } from '@/features/rescue/api';
 import { toPost, type Post } from '@/features/posts/api';
 
@@ -22,7 +28,17 @@ export type NotificationType =
   | 'followup_due'
   | 'followup_posted'
   | 'rescue_help'
-  | 'rescue_nearby';
+  | 'rescue_nearby'
+  | 'content_removed'
+  | 'report_actioned'
+  | 'report_dismissed';
+
+/** Notices from Pawly itself, about a report review: they have no actor. */
+export const PAWLY_NOTICES: readonly NotificationType[] = [
+  'content_removed',
+  'report_actioned',
+  'report_dismissed',
+];
 
 /** Named so it does not clash with the browser's `Notification`. */
 export interface AppNotification {
@@ -44,6 +60,10 @@ export interface AppNotification {
   rescue?: RescueReport;
   /** For nearby rescue alerts: how far the case was, in km. */
   distanceKm: number;
+  /** For report reviews: what was reported (and removed). */
+  contentKind: ReportKind | '';
+  /** For removed content: why. */
+  reportReason: ReportReason | '';
   read: boolean;
   created: string;
 }
@@ -67,6 +87,7 @@ const TYPES: readonly NotificationType[] = [
   'followup_posted',
   'rescue_help',
   'rescue_nearby',
+  ...PAWLY_NOTICES,
 ];
 
 export function toNotification(record: RecordModel): AppNotification {
@@ -93,6 +114,8 @@ export function toNotification(record: RecordModel): AppNotification {
     rescueId: String(record.rescue ?? ''),
     rescue: expand.rescue ? toRescueReport(expand.rescue) : undefined,
     distanceKm: Number(record.distanceKm ?? 0),
+    contentKind: isReportKind(record.contentKind) ? record.contentKind : '',
+    reportReason: isReportReason(record.reportReason) ? record.reportReason : '',
     read: Boolean(record.read),
     created: String(record.created ?? ''),
   };
