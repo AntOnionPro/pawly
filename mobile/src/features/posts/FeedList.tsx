@@ -6,10 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
-import { Icon } from '@/components/Icon';
 import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
+import { Wordmark } from '@/components/Wordmark';
 import { MessagesButton } from '@/features/messages/MessagesButton';
 import { isHiddenPost, useBlockedIds } from '@/features/moderation/hooks';
 import { NotificationsButton } from '@/features/notifications/NotificationsButton';
@@ -65,10 +65,9 @@ export function FeedList() {
         ListHeaderComponent={
           <View style={styles.top}>
             <View style={styles.header}>
-              <Icon name="paw" selected size={28} color={colors.accent} />
-              <ThemedText variant="title" accessibilityRole="header" style={styles.title}>
-                {t('home.title')}
-              </ThemedText>
+              <View style={styles.title}>
+                <Wordmark />
+              </View>
               <IconButton
                 icon="search"
                 size={26}

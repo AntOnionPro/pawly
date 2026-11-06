@@ -27,7 +27,7 @@ Etapa actual: **etapa 7.5, Diseño y detalles (en progreso).** Las etapas 8 y 9 
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) y botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)). Se publica como `v0.8.5`.
+Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) y botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)). Se publica como `v0.8.5`.
 
 ## Funcionalidades
 
@@ -110,7 +110,8 @@ Los reportes se ven en una lista y en un mapa de casos cercanos. Los usuarios pu
 - Estructura vertical tipo Instagram, con barra de navegación inferior.
 - Pestañas: **Inicio · Adopción · Publicar (+) · Rescate · Perfil**. La búsqueda y las notificaciones van en la barra superior.
 - Solo íconos en la interfaz, nunca emojis. Aspecto nativo en cada plataforma: SF Symbols en iOS y Material Symbols en Android.
-- Llegan en la etapa 7.5: la letra Ubuntu (con la letra del sistema como opción en ajustes), paletas del tema claro a elegir en ajustes (rosa, naranja, verde, azul y morado) y el logo: un gato que forma la letra P.
+- Logo: un gato que forma la letra P (`mobile/assets/brand/logo.svg`), en rosa `#FF2981`, que no cambia con la paleta elegida. El ícono de la app es el logo blanco sobre ese rosa (con versiones oscura y tintada en iOS y una monocromática en Android), e Inicio muestra "Pawly" escrito con esa P (`mobile/assets/brand/wordmark.svg`) en el color de acento.
+- Llegan en la etapa 7.5: la letra Ubuntu (con la letra del sistema como opción en ajustes) y paletas del tema claro a elegir en ajustes (rosa, naranja, verde, azul y morado).
 - La reacción es una huella, no un corazón.
 - La versión web para computadora es la de menor prioridad.
 
@@ -219,7 +220,6 @@ Costos externos:
 
 ## Pendientes
 
-- Ícono de la app (la app usa los provisionales de Expo hasta la etapa 7.5; el diseño del logo ya existe).
 - Identificadores de la app para las tiendas (bundle ID de iOS y nombre de paquete de Android).
 - Nombre de dominio.
 - Texto en español de los permisos de fotos y de ubicación en iOS (la build usa inglés hasta la etapa 9).

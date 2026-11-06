@@ -124,7 +124,7 @@ mobile/
 │   └── utils/          Utilidades pequeñas (diálogo de confirmación, selector de fotos, subida de archivos)
 ├── __tests__/          Pruebas de Jest
 ├── test-utils/         Utilidades de prueba compartidas (providers y sesión simulada)
-└── assets/             Íconos y pantalla de carga (provisionales hasta tener logo)
+└── assets/             Íconos de la app, pantalla de carga y logotipo (PNG), y en brand/ el logo y el logotipo en vector (SVG)
 ```
 
 ## Convenciones

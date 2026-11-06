@@ -12,9 +12,6 @@ const es: Resources = {
     title: 'Próximamente',
     stage: 'Esta sección llega en la etapa {{stage}}.',
   },
-  home: {
-    title: 'Pawly',
-  },
   adoption: {
     title: 'Adopción',
     give: 'Dar en adopción',

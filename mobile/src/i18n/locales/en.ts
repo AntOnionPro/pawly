@@ -10,9 +10,6 @@ const en = {
     title: 'Coming soon',
     stage: 'This section arrives in stage {{stage}}.',
   },
-  home: {
-    title: 'Pawly',
-  },
   adoption: {
     title: 'Adoption',
     give: 'Put up for adoption',
