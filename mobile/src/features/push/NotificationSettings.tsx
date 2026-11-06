@@ -10,6 +10,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { spacing } from '@/theme/typography';
 import { notify } from '@/utils/notify';
 
+import {
+  AlertLocationError,
+  useRescueAlert,
+  useToggleRescueAlert,
+} from '@/features/rescue/alertHooks';
+import { usePreferences } from '@/preferences/PreferencesProvider';
+
 import { PUSH_TYPES, type PushType } from './api';
 import { useEnablePush, usePushPermission, usePushPrefs, useSavePushPrefs } from './hooks';
 
@@ -54,6 +61,46 @@ function PermissionNote() {
   return null;
 }
 
+/** Opt-in alerts for new rescue cases near the user. */
+function NearbyAlerts() {
+  const { t } = useTranslation();
+  const { nearbyRadiusKm } = usePreferences();
+  const { data: alert, isPending } = useRescueAlert();
+  const toggle = useToggleRescueAlert();
+
+  function change(on: boolean) {
+    toggle.mutate(
+      { on, alert: alert ?? null },
+      {
+        onError: (failure) => {
+          if (failure instanceof AlertLocationError) {
+            notify(t('rescueAlerts.locationNeeded'));
+            return;
+          }
+          const key = requestErrorKey(requestErrorKind(failure)) ?? 'errors.generic';
+          notify(`${t('rescueAlerts.failed')} ${t(key)}`);
+        },
+      },
+    );
+  }
+
+  return (
+    <View style={styles.note}>
+      <Group title={t('rescueAlerts.title')}>
+        <SwitchRow
+          label={t('rescueAlerts.toggle')}
+          value={Boolean(alert)}
+          onValueChange={change}
+          disabled={isPending || toggle.isPending}
+        />
+      </Group>
+      <ThemedText variant="caption" color="textSecondary">
+        {t('rescueAlerts.info', { radius: nearbyRadiusKm })}
+      </ThemedText>
+    </View>
+  );
+}
+
 /** Settings → Notifications: which push notifications to receive. */
 export function NotificationSettings() {
   const { t } = useTranslation();
@@ -96,6 +143,7 @@ export function NotificationSettings() {
       <ThemedText variant="caption" color="textSecondary">
         {t('pushSettings.inApp')}
       </ThemedText>
+      <NearbyAlerts />
     </View>
   );
 }

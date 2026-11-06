@@ -424,6 +424,20 @@ const es: Resources = {
       'Ya pasó {{when}} desde que adoptaste a {{pet}}. Comparte una foto o video para @{{username}}.',
     followupPosted: '@{{username}} compartió cómo está {{pet}}.',
     rescueHelp: '@{{username}} puede ayudar con tu caso de rescate.',
+    rescueNearby: '{{what}} a {{km}} km de ti.',
+  },
+  rescueAlerts: {
+    title: 'Casos de rescate cercanos',
+    toggle: 'Avisarme de casos cerca de mí',
+    info: 'Pawly guarda una ubicación aproximada (unos 500 m) y la distancia que elegiste en Ajustes ({{radius}} km), y la actualiza al abrir la app. Al apagarlo, se borra.',
+    locationNeeded:
+      'Para avisarte de casos cercanos, Pawly necesita tu ubicación. Actívala en los ajustes del celular.',
+    failed: 'No se pudo guardar el cambio.',
+    what: {
+      help: 'Animal que necesita ayuda',
+      lost: 'Mascota perdida',
+      found: 'Animal encontrado',
+    },
   },
   pushSettings: {
     title: 'Notificaciones',
@@ -661,7 +675,7 @@ const es: Resources = {
         'Pawly es responsable de tus datos personales, conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares. Los datos de contacto se publicarán con la versión definitiva.',
       dataTitle: 'Qué datos recabamos',
       dataBody:
-        'Tu correo, nombre de usuario, fecha de nacimiento, foto de perfil y bio. En versiones posteriores, también tus publicaciones, mensajes y la ubicación de los reportes de rescate que crees.',
+        'Tu correo, nombre de usuario, fecha de nacimiento, foto de perfil y bio; tus mascotas, publicaciones, comentarios y mensajes; y la ubicación GPS de los reportes de rescate que crees. Solo si activas los avisos de casos de rescate cercanos, también una ubicación aproximada (redondeada a unos 500 m) y la distancia que elijas; se actualiza al abrir la app y se borra al apagar los avisos.',
       purposesTitle: 'Para qué los usamos',
       purposesBody:
         'Para crear y operar tu cuenta, comprobar la edad mínima, mantener Pawly seguro y moderar el contenido. Tu correo y tu fecha de nacimiento nunca se muestran a otras personas.',

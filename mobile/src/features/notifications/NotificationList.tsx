@@ -61,6 +61,11 @@ function useNotificationText(notification: AppNotification): string {
       return t('notifications.followupPosted', { username, pet });
     case 'rescue_help':
       return t('notifications.rescueHelp', { username });
+    case 'rescue_nearby':
+      return t('notifications.rescueNearby', {
+        what: t(`rescueAlerts.what.${notification.rescue?.kind ?? 'help'}`),
+        km: notification.distanceKm,
+      });
   }
 }
 

@@ -21,7 +21,8 @@ export type NotificationType =
   | 'adopted'
   | 'followup_due'
   | 'followup_posted'
-  | 'rescue_help';
+  | 'rescue_help'
+  | 'rescue_nearby';
 
 /** Named so it does not clash with the browser's `Notification`. */
 export interface AppNotification {
@@ -41,6 +42,8 @@ export interface AppNotification {
   /** The rescue report, for rescue notifications (when expanded). */
   rescueId: string;
   rescue?: RescueReport;
+  /** For nearby rescue alerts: how far the case was, in km. */
+  distanceKm: number;
   read: boolean;
   created: string;
 }
@@ -63,6 +66,7 @@ const TYPES: readonly NotificationType[] = [
   'followup_due',
   'followup_posted',
   'rescue_help',
+  'rescue_nearby',
 ];
 
 export function toNotification(record: RecordModel): AppNotification {
@@ -88,6 +92,7 @@ export function toNotification(record: RecordModel): AppNotification {
     followupMilestone: expand.followup ? toFollowup(expand.followup).milestone : '',
     rescueId: String(record.rescue ?? ''),
     rescue: expand.rescue ? toRescueReport(expand.rescue) : undefined,
+    distanceKm: Number(record.distanceKm ?? 0),
     read: Boolean(record.read),
     created: String(record.created ?? ''),
   };

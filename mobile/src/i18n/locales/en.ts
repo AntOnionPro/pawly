@@ -420,6 +420,20 @@ const en = {
       'It has been {{when}} since you adopted {{pet}}. Share a photo or video for @{{username}}.',
     followupPosted: '@{{username}} shared how {{pet}} is doing.',
     rescueHelp: '@{{username}} can help with your rescue case.',
+    rescueNearby: '{{what}} {{km}} km from you.',
+  },
+  rescueAlerts: {
+    title: 'Nearby rescue cases',
+    toggle: 'Alert me about cases near me',
+    info: 'Pawly saves an approximate location (about 500 m) and the distance you chose in Settings ({{radius}} km), and updates it when you open the app. Turning this off deletes it.',
+    locationNeeded:
+      'To alert you about nearby cases, Pawly needs your location. Turn it on in the phone settings.',
+    failed: 'The change could not be saved.',
+    what: {
+      help: 'Animal in need of help',
+      lost: 'Lost pet',
+      found: 'Found animal',
+    },
   },
   pushSettings: {
     title: 'Notifications',
@@ -655,7 +669,7 @@ const en = {
         'Pawly is responsible for your personal data, under Mexico’s Federal Law on Protection of Personal Data Held by Private Parties. The contact details will be published with the final version.',
       dataTitle: 'What data we collect',
       dataBody:
-        'Your email, username, date of birth, profile photo and bio. In later versions, also your posts, messages and the location of the rescue reports you create.',
+        'Your email, username, date of birth, profile photo and bio; your pets, posts, comments and messages; and the GPS location of the rescue reports you create. Only if you turn on alerts for nearby rescue cases, also an approximate location (rounded to about 500 m) and the distance you choose; it is updated when you open the app and deleted when you turn the alerts off.',
       purposesTitle: 'What we use it for',
       purposesBody:
         'To create and run your account, to check the minimum age, to keep Pawly safe and to moderate content. Your email and date of birth are never shown to other people.',
