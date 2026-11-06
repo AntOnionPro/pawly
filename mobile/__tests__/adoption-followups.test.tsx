@@ -259,6 +259,7 @@ describe('follow-up notifications', () => {
       adoptionId: 'a1',
       adoption: ADOPTED,
       followupMilestone: 'month1',
+      rescueId: '',
       read: true,
       created: new Date().toISOString(),
       ...overrides,

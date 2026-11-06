@@ -35,6 +35,9 @@ export type ErrorKey =
   | 'errors.requestNotAccepted'
   | 'errors.followupNotOverdue'
   | 'errors.locationRequired'
+  | 'errors.alreadyHelping'
+  | 'errors.ownReport'
+  | 'errors.reportClosed'
   | 'errors.alreadyReposted'
   | 'errors.alreadyReported'
   | 'errors.blocked';
@@ -99,6 +102,12 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.followupNotOverdue';
     case 'location_required':
       return 'errors.locationRequired';
+    case 'already_helping':
+      return 'errors.alreadyHelping';
+    case 'own_report':
+      return 'errors.ownReport';
+    case 'report_closed':
+      return 'errors.reportClosed';
     case 'date_future':
       return 'errors.dateInvalid';
     case 'blocked':

@@ -293,6 +293,7 @@ describe('the congratulations', () => {
           adoptionId: 'a1',
           adoption: ADOPTED,
           followupMilestone: '',
+          rescueId: '',
           read: true,
           created: new Date().toISOString(),
         },

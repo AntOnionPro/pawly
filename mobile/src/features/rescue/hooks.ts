@@ -3,6 +3,8 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import { useAuth } from '@/auth/AuthProvider';
 import type { Point } from '@/utils/geo';
 
+import { getMyOffer, listHelpOffers, offerHelp, withdrawHelp } from './helpers';
+
 import {
   createRescueReport,
   deleteRescueReport,
@@ -86,4 +88,51 @@ export function useDeleteRescueReport() {
     mutationFn: (id: string) => deleteRescueReport(client, id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: rescueKeys.all }),
   });
+}
+
+export const helpKeys = {
+  all: ['rescueHelp'] as const,
+  mine: (me: string, reportId: string) => ['rescueHelp', 'mine', me, reportId] as const,
+  forReport: (reportId: string) => ['rescueHelp', 'report', reportId] as const,
+};
+
+/** The signed-in user's offer to help with a report (`null` when none). */
+export function useMyOffer(reportId: string, enabled: boolean) {
+  const { client, user } = useAuth();
+  const me = user?.id ?? '';
+  return useQuery({
+    queryKey: helpKeys.mine(me, reportId),
+    queryFn: () => getMyOffer(client, me, reportId),
+    enabled: enabled && Boolean(me),
+  });
+}
+
+/** Everyone who offered to help, for the reporter. */
+export function useHelpOffers(reportId: string, enabled: boolean) {
+  const { client } = useAuth();
+  return useQuery({
+    queryKey: helpKeys.forReport(reportId),
+    queryFn: () => listHelpOffers(client, reportId),
+    enabled,
+  });
+}
+
+/** Offers or withdraws help; the report's count and status change, so reports refresh too. */
+export function useHelpActions() {
+  const { client, user } = useAuth();
+  const queryClient = useQueryClient();
+  const refresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: helpKeys.all });
+    await queryClient.invalidateQueries({ queryKey: rescueKeys.all });
+  };
+  const offer = useMutation({
+    mutationFn: ({ reportId, message }: { reportId: string; message: string }) =>
+      offerHelp(client, user?.id ?? '', reportId, message),
+    onSuccess: refresh,
+  });
+  const withdraw = useMutation({
+    mutationFn: (offerId: string) => withdrawHelp(client, offerId),
+    onSuccess: refresh,
+  });
+  return { offer, withdraw };
 }

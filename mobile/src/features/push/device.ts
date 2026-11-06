@@ -72,6 +72,7 @@ export interface PushTarget {
   conversationId?: string;
   adoptionId?: string;
   petId?: string;
+  rescueId?: string;
 }
 
 /**

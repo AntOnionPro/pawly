@@ -11,6 +11,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { useAdoptionPhoto } from '@/features/adoption/AdoptionCard';
 import type { Adoption } from '@/features/adoption/api';
 import { useBlockedIds } from '@/features/moderation/hooks';
+import type { RescueReport } from '@/features/rescue/api';
+import { useRescuePhoto } from '@/features/rescue/RescueCard';
 import { useAskForPushOnce } from '@/features/push/hooks';
 import { mediaKind, mediaUrl } from '@/features/posts/api';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
@@ -57,7 +59,15 @@ function useNotificationText(notification: AppNotification): string {
       });
     case 'followup_posted':
       return t('notifications.followupPosted', { username, pet });
+    case 'rescue_help':
+      return t('notifications.rescueHelp', { username });
   }
+}
+
+/** Small picture of the rescue case a notification is about. */
+function RescueThumb({ report }: { report: RescueReport }) {
+  const photo = useRescuePhoto(report);
+  return photo ? <Image source={{ uri: photo }} style={styles.photo} /> : null;
 }
 
 /** Small picture of the listing an adoption notification is about. */
@@ -78,7 +88,9 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
   const photo = post?.media.find((file) => mediaKind(file) === 'photo');
 
   function open() {
-    if (notification.type === 'followup_due' && notification.adoption?.petId) {
+    if (notification.rescueId) {
+      router.push({ pathname: '/rescue/[id]', params: { id: notification.rescueId } });
+    } else if (notification.type === 'followup_due' && notification.adoption?.petId) {
       // Straight to a new post with the pet tagged.
       router.push({ pathname: '/post', params: { petId: notification.adoption.petId } });
     } else if (notification.type === 'followup_posted' && notification.postId) {
@@ -126,6 +138,7 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
       {notification.adoption && !(post && photo) ? (
         <AdoptionThumb adoption={notification.adoption} />
       ) : null}
+      {notification.rescue ? <RescueThumb report={notification.rescue} /> : null}
     </Pressable>
   );
 }

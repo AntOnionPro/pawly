@@ -34,6 +34,7 @@ const ALL_ON: api.PushPrefs = {
   repost: true,
   message: true,
   adoption: true,
+  rescue: true,
 };
 
 beforeEach(async () => {
@@ -92,6 +93,7 @@ describe('preferences API helpers', () => {
       repostOff: false,
       messageOff: false,
       adoptionOff: false,
+      rescueOff: false,
     });
     await actual.savePushPrefs(client, 'u1', { id: 'old', prefs });
     expect(update).toHaveBeenCalledWith('old', expect.objectContaining({ followOff: true }));
@@ -119,6 +121,7 @@ describe('notification settings', () => {
       'Republicaciones',
       'Mensajes',
       'Adopciones',
+      'Rescate',
     ]) {
       expect(screen.getByLabelText(label).props.value).toBe(true);
     }

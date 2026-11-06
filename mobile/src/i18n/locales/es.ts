@@ -194,6 +194,22 @@ const es: Resources = {
     distanceM: 'a {{distance}} m',
     distanceKm: 'a {{distance}} km',
     pickHint: 'Toca el mapa o mueve el marcador para ajustar el lugar.',
+    help: {
+      can: 'Puedo ayudar',
+      count_one: '{{count}} persona se ofreció a ayudar',
+      count_other: '{{count}} personas se ofrecieron a ayudar',
+      none: 'Nadie se ha ofrecido todavía. Te avisaremos cuando alguien pueda ayudar.',
+      title: 'Quienes pueden ayudar',
+      message: 'Mensaje para @{{username}} (opcional)',
+      messageHint: 'Por ejemplo, cuándo puedes ir o qué puedes llevar.',
+      send: 'Ofrecer ayuda',
+      cancel: 'Cancelar',
+      offered: 'Te ofreciste a ayudar. Escríbele a @{{username}} para coordinarse.',
+      withdraw: 'Ya no puedo ayudar',
+      withdrawConfirmTitle: '¿Ya no puedes ayudar?',
+      withdrawConfirmMessage: 'Dejarás de aparecer en la lista de @{{username}}.',
+      failed: 'No se pudo guardar.',
+    },
   },
   profile: {
     title: 'Perfil',
@@ -407,6 +423,7 @@ const es: Resources = {
     followupDue:
       'Ya pasó {{when}} desde que adoptaste a {{pet}}. Comparte una foto o video para @{{username}}.',
     followupPosted: '@{{username}} compartió cómo está {{pet}}.',
+    rescueHelp: '@{{username}} puede ayudar con tu caso de rescate.',
   },
   pushSettings: {
     title: 'Notificaciones',
@@ -418,6 +435,7 @@ const es: Resources = {
       repost: 'Republicaciones',
       message: 'Mensajes',
       adoption: 'Adopciones',
+      rescue: 'Rescate',
     },
     inApp: 'La campana de Inicio siempre muestra todas tus notificaciones.',
     undetermined: 'Activa las notificaciones para enterarte aunque la app esté cerrada.',
@@ -609,6 +627,9 @@ const es: Resources = {
     adoptionClosed: 'Esta mascota ya no está en adopción.',
     requestNotAccepted: 'Elige a alguien cuya solicitud aceptaste.',
     locationRequired: 'Agrega la ubicación.',
+    alreadyHelping: 'Ya te ofreciste a ayudar con este caso.',
+    ownReport: 'No puedes ofrecer ayuda en tu propio reporte.',
+    reportClosed: 'Este caso ya está cerrado.',
     followupNotOverdue:
       'Solo puedes reportar un seguimiento vencido de una mascota que diste en adopción.',
     alreadyReposted: 'Ya republicaste esta publicación.',

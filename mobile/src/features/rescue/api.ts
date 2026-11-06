@@ -40,6 +40,8 @@ export interface RescueReport {
   pet?: Pet;
   lastSeenAt: string;
   status: RescueStatus;
+  /** How many people offered to help (only animals that need help take offers). */
+  helperCount: number;
   created: string;
 }
 
@@ -95,6 +97,7 @@ export function toRescueReport(record: RecordModel): RescueReport {
     pet: expand.pet ? toPet(expand.pet) : undefined,
     lastSeenAt: String(record.lastSeenAt ?? ''),
     status: oneOf(['open', 'in_progress', 'closed'] as const, record.status) ?? 'open',
+    helperCount: Number(record.helperCount ?? 0),
     created: String(record.created ?? ''),
   };
 }
