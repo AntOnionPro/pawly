@@ -24,6 +24,8 @@ export function FollowListView({ userId, list }: { userId: string; list: FollowL
   return (
     <SafeAreaView edges={['bottom']} style={[styles.root, { backgroundColor: colors.background }]}>
       <FlatList
+        // iOS 26+ draws the screen under the see-through header: start the list below it.
+        contentInsetAdjustmentBehavior="automatic"
         data={users}
         keyExtractor={(user) => user.id}
         contentContainerStyle={styles.content}

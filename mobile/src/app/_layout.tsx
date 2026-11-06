@@ -80,7 +80,12 @@ function RootNavigator() {
   return (
     <ThemeProvider value={navigationTheme}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <Stack screenOptions={{ headerTintColor: colors.text }}>
+      <Stack
+        screenOptions={{
+          headerTintColor: colors.text,
+          // Only the arrow: the previous screen's title can be an internal name like "(tabs)".
+          headerBackButtonDisplayMode: 'minimal',
+        }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ title: t('settings.title') }} />
         <Stack.Screen name="search" options={{ title: t('search.title') }} />
