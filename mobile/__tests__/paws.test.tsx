@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
+import * as Haptics from 'expo-haptics';
 import type PocketBase from 'pocketbase';
+import { AccessibilityInfo, Animated } from 'react-native';
 
 import * as api from '@/features/posts/api';
 import { mapPostInCache } from '@/features/posts/cache';
@@ -17,6 +19,11 @@ jest.mock('expo-localization', () => ({
 jest.mock('expo-router', () => ({ useRouter: () => mockRouter }));
 jest.mock('@/features/posts/VideoItem', () => ({ VideoItem: () => null }));
 jest.mock('@/utils/notify', () => ({ notify: jest.fn() }));
+jest.mock('expo-haptics', () => ({
+  ...jest.requireActual('expo-haptics'),
+  impactAsync: jest.fn(async () => undefined),
+  performAndroidHapticsAsync: jest.fn(async () => undefined),
+}));
 jest.mock('@/features/posts/api', () => ({
   ...jest.requireActual('@/features/posts/api'),
   listPosts: jest.fn(),
@@ -51,7 +58,32 @@ beforeEach(async () => {
   await AsyncStorage.clear();
   await AsyncStorage.setItem(PREFERENCES_KEY, '{"theme":"light","language":"es"}');
   jest.mocked(api.listPosts).mockResolvedValue({ items: [POST], page: 1, hasMore: false });
+  jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
 });
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
+/** Whether the paw print button bounced: it grows before going back to its size. */
+function bounces(timing: jest.SpyInstance) {
+  return timing.mock.calls.filter(([, config]) => config.toValue === 1.4).length;
+}
+
+/** A post with one photo, in the feed, with the carousel measured so the photo shows. */
+async function feedWithPhoto(auth: Parameters<typeof renderWith>[1], post = POST) {
+  jest
+    .mocked(api.listPosts)
+    .mockResolvedValue({ items: [{ ...post, media: ['foto.jpg'] }], page: 1, hasMore: false });
+  await renderWith(<FeedList />, auth);
+  await fireEvent(await screen.findByTestId('media-carousel'), 'layout', {
+    nativeEvent: { layout: { width: 300, height: 300 } },
+  });
+  const photo = await screen.findByLabelText('Archivo 1 de 1');
+  // The list renders its cells in a batch a moment later.
+  await act(() => new Promise((resolve) => setTimeout(resolve, 100)));
+  return photo;
+}
 
 describe('withMyPaws', () => {
   it("marks the user's paw prints with one request", async () => {
@@ -126,6 +158,50 @@ describe('paw print button', () => {
     );
   });
 
+  it('bounces and vibrates lightly when given, and neither when taken back', async () => {
+    const timing = jest.spyOn(Animated, 'timing');
+    jest.mocked(api.addPaw).mockResolvedValue('paw1');
+    jest.mocked(api.removePaw).mockResolvedValue(undefined);
+    await renderWith(<FeedList />, signedIn());
+    expect(bounces(timing)).toBe(0);
+
+    await fireEvent.press(await screen.findByRole('button', { name: 'Dar huella' }));
+    await screen.findByRole('button', { name: 'Quitar tu huella' });
+    expect(bounces(timing)).toBe(1);
+    expect(Haptics.impactAsync).toHaveBeenCalledTimes(1);
+    expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Light);
+    await act(async () => {});
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Quitar tu huella' }));
+    await screen.findByRole('button', { name: 'Dar huella' });
+    expect(bounces(timing)).toBe(1);
+    expect(Haptics.impactAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not bounce with "Reduce motion", but still fills the paw', async () => {
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    const timing = jest.spyOn(Animated, 'timing');
+    jest.mocked(api.addPaw).mockResolvedValue('paw1');
+    await renderWith(<FeedList />, signedIn());
+    await fireEvent.press(await screen.findByRole('button', { name: 'Dar huella' }));
+    expect(
+      await screen.findByRole('button', { name: 'Quitar tu huella', selected: true }),
+    ).toBeOnTheScreen();
+    expect(bounces(timing)).toBe(0);
+  });
+
+  it('a post already given does not bounce when it shows', async () => {
+    const timing = jest.spyOn(Animated, 'timing');
+    jest.mocked(api.listPosts).mockResolvedValue({
+      items: [{ ...POST, pawedByMe: true, myPawId: 'paw1', pawCount: 5 }],
+      page: 1,
+      hasMore: false,
+    });
+    await renderWith(<FeedList />, signedIn());
+    expect(await screen.findByRole('button', { name: 'Quitar tu huella' })).toBeOnTheScreen();
+    expect(bounces(timing)).toBe(0);
+  });
+
   it('goes back to how it was and explains if saving fails', async () => {
     jest.mocked(api.addPaw).mockRejectedValue(serverError(0));
     await renderWith(<FeedList />, signedIn());
@@ -141,5 +217,61 @@ describe('paw print button', () => {
     await fireEvent.press(await screen.findByRole('button', { name: 'Dar huella' }));
     expect(mockRouter.push).toHaveBeenCalledWith('/sign-in');
     expect(api.addPaw).not.toHaveBeenCalled();
+  });
+});
+
+describe('double tap on a photo', () => {
+  it('gives the paw print and shows a big paw print; a single tap does nothing', async () => {
+    jest.mocked(api.addPaw).mockResolvedValue('paw1');
+    const photo = await feedWithPhoto(signedIn());
+
+    await fireEvent.press(photo);
+    expect(api.addPaw).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('paw-burst', { includeHiddenElements: true })).toBeNull();
+
+    await fireEvent.press(photo);
+    expect(
+      await screen.findByRole('button', { name: 'Quitar tu huella', selected: true }),
+    ).toBeOnTheScreen();
+    expect(api.addPaw).toHaveBeenCalledWith(expect.anything(), 'u1', 'post1');
+    expect(Haptics.impactAsync).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('paw-burst', { includeHiddenElements: true })).toBeOnTheScreen();
+  });
+
+  it('never takes the paw print back', async () => {
+    const photo = await feedWithPhoto(signedIn(), {
+      ...POST,
+      pawedByMe: true,
+      myPawId: 'paw1',
+      pawCount: 5,
+    });
+    await fireEvent.press(photo);
+    await fireEvent.press(photo);
+    expect(screen.getByTestId('paw-burst', { includeHiddenElements: true })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Quitar tu huella' })).toBeOnTheScreen();
+    expect(api.removePaw).not.toHaveBeenCalled();
+    expect(api.addPaw).not.toHaveBeenCalled();
+    expect(Haptics.impactAsync).not.toHaveBeenCalled();
+  });
+
+  it('sends visitors to sign in, without the big paw print', async () => {
+    const photo = await feedWithPhoto(authValue());
+    await fireEvent.press(photo);
+    await fireEvent.press(photo);
+    expect(mockRouter.push).toHaveBeenCalledWith('/sign-in');
+    expect(screen.queryByTestId('paw-burst', { includeHiddenElements: true })).toBeNull();
+    expect(api.addPaw).not.toHaveBeenCalled();
+  });
+
+  it('with "Reduce motion" gives the paw print without the big paw print', async () => {
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    jest.mocked(api.addPaw).mockResolvedValue('paw1');
+    const photo = await feedWithPhoto(signedIn());
+    await fireEvent.press(photo);
+    await fireEvent.press(photo);
+    expect(
+      await screen.findByRole('button', { name: 'Quitar tu huella', selected: true }),
+    ).toBeOnTheScreen();
+    expect(screen.queryByTestId('paw-burst', { includeHiddenElements: true })).toBeNull();
   });
 });

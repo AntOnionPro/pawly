@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { requestErrorKey, requestErrorKind } from '@/api/errors';
 import { useAuth } from '@/auth/AuthProvider';
+import { giveFeedback } from '@/utils/haptics';
 import { notify } from '@/utils/notify';
 
 import { addPaw, removePaw, type Post } from './api';
@@ -52,7 +53,8 @@ export function useTogglePaw() {
 }
 
 /**
- * What a paw print button does: visitors go to sign in; signed-in users toggle it.
+ * What a paw print button does: visitors go to sign in; signed-in users toggle it, with a light
+ * vibration when they give it (not when they take it back).
  * Taps while the same post is saving are ignored.
  */
 export function usePawAction(): (post: Post) => void {
@@ -67,6 +69,7 @@ export function usePawAction(): (post: Post) => void {
       return;
     }
     if (toggle.isPending && toggle.variables?.id === post.id) return;
+    if (!post.pawedByMe) giveFeedback();
     toggle.mutate(post, {
       onError: (error) => {
         const key = requestErrorKey(requestErrorKind(error)) ?? 'errors.generic';
