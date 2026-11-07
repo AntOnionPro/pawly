@@ -20,6 +20,7 @@ describe('parsePreferences', () => {
       nearbyRadiusKm: 5,
       font: 'ubuntu',
       palette: 'pink',
+      autoplay: 'always',
     });
     expect(parsePreferences('{"nearbyRadiusKm":25}').nearbyRadiusKm).toBe(25);
     expect(parsePreferences('{"nearbyRadiusKm":3}').nearbyRadiusKm).toBe(5);
@@ -27,6 +28,8 @@ describe('parsePreferences', () => {
     expect(parsePreferences('{"font":"comic"}').font).toBe('ubuntu');
     expect(parsePreferences('{"palette":"green"}').palette).toBe('green');
     expect(parsePreferences('{"palette":"yellow"}').palette).toBe('pink');
+    expect(parsePreferences('{"autoplay":"wifi"}').autoplay).toBe('wifi');
+    expect(parsePreferences('{"autoplay":"sometimes"}').autoplay).toBe('always');
   });
 
   it('replaces unknown values with the defaults', () => {
@@ -56,9 +59,10 @@ describe('loadPreferences / savePreferences', () => {
       nearbyRadiusKm: 10,
       font: 'system',
       palette: 'blue',
+      autoplay: 'never',
     });
     expect(await AsyncStorage.getItem(PREFERENCES_KEY)).toBe(
-      '{"theme":"light","language":"en","nearbyRadiusKm":10,"font":"system","palette":"blue"}',
+      '{"theme":"light","language":"en","nearbyRadiusKm":10,"font":"system","palette":"blue","autoplay":"never"}',
     );
     expect(await loadPreferences()).toEqual({
       theme: 'light',
@@ -66,6 +70,7 @@ describe('loadPreferences / savePreferences', () => {
       nearbyRadiusKm: 10,
       font: 'system',
       palette: 'blue',
+      autoplay: 'never',
     });
   });
 

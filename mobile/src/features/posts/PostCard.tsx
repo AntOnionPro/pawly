@@ -44,6 +44,8 @@ interface PostCardProps {
   onReport?: () => void;
   /** The whole text (the post page); otherwise long texts are cut with "See more". */
   fullText?: boolean;
+  /** Its video may start on its own (the post in view in the feed, or the post page). */
+  autoPlay?: boolean;
 }
 
 /**
@@ -63,6 +65,7 @@ export function PostCard({
   onDelete,
   onReport,
   fullText = false,
+  autoPlay = false,
 }: PostCardProps) {
   const { t } = useTranslation();
   const { client, status } = useAuth();
@@ -126,6 +129,7 @@ export function PostCard({
       {pets}
       <MediaCarousel
         record={post}
+        autoPlay={autoPlay}
         onDoubleTap={onPaw ? doubleTap : undefined}
         overlay={burst > 0 ? <PawBurst key={burst} onEnd={() => setBurst(0)} /> : null}
       />

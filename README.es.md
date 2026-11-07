@@ -27,7 +27,7 @@ Etapa actual: **etapa 7.5, Diseño y detalles (en progreso).** Las etapas 8 y 9 
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87), hecho), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88), hecho), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89), hecho), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90), hecho), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91), hecho), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92), hecho), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) y botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)). Se publica como `v0.8.5`.
+Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87), hecho), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88), hecho), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89), hecho), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90), hecho), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91), hecho), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92), hecho), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93), hecho) y botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)). Se publica como `v0.8.5`.
 
 ## Funcionalidades
 
@@ -50,6 +50,7 @@ Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionP
 #### Publicaciones y feed
 
 - Publicaciones con texto, imágenes y videos, con varios archivos por publicación. Una publicación se lee de arriba abajo: autor, texto, mascotas etiquetadas, fotos y videos, y los conteos de huellas, comentarios y republicaciones. En el feed, los textos largos se cortan a tres líneas con "ver más". Escribir una publicación sigue el mismo orden: quién publica (con "Publicar" arriba), el texto, las fotos y videos (con "+" para agregar más) y las mascotas etiquetadas.
+- Los videos se reproducen solos, sin sonido y en bucle, cuando están a la vista en Inicio (uno a la vez) y en la página de la publicación, y se pausan al salir de la pantalla. Un toque activa o quita el sonido (y los siguientes videos conservan esa elección), y un botón los abre en pantalla completa. Los videos verticales se ven más altos, hasta 4:5. En ajustes, "Videos automáticos" puede ser "Siempre", "Solo con Wi-Fi" o "Nunca"; con "Reducir movimiento" activado en el celular (o el ahorro de datos del navegador) nunca se reproducen solos, y un botón de reproducir los inicia.
 - Los usuarios reaccionan con una huella (la única reacción) y comentan. Al dar huella, esta rebota con una vibración leve, y un doble toque en una foto o video también da huella (nunca la quita), con una huella grande que se desvanece. Con "Reducir movimiento" activado en el celular no hay animación. Pueden editar y borrar sus propias publicaciones y comentarios; al editar una publicación también se quitan y agregan fotos y videos.
 - Compartir hacia fuera de la app (menú de compartir del sistema con un enlace a la versión web) y dentro de la app (republicar o enviar por mensaje directo).
 - Los usuarios se siguen entre sí. El inicio tiene dos pestañas: **Siguiendo** (publicaciones de quienes sigues) y **Descubrir** (todas las publicaciones). Sin cuenta solo se ve Descubrir. Las republicaciones aparecen en Siguiendo y en los perfiles, no en Descubrir.
@@ -89,7 +90,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos. Los usuarios pu
 
 #### Ajustes
 
-- Idioma, tema, paleta de color, letra, preferencias de notificaciones, radio de cercanía, usuarios bloqueados, cambiar contraseña, eliminar cuenta, términos y aviso de privacidad, cerrar sesión.
+- Idioma, tema, paleta de color, letra, videos automáticos, preferencias de notificaciones, radio de cercanía, usuarios bloqueados, cambiar contraseña, eliminar cuenta, términos y aviso de privacidad, cerrar sesión.
 
 ### Fase 2
 

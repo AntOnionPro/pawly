@@ -27,7 +27,7 @@ Current stage: **Stage 7.5, Design and details (in progress).** Stages 8 and 9 a
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89), done), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90), done), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91), done), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92), done), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) and Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)). It is released as `v0.8.5`.
+Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89), done), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90), done), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91), done), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92), done), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93), done) and Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)). It is released as `v0.8.5`.
 
 ## Features
 
@@ -50,6 +50,7 @@ Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro
 #### Posts and feed
 
 - Posts with text, images and videos, with several files per post. A post reads from top to bottom: author, text, tagged pets, photos and videos, and the counts of paw prints, comments and reposts. In the feed, long texts are cut to three lines with "See more". Writing a post follows the same order: who posts (with "Publish" at the top), the text, the photos and videos (with "+" to add more) and the tagged pets.
+- Videos play on their own, muted and in a loop, when they are in view in Home (one at a time) and on the post page, and pause when they leave the screen. A tap turns the sound on or off (and the next videos keep that choice), and a button opens them in fullscreen. Vertical videos show taller, up to 4:5. In settings, "Autoplay videos" can be "Always", "Wi-Fi only" or "Never"; with the phone's "Reduce motion" setting (or the browser's data saver) they never start on their own, and a play button starts them.
 - Users react with a paw print (the only reaction) and comment. Giving a paw print makes it bounce with a light vibration, and a double tap on a photo or video also gives it (never takes it back), with a big paw print that fades away. With the phone's "Reduce motion" setting there is no animation. They can edit and delete their own posts and comments; editing a post also removes and adds photos and videos.
 - Sharing outside the app (system share sheet with a link to the web version) and inside the app (repost, or send by direct message).
 - Users follow each other. Home has two tabs: **Following** (posts by the people you follow) and **Discover** (every post). Visitors only see Discover. Reposts appear in Following and on profiles, not in Discover.
@@ -89,7 +90,7 @@ Reports appear as a list and on a map of nearby cases. Users can opt in to push 
 
 #### Settings
 
-- Language, theme, color palette, font, notification preferences, nearby radius, blocked users, change password, delete account, terms and privacy notice, sign out.
+- Language, theme, color palette, font, autoplay videos, notification preferences, nearby radius, blocked users, change password, delete account, terms and privacy notice, sign out.
 
 ### Phase 2
 
