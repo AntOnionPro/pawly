@@ -18,6 +18,7 @@ export function PetAdoptionButton({ pet, isOwner }: { pet: Pet; isOwner: boolean
   if (adoption) {
     return (
       <Button
+        size="compact"
         icon="adoption"
         label={t('adoption.view')}
         onPress={() => router.push({ pathname: '/adoption/[id]', params: { id: adoption.id } })}
@@ -27,6 +28,7 @@ export function PetAdoptionButton({ pet, isOwner }: { pet: Pet; isOwner: boolean
   if (!isOwner) return null;
   return (
     <Button
+      size="compact"
       variant="secondary"
       icon="adoption"
       label={t('adoption.give')}

@@ -10,6 +10,7 @@ export function MessageButton({ userId }: { userId: string }) {
   const { open, opening } = useMessageAction();
   return (
     <Button
+      size="compact"
       variant="secondary"
       icon="messages"
       label={t('messages.message')}

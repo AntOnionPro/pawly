@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
+import { ButtonRow } from '@/components/ButtonRow';
 import { Screen } from '@/components/Screen';
 import { AuthPrompt } from '@/features/auth/AuthPrompt';
 import { PetList } from '@/features/pets/PetList';
@@ -18,6 +19,16 @@ export default function ProfileScreen() {
   // sign-in: take the current counts from the server.
   const { data: current } = useUser(status === 'signedIn' ? user?.id : undefined);
 
+  const settings = (
+    <Button
+      size="compact"
+      variant="secondary"
+      icon="settings"
+      label={t('profile.settings')}
+      onPress={() => router.push('/settings')}
+    />
+  );
+
   return (
     <Screen>
       {status === 'signedIn' && user ? (
@@ -29,12 +40,16 @@ export default function ProfileScreen() {
               followingCount: current?.followingCount ?? user.followingCount,
             }}
           />
-          <Button
-            variant="secondary"
-            icon="edit"
-            label={t('profile.editButton')}
-            onPress={() => router.push('/edit-profile')}
-          />
+          <ButtonRow align="center">
+            <Button
+              size="compact"
+              variant="secondary"
+              icon="edit"
+              label={t('profile.editButton')}
+              onPress={() => router.push('/edit-profile')}
+            />
+            {settings}
+          </ButtonRow>
           <PetList ownerId={user.id} canAdd />
           <PostGrid
             filter={{ authorId: user.id }}
@@ -43,14 +58,11 @@ export default function ProfileScreen() {
           />
         </>
       ) : (
-        <AuthPrompt icon="profile" message={t('auth.prompt.profile')} />
+        <>
+          <AuthPrompt icon="profile" message={t('auth.prompt.profile')} />
+          <ButtonRow align="center">{settings}</ButtonRow>
+        </>
       )}
-      <Button
-        variant="secondary"
-        icon="settings"
-        label={t('profile.settings')}
-        onPress={() => router.push('/settings')}
-      />
     </Screen>
   );
 }

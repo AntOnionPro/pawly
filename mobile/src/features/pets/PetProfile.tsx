@@ -65,7 +65,13 @@ export function PetProfile({ pet, onEdit, onPressOwner }: PetProfileProps) {
       ) : null}
       {onEdit ? (
         <View style={styles.actions}>
-          <Button variant="secondary" icon="edit" label={t('pets.edit')} onPress={onEdit} />
+          <Button
+            size="compact"
+            variant="secondary"
+            icon="edit"
+            label={t('pets.edit')}
+            onPress={onEdit}
+          />
         </View>
       ) : null}
     </View>
@@ -86,6 +92,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: spacing.sm,
   },
-  actions: { alignSelf: 'stretch', marginTop: spacing.md },
+  actions: { marginTop: spacing.md },
   pressed: { opacity: 0.6 },
 });

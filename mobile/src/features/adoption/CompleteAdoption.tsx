@@ -8,6 +8,7 @@ import { avatarUrl, useAuth } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { Icon } from '@/components/Icon';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
@@ -84,6 +85,12 @@ export function CompleteAdoption({ adoption, onDone }: { adoption: Adoption; onD
 
   return (
     <View style={styles.container}>
+      <HeaderAction
+        label={t('adoption.complete.confirm')}
+        loading={complete.isPending}
+        onPress={() => void submit()}
+      />
+      <FieldError message={formError} />
       <ThemedText variant="title" accessibilityRole="header">
         {name}
       </ThemedText>
@@ -123,13 +130,6 @@ export function CompleteAdoption({ adoption, onDone }: { adoption: Adoption; onD
           );
         })}
       </View>
-      <FieldError message={formError} />
-      <Button
-        icon="adoption"
-        label={t('adoption.complete.confirm')}
-        onPress={submit}
-        loading={complete.isPending}
-      />
     </View>
   );
 }

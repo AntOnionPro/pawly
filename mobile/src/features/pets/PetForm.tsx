@@ -8,6 +8,7 @@ import { Button } from '@/components/Button';
 import { ChipGroup } from '@/components/ChipGroup';
 import { DateField } from '@/components/DateField';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { Icon } from '@/components/Icon';
 import { TextField } from '@/components/TextField';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
@@ -113,6 +114,8 @@ export function PetForm({ pet, onSaved, onDeleted }: PetFormProps) {
 
   return (
     <View style={styles.form}>
+      <HeaderAction label={t('pets.save')} loading={save.isPending} onPress={() => void submit()} />
+      <FieldError message={formError} />
       <View style={styles.photoArea}>
         <View
           style={[styles.photo, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -171,8 +174,6 @@ export function PetForm({ pet, onSaved, onDeleted }: PetFormProps) {
         onChange={(value) => update('birthDate', value)}
         error={message('birthDate')}
       />
-      <FieldError message={formError} />
-      <Button label={t('pets.save')} onPress={submit} loading={save.isPending} />
       {pet ? (
         <Button
           variant="secondary"

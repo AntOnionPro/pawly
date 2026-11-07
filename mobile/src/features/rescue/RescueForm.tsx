@@ -9,6 +9,7 @@ import { Button } from '@/components/Button';
 import { ChipGroup } from '@/components/ChipGroup';
 import { DateField } from '@/components/DateField';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { Icon } from '@/components/Icon';
 import { TextField } from '@/components/TextField';
 import { ThemedText } from '@/components/ThemedText';
@@ -268,6 +269,15 @@ export function RescueForm({ report, kind, petId, onSaved, onDeleted }: RescueFo
 
   return (
     <View style={styles.form}>
+      <HeaderAction
+        label={report ? t('rescue.save') : t('rescue.publish')}
+        pendingLabel={report ? undefined : t('rescue.publishing')}
+        loading={save.isPending}
+        onPress={() => void submit()}
+      />
+      {formErrors.map((text) => (
+        <FieldError key={text} message={text} />
+      ))}
       {report ? (
         <ThemedText variant="title" accessibilityRole="header">
           {t(`rescue.kinds.${report.kind}`)}
@@ -354,16 +364,6 @@ export function RescueForm({ report, kind, petId, onSaved, onDeleted }: RescueFo
         onChangeText={(text) => update('place', text)}
         error={message('place')}
         maxLength={RESCUE_PLACE_MAX}
-      />
-      {formErrors.map((text) => (
-        <FieldError key={text} message={text} />
-      ))}
-      <Button
-        label={
-          report ? t('rescue.save') : save.isPending ? t('rescue.publishing') : t('rescue.publish')
-        }
-        onPress={submit}
-        loading={save.isPending}
       />
       {report ? (
         <Button

@@ -8,6 +8,7 @@ import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { ChipGroup } from '@/components/ChipGroup';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { Loading } from '@/components/QueryState';
 import { SwitchRow } from '@/components/SwitchRow';
 import { TextField } from '@/components/TextField';
@@ -183,6 +184,15 @@ export function AdoptionForm({ adoption, petId, onSaved, onDeleted }: AdoptionFo
 
   return (
     <View style={styles.form}>
+      <HeaderAction
+        label={adoption ? t('adoption.save') : t('adoption.publish')}
+        pendingLabel={adoption ? undefined : t('adoption.publishing')}
+        loading={save.isPending}
+        onPress={() => void submit()}
+      />
+      {formErrors.map((text) => (
+        <FieldError key={text} message={text} />
+      ))}
       {adoption ? (
         <ThemedText variant="title" accessibilityRole="header">
           {adoption.pet?.name}
@@ -276,20 +286,6 @@ export function AdoptionForm({ adoption, petId, onSaved, onDeleted }: AdoptionFo
         error={message('description')}
         multiline
         maxLength={ADOPTION_DESCRIPTION_MAX}
-      />
-      {formErrors.map((text) => (
-        <FieldError key={text} message={text} />
-      ))}
-      <Button
-        label={
-          adoption
-            ? t('adoption.save')
-            : save.isPending
-              ? t('adoption.publishing')
-              : t('adoption.publish')
-        }
-        onPress={submit}
-        loading={save.isPending}
       />
       {adoption ? (
         <Button

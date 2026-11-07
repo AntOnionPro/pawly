@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { requestErrorKey, requestErrorKind, toFieldErrors } from '@/api/errors';
-import { Button } from '@/components/Button';
 import { ChipGroup } from '@/components/ChipGroup';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { TextField } from '@/components/TextField';
 import { ThemedText } from '@/components/ThemedText';
 import { spacing } from '@/theme/typography';
@@ -58,6 +58,12 @@ export function ReportForm({ target, reason: fixedReason, onSent }: ReportFormPr
 
   return (
     <View style={styles.form}>
+      <HeaderAction
+        label={t('report.send')}
+        loading={send.isPending}
+        onPress={() => void submit()}
+      />
+      <FieldError message={errorKey ? t(errorKey) : null} />
       <ThemedText variant="heading">{t(`report.question.${target.kind}`)}</ThemedText>
       <ChipGroup
         label={t('report.reason')}
@@ -75,13 +81,6 @@ export function ReportForm({ target, reason: fixedReason, onSent }: ReportFormPr
         onChangeText={setDetails}
         multiline
         maxLength={REPORT_DETAILS_MAX}
-      />
-      <FieldError message={errorKey ? t(errorKey) : null} />
-      <Button
-        label={t('report.send')}
-        icon="flag"
-        loading={send.isPending}
-        onPress={() => void submit()}
       />
     </View>
   );

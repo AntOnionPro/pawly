@@ -5,8 +5,8 @@ import { StyleSheet, View } from 'react-native';
 import { requestErrorKey, requestErrorKind, toFieldErrors, type FieldErrors } from '@/api/errors';
 import { useAuth } from '@/auth/AuthProvider';
 import { validatePassword, validatePasswordConfirm } from '@/auth/validation';
-import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { TextField } from '@/components/TextField';
 import { spacing } from '@/theme/typography';
 
@@ -51,6 +51,12 @@ export function ChangePasswordForm({ onChanged }: { onChanged: () => void }) {
 
   return (
     <View style={styles.form}>
+      <HeaderAction
+        label={t('account.password.save')}
+        loading={saving}
+        onPress={() => void save()}
+      />
+      <FieldError message={formError} />
       <TextField
         label={t('account.password.current')}
         value={oldPassword}
@@ -79,8 +85,6 @@ export function ChangePasswordForm({ onChanged }: { onChanged: () => void }) {
         autoComplete="new-password"
         textContentType="newPassword"
       />
-      <FieldError message={formError} />
-      <Button label={t('account.password.save')} onPress={save} loading={saving} />
     </View>
   );
 }

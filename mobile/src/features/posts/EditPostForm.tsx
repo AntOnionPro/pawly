@@ -15,6 +15,7 @@ export function EditPostForm({ post, onSaved }: { post: Post; onSaved: () => voi
       submitLabel={t('posts.save')}
       pendingLabel={t('posts.saving')}
       pending={update.isPending}
+      actionIn="header"
       onSubmit={async ({ text, petIds, add, remove }) => {
         await update.mutateAsync({
           id: post.id,

@@ -4,6 +4,7 @@ import { render } from '@testing-library/react-native';
 import type PocketBase from 'pocketbase';
 import { ClientResponseError } from 'pocketbase';
 import type { ReactNode } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthContext, type AuthContextValue, type User } from '@/auth/AuthProvider';
 import { PreferencesProvider, usePreferences } from '@/preferences/PreferencesProvider';
@@ -47,18 +48,26 @@ function ReadyGate({ children }: { children: ReactNode }) {
 }
 
 /** Renders inside the preferences and the given session. Set the saved language before. */
+/** A phone screen without notch, as the app's SafeAreaProvider would measure it. */
+const TEST_METRICS = {
+  frame: { x: 0, y: 0, width: 390, height: 844 },
+  insets: { top: 0, left: 0, right: 0, bottom: 0 },
+};
+
 export async function renderWith(ui: ReactNode, auth: AuthContextValue = authValue()) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity }, mutations: { retry: false } },
   });
   return render(
-    <PreferencesProvider>
-      <AuthContext.Provider value={auth}>
-        <QueryClientProvider client={queryClient}>
-          <ReadyGate>{ui}</ReadyGate>
-        </QueryClientProvider>
-      </AuthContext.Provider>
-    </PreferencesProvider>,
+    <SafeAreaProvider initialMetrics={TEST_METRICS}>
+      <PreferencesProvider>
+        <AuthContext.Provider value={auth}>
+          <QueryClientProvider client={queryClient}>
+            <ReadyGate>{ui}</ReadyGate>
+          </QueryClientProvider>
+        </AuthContext.Provider>
+      </PreferencesProvider>
+    </SafeAreaProvider>,
   );
 }
 
