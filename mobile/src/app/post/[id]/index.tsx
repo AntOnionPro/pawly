@@ -92,6 +92,7 @@ export default function PostDetailScreen() {
         <>
           <PostCard
             fullText
+            autoPlay
             post={post}
             onPaw={() => paw(post)}
             onComments={() => {

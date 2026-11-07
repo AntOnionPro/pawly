@@ -29,3 +29,8 @@ jest.mock('react-native-maps', () => {
     );
   return { __esModule: true, default: MapView, Marker };
 });
+
+// The connection is unknown in tests: the mock says mobile data. Tests that need Wi-Fi change it.
+jest.mock('@react-native-community/netinfo', () =>
+  require('@react-native-community/netinfo/jest/netinfo-mock.js'),
+);

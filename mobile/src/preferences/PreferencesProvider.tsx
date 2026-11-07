@@ -27,6 +27,7 @@ import {
   savePreferences,
   type NearbyRadius,
   type Preferences,
+  type AutoplayPreference,
   type ThemePreference,
 } from './storage';
 
@@ -38,6 +39,7 @@ interface PreferencesContextValue extends Preferences {
   setNearbyRadius: (radiusKm: NearbyRadius) => void;
   setFont: (font: FontPreference) => void;
   setPalette: (palette: PaletteName) => void;
+  setAutoplay: (autoplay: AutoplayPreference) => void;
 }
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
@@ -97,6 +99,7 @@ export function PreferencesProvider({ children }: PropsWithChildren) {
       setNearbyRadius: (radiusKm) => update({ nearbyRadiusKm: radiusKm }),
       setFont: (font) => update({ font }),
       setPalette: (palette) => update({ palette }),
+      setAutoplay: (autoplay) => update({ autoplay }),
     }),
     [preferences, ready, update],
   );

@@ -11,13 +11,19 @@ import { radius, spacing } from '@/theme/typography';
 import { useReportAction } from '@/features/moderation/hooks';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
-import type { Post } from './api';
+import { mediaKind, type Post } from './api';
 import { usePawAction } from './paws';
 import { PostCard } from './PostCard';
 import { useRepostAction, useShareAction, useUndoRepostAction } from './reposts';
 
+interface ItemProps {
+  post: Post;
+  /** Its video may start on its own (the post in view). */
+  autoPlay: boolean;
+}
+
 /** A post with every action of a list (feed): open, paw, comments, repost, share, links. */
-function ListPostCard({ post }: { post: Post }) {
+function ListPostCard({ post, autoPlay }: ItemProps) {
   const router = useRouter();
   const { user } = useAuth();
   const report = useReportAction();
@@ -28,6 +34,7 @@ function ListPostCard({ post }: { post: Post }) {
   return (
     <PostCard
       post={post}
+      autoPlay={autoPlay}
       onOpen={open}
       onPaw={() => paw(post)}
       onComments={open}
@@ -43,7 +50,7 @@ function ListPostCard({ post }: { post: Post }) {
 }
 
 /** "@user reposted", their optional comment and the original post inside. */
-function RepostCard({ repost }: { repost: Post }) {
+function RepostCard({ repost, autoPlay }: { repost: Post; autoPlay: boolean }) {
   const { t } = useTranslation();
   const router = useRouter();
   const { user } = useAuth();
@@ -84,7 +91,7 @@ function RepostCard({ repost }: { repost: Post }) {
       {repost.text ? <ThemedText>{repost.text}</ThemedText> : null}
       <View style={[styles.original, { borderColor: colors.border }]}>
         {original ? (
-          <ListPostCard post={original} />
+          <ListPostCard post={original} autoPlay={autoPlay} />
         ) : (
           <ThemedText color="textSecondary">{t('reposts.unavailable')}</ThemedText>
         )}
@@ -94,8 +101,18 @@ function RepostCard({ repost }: { repost: Post }) {
 }
 
 /** A post in a list: a regular post, or a repost with its original inside. */
-export function PostListItem({ post }: { post: Post }) {
-  return post.repostOfId ? <RepostCard repost={post} /> : <ListPostCard post={post} />;
+export function PostListItem({ post, autoPlay = false }: { post: Post; autoPlay?: boolean }) {
+  return post.repostOfId ? (
+    <RepostCard repost={post} autoPlay={autoPlay} />
+  ) : (
+    <ListPostCard post={post} autoPlay={autoPlay} />
+  );
+}
+
+/** Whether a post (or the post it reposts) has a video. */
+export function hasVideo(post: Post): boolean {
+  const shown = post.repostOfId ? post.repostOf : post;
+  return (shown?.media ?? []).some((name) => mediaKind(name) === 'video');
 }
 
 const styles = StyleSheet.create({

@@ -283,6 +283,12 @@ const es: Resources = {
       count_other: '{{count}} huellas',
       failed: 'No se pudo guardar tu huella.',
     },
+    video: {
+      play: 'Reproducir video',
+      unmute: 'Activar sonido',
+      mute: 'Quitar sonido',
+      fullscreen: 'Ver en pantalla completa',
+    },
   },
   comments: {
     title: 'Comentarios',
@@ -575,6 +581,13 @@ const es: Resources = {
       title: 'Letra',
       ubuntu: 'Ubuntu',
       system: 'Del sistema',
+    },
+    autoplay: {
+      title: 'Videos automáticos',
+      always: 'Siempre',
+      wifi: 'Solo con Wi-Fi',
+      never: 'Nunca',
+      hint: 'Los videos del inicio se reproducen solos y sin sonido. "Solo con Wi-Fi" ahorra datos móviles. Con "Reducir movimiento" activado en el celular, nunca se reproducen solos.',
     },
     language: {
       title: 'Idioma',

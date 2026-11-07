@@ -5,7 +5,12 @@ import { NavRow } from '@/components/NavRow';
 import { OptionGroup, type Option } from '@/components/OptionGroup';
 import type { LanguagePreference } from '@/i18n';
 import { usePreferences } from '@/preferences/PreferencesProvider';
-import { NEARBY_RADII, type ThemePreference } from '@/preferences/storage';
+import {
+  AUTOPLAY_PREFERENCES,
+  NEARBY_RADII,
+  type AutoplayPreference,
+  type ThemePreference,
+} from '@/preferences/storage';
 import { LIGHT_PALETTES, PALETTE_NAMES, type PaletteName } from '@/theme/colors';
 import type { FontPreference } from '@/theme/fonts';
 
@@ -32,11 +37,13 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
     nearbyRadiusKm,
     font,
     palette,
+    autoplay,
     setTheme,
     setLanguage,
     setNearbyRadius,
     setFont,
     setPalette,
+    setAutoplay,
   } = usePreferences();
 
   const themeOptions: Option<ThemePreference>[] = [
@@ -55,6 +62,11 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
     { value: 'ubuntu', label: t('settings.font.ubuntu') },
     { value: 'system', label: t('settings.font.system') },
   ];
+
+  const autoplayOptions: Option<AutoplayPreference>[] = AUTOPLAY_PREFERENCES.map((value) => ({
+    value,
+    label: t(`settings.autoplay.${value}`),
+  }));
 
   // Language names stay in their own language so people can always find theirs.
   const languageOptions: Option<LanguagePreference>[] = [
@@ -117,6 +129,13 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
         options={languageOptions}
         selected={language}
         onSelect={setLanguage}
+      />
+      <OptionGroup
+        title={t('settings.autoplay.title')}
+        options={autoplayOptions}
+        selected={autoplay}
+        onSelect={setAutoplay}
+        footer={t('settings.autoplay.hint')}
       />
       <OptionGroup
         title={t('settings.nearby')}

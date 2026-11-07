@@ -19,9 +19,23 @@ import { spacing } from '@/theme/typography';
 import type { Post, PostFilter } from './api';
 import { FeedTabs, type FeedTab } from './FeedTabs';
 import { usePostList } from './hooks';
-import { PostListItem } from './PostListItem';
+import { hasVideo, PostListItem } from './PostListItem';
 
 const DISCOVER = { all: true } as const;
+
+/** A post counts as in view when most of it is on screen. */
+const VIEWABILITY = { itemVisiblePercentThreshold: 60 };
+
+/** What FlatList tells about each post in view. */
+interface ViewablePost {
+  item: Post;
+  isViewable: boolean;
+}
+
+/** The post whose video plays: the first one in view that has a video. */
+export function postToPlay(viewable: ViewablePost[]): string | null {
+  return viewable.find((token) => token.isViewable && hasVideo(token.item))?.item.id ?? null;
+}
 
 /**
  * Home feed, newest first: "Following" (posts by the people you follow) and "Discover" (every
@@ -33,6 +47,14 @@ export function FeedList() {
   const colors = useThemeColors();
   const { status, user } = useAuth();
   const [tab, setTab] = useState<FeedTab>('following');
+  // Only one video plays at a time: the one of the first post in view with a video.
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  // FlatList does not allow changing this callback, so it is created once.
+  const [onViewableItemsChanged] = useState(
+    () =>
+      ({ viewableItems }: { viewableItems: ViewablePost[] }) =>
+        setPlayingId(postToPlay(viewableItems)),
+  );
   const signedIn = status === 'signedIn' && user !== null;
   const showFollowing = signedIn && tab === 'following';
   const filter: PostFilter = showFollowing && user ? { followedBy: user.id } : DISCOVER;
@@ -58,6 +80,9 @@ export function FeedList() {
         testID="feed"
         data={posts}
         keyExtractor={(post) => post.id}
+        viewabilityConfig={VIEWABILITY}
+        onViewableItemsChanged={onViewableItemsChanged}
+        extraData={playingId}
         contentContainerStyle={styles.content}
         ItemSeparatorComponent={() => (
           <View style={[styles.separator, { backgroundColor: colors.border }]} />
@@ -114,7 +139,7 @@ export function FeedList() {
             </ThemedText>
           ) : undefined
         }
-        renderItem={({ item }) => <PostListItem post={item} />}
+        renderItem={({ item }) => <PostListItem post={item} autoPlay={item.id === playingId} />}
         onEndReachedThreshold={0.5}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) void fetchNextPage();

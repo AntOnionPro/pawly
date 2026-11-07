@@ -10,6 +10,10 @@ export type ThemePreference = 'system' | 'light' | 'dark';
 export const NEARBY_RADII = [1, 5, 10, 25] as const;
 export type NearbyRadius = (typeof NEARBY_RADII)[number];
 
+/** When feed videos start on their own (muted). */
+export const AUTOPLAY_PREFERENCES = ['always', 'wifi', 'never'] as const;
+export type AutoplayPreference = (typeof AUTOPLAY_PREFERENCES)[number];
+
 export interface Preferences {
   theme: ThemePreference;
   language: LanguagePreference;
@@ -17,6 +21,7 @@ export interface Preferences {
   font: FontPreference;
   /** Palette of the light theme. */
   palette: PaletteName;
+  autoplay: AutoplayPreference;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -25,6 +30,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   nearbyRadiusKm: 5,
   font: 'ubuntu',
   palette: 'pink',
+  autoplay: 'always',
 };
 
 export const PREFERENCES_KEY = 'pawly:preferences';
@@ -41,7 +47,10 @@ export function parsePreferences(raw: string | null): Preferences {
     if (typeof data !== 'object' || data === null) {
       return DEFAULT_PREFERENCES;
     }
-    const { theme, language, nearbyRadiusKm, font, palette } = data as Record<string, unknown>;
+    const { theme, language, nearbyRadiusKm, font, palette, autoplay } = data as Record<
+      string,
+      unknown
+    >;
     return {
       theme: THEMES.includes(theme as ThemePreference)
         ? (theme as ThemePreference)
@@ -57,6 +66,9 @@ export function parsePreferences(raw: string | null): Preferences {
       palette: PALETTE_NAMES.includes(palette as PaletteName)
         ? (palette as PaletteName)
         : DEFAULT_PREFERENCES.palette,
+      autoplay: AUTOPLAY_PREFERENCES.includes(autoplay as AutoplayPreference)
+        ? (autoplay as AutoplayPreference)
+        : DEFAULT_PREFERENCES.autoplay,
     };
   } catch {
     return DEFAULT_PREFERENCES;

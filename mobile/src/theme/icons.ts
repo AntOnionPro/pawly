@@ -97,6 +97,22 @@ export const icons = {
     sf: { default: 'photo.on.rectangle', selected: 'photo.on.rectangle' },
     md: 'photo_library',
   },
+  play: { sf: { default: 'play.fill', selected: 'play.fill' }, md: 'play_arrow' },
+  soundOn: {
+    sf: { default: 'speaker.wave.2.fill', selected: 'speaker.wave.2.fill' },
+    md: 'volume_up',
+  },
+  soundOff: {
+    sf: { default: 'speaker.slash.fill', selected: 'speaker.slash.fill' },
+    md: 'volume_off',
+  },
+  fullscreen: {
+    sf: {
+      default: 'arrow.up.left.and.arrow.down.right',
+      selected: 'arrow.up.left.and.arrow.down.right',
+    },
+    md: 'fullscreen',
+  },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconName = keyof typeof icons;

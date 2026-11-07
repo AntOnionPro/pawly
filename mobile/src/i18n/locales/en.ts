@@ -279,6 +279,12 @@ const en = {
       count_other: '{{count}} paw prints',
       failed: 'Your paw print could not be saved.',
     },
+    video: {
+      play: 'Play video',
+      unmute: 'Turn sound on',
+      mute: 'Turn sound off',
+      fullscreen: 'View in fullscreen',
+    },
   },
   comments: {
     title: 'Comments',
@@ -572,6 +578,13 @@ const en = {
       title: 'Font',
       ubuntu: 'Ubuntu',
       system: 'System',
+    },
+    autoplay: {
+      title: 'Autoplay videos',
+      always: 'Always',
+      wifi: 'Wi-Fi only',
+      never: 'Never',
+      hint: 'Home videos play on their own, muted. "Wi-Fi only" saves mobile data. With "Reduce motion" on in your phone, they never play on their own.',
     },
     language: {
       title: 'Language',

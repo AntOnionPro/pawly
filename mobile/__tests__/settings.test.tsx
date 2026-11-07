@@ -77,6 +77,7 @@ describe('SettingsContent', () => {
       nearbyRadiusKm: 5,
       font: 'ubuntu',
       palette: 'pink',
+      autoplay: 'always',
     });
   });
 
@@ -112,6 +113,21 @@ describe('SettingsContent', () => {
     expect(screen.getByText('Letra')).not.toHaveStyle({ fontFamily: 'Ubuntu_500Medium' });
     expect(JSON.parse((await AsyncStorage.getItem(PREFERENCES_KEY)) ?? '{}')).toMatchObject({
       font: 'system',
+    });
+  });
+
+  it('plays videos on their own by default, and can limit it to Wi-Fi', async () => {
+    await renderSettings();
+    const autoplayGroup = () => within(screen.getByLabelText('Videos automáticos'));
+    expect(
+      autoplayGroup().getByRole('radio', { name: 'Siempre', checked: true }),
+    ).toBeOnTheScreen();
+    await fireEvent.press(autoplayGroup().getByRole('radio', { name: 'Solo con Wi-Fi' }));
+    expect(
+      autoplayGroup().getByRole('radio', { name: 'Solo con Wi-Fi', checked: true }),
+    ).toBeOnTheScreen();
+    expect(JSON.parse((await AsyncStorage.getItem(PREFERENCES_KEY)) ?? '{}')).toMatchObject({
+      autoplay: 'wifi',
     });
   });
 
