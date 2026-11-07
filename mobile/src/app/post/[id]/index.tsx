@@ -91,6 +91,7 @@ export default function PostDetailScreen() {
       {post ? (
         <>
           <PostCard
+            fullText
             post={post}
             onPaw={() => paw(post)}
             onComments={() => {

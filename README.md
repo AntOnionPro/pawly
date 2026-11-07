@@ -27,7 +27,7 @@ Current stage: **Stage 7.5, Design and details (in progress).** Stages 8 and 9 a
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89), done), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) and Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)). It is released as `v0.8.5`.
+Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89), done), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90), done), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) and Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)). It is released as `v0.8.5`.
 
 ## Features
 
@@ -49,7 +49,7 @@ Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro
 
 #### Posts and feed
 
-- Posts with text, images and videos, with several files per post.
+- Posts with text, images and videos, with several files per post. A post reads from top to bottom: author, text, tagged pets, photos and videos, and the counts of paw prints, comments and reposts. In the feed, long texts are cut to three lines with "See more".
 - Users react with a paw print (the only reaction) and comment. They can edit and delete their own posts and comments.
 - Sharing outside the app (system share sheet with a link to the web version) and inside the app (repost, or send by direct message).
 - Users follow each other. Home has two tabs: **Following** (posts by the people you follow) and **Discover** (every post). Visitors only see Discover. Reposts appear in Following and on profiles, not in Discover.
