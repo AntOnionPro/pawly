@@ -254,6 +254,42 @@ describe('editing and deleting posts', () => {
     assert.deepEqual(withText.body.media, []);
   });
 
+  test('an edit adds and removes photos and videos, up to 10 files', async () => {
+    const { record, token } = await verifiedUser();
+    const { body: post } = await upload('POST', POSTS, token, { author: record.id, text: 'Hola' }, [
+      photo('a.png'),
+      photo('b.png'),
+    ]);
+    const [first, second] = post.media;
+    const edited = await upload('PATCH', `${POSTS}/${post.id}`, token, { 'media-': [first] }, []);
+    assert.equal(edited.status, 200, JSON.stringify(edited.body));
+    assert.deepEqual(edited.body.media, [second]);
+
+    const form = new FormData();
+    form.append('media+', new Blob([png()], { type: 'image/png' }), 'c.png');
+    form.append('media+', new Blob([video()], { type: 'video/mp4' }), 'd.mp4');
+    const added = await fetch(`${pb.baseUrl}${POSTS}/${post.id}`, {
+      method: 'PATCH',
+      headers: { Authorization: token },
+      body: form,
+    }).then(async (response) => ({ status: response.status, body: await response.json() }));
+    assert.equal(added.status, 200, JSON.stringify(added.body));
+    assert.equal(added.body.media.length, 3);
+    assert.equal(added.body.media[0], second);
+
+    const tooMany = new FormData();
+    for (let i = 0; i < 8; i += 1) {
+      tooMany.append('media+', new Blob([png()], { type: 'image/png' }), `extra-${i}.png`);
+    }
+    const rejected = await fetch(`${pb.baseUrl}${POSTS}/${post.id}`, {
+      method: 'PATCH',
+      headers: { Authorization: token },
+      body: tooMany,
+    }).then(async (response) => ({ status: response.status, body: await response.json() }));
+    assert.equal(rejected.status, 400);
+    assert.equal(rejected.body.data.media.code, 'validation_too_many_files');
+  });
+
   test('only the author deletes a post', async () => {
     const author = await verifiedUser();
     const other = await verifiedUser();

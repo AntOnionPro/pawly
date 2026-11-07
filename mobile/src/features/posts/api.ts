@@ -50,6 +50,10 @@ export interface NewPost {
 export interface PostChanges {
   text: string;
   petIds: string[];
+  /** New photos and videos, added after the ones the post keeps. */
+  addMedia?: ComposerMedia[];
+  /** File names of the post to remove. */
+  removeMedia?: string[];
 }
 
 const VIDEO_EXTENSIONS = ['mp4', 'mov'];
@@ -280,10 +284,26 @@ export async function updatePost(
   id: string,
   changes: PostChanges,
 ): Promise<Post> {
+  const add = changes.addMedia ?? [];
+  const remove = changes.removeMedia ?? [];
+  if (add.length === 0 && remove.length === 0) {
+    return toPost(
+      await client
+        .collection(POSTS)
+        .update(id, { text: changes.text.trim(), pets: changes.petIds }, { expand: POST_EXPAND }),
+    );
+  }
+  // With files: `media-` removes saved ones by name and `media+` uploads new ones at the end.
+  const data = new FormData();
+  data.append('text', changes.text.trim());
+  if (changes.petIds.length === 0) data.append('pets', '');
+  for (const petId of changes.petIds) data.append('pets', petId);
+  for (const name of remove) data.append('media-', name);
+  for (const file of add) {
+    await appendFile(data, 'media+', file);
+  }
   return toPost(
-    await client
-      .collection(POSTS)
-      .update(id, { text: changes.text.trim(), pets: changes.petIds }, { expand: POST_EXPAND }),
+    await client.collection(POSTS).update(id, data, { expand: POST_EXPAND, fetch: uploadFetch }),
   );
 }
 

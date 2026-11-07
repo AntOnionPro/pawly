@@ -171,6 +171,33 @@ describe('post API helpers', () => {
     expect(form.getAll('pets')).toEqual(['p1', 'p2']);
     expect(form.getAll('media')).toHaveLength(1);
   });
+
+  it('edits without files as JSON, and with files as a form that removes and adds', async () => {
+    const update = jest.fn().mockResolvedValue({ id: 'post1', collectionId: 'c' });
+    const client = { collection: () => ({ update }) } as unknown as PocketBase;
+    const { updatePost } = jest.requireActual<typeof api>('@/features/posts/api');
+
+    await updatePost(client, 'post1', { text: ' Hola ', petIds: ['p1'] });
+    expect(update).toHaveBeenLastCalledWith(
+      'post1',
+      { text: 'Hola', pets: ['p1'] },
+      expect.anything(),
+    );
+
+    await updatePost(client, 'post1', {
+      text: 'Hola',
+      petIds: [],
+      removeMedia: ['foto_abc.jpg'],
+      addMedia: [{ uri: 'file:///b.mp4', name: 'b.mp4', type: 'video/mp4', kind: 'video' }],
+    });
+    const form = update.mock.lastCall?.[1] as FormData;
+    expect(form.get('text')).toBe('Hola');
+    // No pets left: an empty value clears them.
+    expect(form.getAll('pets')).toEqual(['']);
+    expect(form.getAll('media-')).toEqual(['foto_abc.jpg']);
+    expect(form.getAll('media+')).toHaveLength(1);
+    expect(form.getAll('media')).toHaveLength(0);
+  });
 });
 
 describe('PostComposer', () => {
@@ -210,7 +237,6 @@ describe('PostComposer', () => {
     ).toBeOnTheScreen();
 
     await fireEvent.changeText(screen.getByLabelText('Texto'), 'Paseo con Luna');
-    expect(screen.getByText('14/2200')).toBeOnTheScreen();
     await fireEvent.press(await screen.findByRole('checkbox', { name: 'Luna' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Publicar' }));
 
@@ -223,6 +249,17 @@ describe('PostComposer', () => {
       ],
     });
     expect(onPublished).toHaveBeenCalledWith(POST);
+  });
+
+  it('shows who posts and counts the characters only near the limit', async () => {
+    await renderWith(<PostComposer onPublished={jest.fn()} />, signedIn());
+    expect(await screen.findByText('@luna')).toBeOnTheScreen();
+    const text = screen.getByLabelText('Texto');
+    expect(text.props.placeholder).toBe('¿Qué quieres compartir?');
+    await fireEvent.changeText(text, 'Hola');
+    expect(screen.queryByText('4/2200')).toBeNull();
+    await fireEvent.changeText(text, 'a'.repeat(2100));
+    expect(screen.getByText('2100/2200')).toBeOnTheScreen();
   });
 
   it('removes a chosen file', async () => {
@@ -288,14 +325,55 @@ describe('EditPostForm', () => {
     expect(onSaved).toHaveBeenCalled();
   });
 
-  it('does not allow leaving a post without text or files', async () => {
-    await renderWith(
-      <EditPostForm post={{ ...POST, media: [] }} onSaved={jest.fn()} />,
-      signedIn(),
+  it('removes saved photos and videos and adds new ones', async () => {
+    jest.mocked(ImagePicker.launchImageLibraryAsync).mockResolvedValue({
+      canceled: false,
+      assets: [asset({ uri: 'file:///new.jpg', type: 'image', fileName: 'new.jpg' })],
+    });
+    jest.mocked(api.updatePost).mockResolvedValue(POST);
+    const onSaved = jest.fn();
+    await renderWith(<EditPostForm post={POST} onSaved={onSaved} />, signedIn());
+
+    // The two saved files show, and there is room for 8 more.
+    expect(await screen.findByRole('button', { name: 'Quitar el archivo 2' })).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Quitar el archivo 1' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Agregar fotos o videos' }));
+    expect(ImagePicker.launchImageLibraryAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ selectionLimit: 9 }),
     );
-    await fireEvent.changeText(await screen.findByLabelText('Texto'), '  ');
+    expect(screen.getByRole('button', { name: 'Quitar el archivo 2' })).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
-    expect(screen.getByText('Escribe algo o agrega una foto o un video.')).toBeOnTheScreen();
+
+    expect(api.updatePost).toHaveBeenCalledWith(expect.anything(), 'post1', {
+      text: 'Paseo en Chapultepec',
+      petIds: ['p1'],
+      removeMedia: ['foto_abc.jpg'],
+      addMedia: [expect.objectContaining({ uri: 'file:///new.jpg', kind: 'photo' })],
+    });
+    expect(onSaved).toHaveBeenCalled();
+  });
+
+  it('does not allow leaving a post without text or files', async () => {
+    await renderWith(<EditPostForm post={POST} onSaved={jest.fn()} />, signedIn());
+    await fireEvent.changeText(await screen.findByLabelText('Texto'), '  ');
+    await fireEvent.press(screen.getByRole('button', { name: 'Quitar el archivo 2' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Quitar el archivo 1' }));
+    expect(screen.getByRole('button', { name: 'Guardar' })).toBeDisabled();
     expect(api.updatePost).not.toHaveBeenCalled();
+  });
+
+  it('shows server errors and keeps the changes', async () => {
+    jest
+      .mocked(api.updatePost)
+      .mockRejectedValue(serverError(400, { media: { code: 'validation_too_many_files' } }));
+    const onSaved = jest.fn();
+    await renderWith(<EditPostForm post={POST} onSaved={onSaved} />, signedIn());
+    await fireEvent.changeText(await screen.findByLabelText('Texto'), 'Otro texto');
+    await fireEvent.press(screen.getByRole('button', { name: 'Guardar' }));
+    expect(
+      screen.getByText('Una publicación puede tener hasta 10 fotos o videos.'),
+    ).toBeOnTheScreen();
+    expect(screen.getByLabelText('Texto').props.value).toBe('Otro texto');
+    expect(onSaved).not.toHaveBeenCalled();
   });
 });
