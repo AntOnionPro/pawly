@@ -4,6 +4,7 @@ import { Image, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
+import { ButtonRow } from '@/components/ButtonRow';
 import { Icon } from '@/components/Icon';
 import { ThemedText } from '@/components/ThemedText';
 import { useReportAction } from '@/features/moderation/hooks';
@@ -137,17 +138,26 @@ export function AdoptionDetail({
         />
       ) : null}
 
-      {pet ? (
-        <Button
-          variant="secondary"
-          icon="paw"
-          label={t('adoption.openPet', { name })}
-          onPress={() => onPressPet(pet.id)}
-        />
-      ) : null}
-      {onEdit ? (
-        <Button variant="secondary" icon="edit" label={t('adoption.edit')} onPress={onEdit} />
-      ) : null}
+      <ButtonRow>
+        {pet ? (
+          <Button
+            size="compact"
+            variant="secondary"
+            icon="paw"
+            label={t('adoption.openPet', { name })}
+            onPress={() => onPressPet(pet.id)}
+          />
+        ) : null}
+        {onEdit ? (
+          <Button
+            size="compact"
+            variant="secondary"
+            icon="edit"
+            label={t('adoption.edit')}
+            onPress={onEdit}
+          />
+        ) : null}
+      </ButtonRow>
       {user?.id !== adoption.publisherId ? (
         <Button
           variant="link"

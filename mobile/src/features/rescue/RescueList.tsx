@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
 import { Icon } from '@/components/Icon';
+import { FLOATING_ACTION_SPACE, FloatingAction } from '@/components/FloatingAction';
 import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
 import { TabBar } from '@/components/TabBar';
@@ -92,6 +93,14 @@ export function RescueList() {
   const open = (report: RescueReport) =>
     router.push({ pathname: '/rescue/[id]', params: { id: report.id } });
 
+  const reportCase = (
+    <FloatingAction
+      icon="add"
+      label={t('rescue.report')}
+      onPress={() => router.push(status === 'signedIn' ? '/rescue/new' : '/sign-in')}
+    />
+  );
+
   const header = (
     <View style={styles.top}>
       <View style={styles.header}>
@@ -110,12 +119,6 @@ export function RescueList() {
             }}
           />
         ) : null}
-        <IconButton
-          icon="add"
-          size={26}
-          label={t('rescue.report')}
-          onPress={() => router.push(status === 'signedIn' ? '/rescue/new' : '/sign-in')}
-        />
       </View>
       <TabBar<KindTab>
         tabs={[
@@ -181,6 +184,8 @@ export function RescueList() {
             </View>
           ) : null}
         </View>
+        {/* The card of the chosen case takes the bottom of the map. */}
+        {selectedReport ? null : reportCase}
       </SafeAreaView>
     );
   }
@@ -217,13 +222,19 @@ export function RescueList() {
           />
         }
       />
+      {reportCase}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { padding: spacing.md, gap: spacing.md, flexGrow: 1 },
+  content: {
+    padding: spacing.md,
+    paddingBottom: FLOATING_ACTION_SPACE,
+    gap: spacing.md,
+    flexGrow: 1,
+  },
   top: { gap: spacing.sm },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   title: { flex: 1 },

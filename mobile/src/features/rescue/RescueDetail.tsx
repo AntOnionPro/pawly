@@ -3,6 +3,7 @@ import { Image, Linking, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
+import { ButtonRow } from '@/components/ButtonRow';
 import { Icon } from '@/components/Icon';
 import { ThemedText } from '@/components/ThemedText';
 import { MessageButton } from '@/features/messages/MessageButton';
@@ -121,14 +122,6 @@ export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: Rescue
         />
       </View>
 
-      {report.pet ? (
-        <Button
-          variant="secondary"
-          icon="paw"
-          label={t('adoption.openPet', { name: report.pet.name })}
-          onPress={() => onPressPet(report.petId)}
-        />
-      ) : null}
       {reporter ? (
         <UserLink
           user={reporter}
@@ -136,11 +129,28 @@ export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: Rescue
           onPress={() => onPressUser(reporter.id)}
         />
       ) : null}
-      {!isReporter ? <MessageButton userId={report.reporterId} /> : null}
+      <ButtonRow>
+        {report.pet ? (
+          <Button
+            size="compact"
+            variant="secondary"
+            icon="paw"
+            label={t('adoption.openPet', { name: report.pet.name })}
+            onPress={() => onPressPet(report.petId)}
+          />
+        ) : null}
+        {!isReporter ? <MessageButton userId={report.reporterId} /> : null}
+        {onEdit ? (
+          <Button
+            size="compact"
+            variant="secondary"
+            icon="edit"
+            label={t('rescue.edit')}
+            onPress={onEdit}
+          />
+        ) : null}
+      </ButtonRow>
       {isReporter ? <StatusActions report={report} /> : null}
-      {onEdit ? (
-        <Button variant="secondary" icon="edit" label={t('rescue.edit')} onPress={onEdit} />
-      ) : null}
       {!isReporter ? (
         <Button
           variant="link"

@@ -10,6 +10,7 @@ export function FollowButton({ userId }: { userId: string }) {
   const { following, loading, toggle } = useFollowAction(userId);
   return (
     <Button
+      size="compact"
       variant={following ? 'secondary' : 'primary'}
       icon={following ? 'check' : 'add'}
       label={following ? t('follows.following') : t('follows.follow')}

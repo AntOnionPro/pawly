@@ -34,3 +34,26 @@ jest.mock('react-native-maps', () => {
 jest.mock('@react-native-community/netinfo', () =>
   require('@react-native-community/netinfo/jest/netinfo-mock.js'),
 );
+
+// Form actions live in the native top bar, which tests do not have: here they show as a regular
+// button with the same name, so forms can be tested. __tests__/header-action.test.tsx tests the
+// real component.
+jest.mock('@/components/HeaderAction', () => {
+  const React = require('react');
+  const { Button } = require('@/components/Button');
+  return {
+    HeaderAction: ({ label, pendingLabel, loading, disabled, onPress }) =>
+      React.createElement(Button, {
+        label: loading && pendingLabel ? pendingLabel : label,
+        loading,
+        disabled,
+        onPress,
+      }),
+  };
+});
+
+// Liquid Glass needs iOS 26: tests use the fallback unless they say otherwise.
+jest.mock('expo-glass-effect', () => {
+  const { View } = require('react-native');
+  return { GlassView: View, isLiquidGlassAvailable: jest.fn(() => false) };
+});

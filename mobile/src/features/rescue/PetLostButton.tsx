@@ -10,6 +10,7 @@ export function PetLostButton({ pet }: { pet: Pet }) {
   const router = useRouter();
   return (
     <Button
+      size="compact"
       variant="secondary"
       icon="lost"
       label={t('rescue.reportLost')}

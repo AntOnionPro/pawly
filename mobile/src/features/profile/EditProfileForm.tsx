@@ -8,6 +8,7 @@ import { BIO_MAX_LENGTH, normalizeUsername, validateUsername } from '@/auth/vali
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { TextField } from '@/components/TextField';
 import { spacing } from '@/theme/typography';
 import { pickSquarePhoto, type PickedImage } from '@/utils/pickPhoto';
@@ -69,6 +70,8 @@ export function EditProfileForm({ user, onSaved }: EditProfileFormProps) {
 
   return (
     <View style={styles.form}>
+      <HeaderAction label={t('profile.edit.save')} loading={saving} onPress={() => void save()} />
+      <FieldError message={formError} />
       <View style={styles.photo}>
         <Avatar uri={preview} username={username || user.username} size={120} />
         <View style={styles.photoActions}>
@@ -113,8 +116,6 @@ export function EditProfileForm({ user, onSaved }: EditProfileFormProps) {
         multiline
         maxLength={BIO_MAX_LENGTH}
       />
-      <FieldError message={formError} />
-      <Button label={t('profile.edit.save')} onPress={save} loading={saving} />
     </View>
   );
 }

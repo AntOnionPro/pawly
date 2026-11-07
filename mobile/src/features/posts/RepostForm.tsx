@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { requestErrorKey, requestErrorKind, toFieldErrors } from '@/api/errors';
-import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { TextField } from '@/components/TextField';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
@@ -39,6 +39,13 @@ export function RepostForm({ post, onDone }: { post: Post; onDone: () => void })
 
   return (
     <View style={styles.form}>
+      <HeaderAction
+        label={t('reposts.publish')}
+        pendingLabel={t('reposts.publishing')}
+        loading={add.isPending}
+        onPress={() => void submit()}
+      />
+      <FieldError message={errorKey ? t(errorKey) : null} />
       <TextField
         label={t('reposts.comment')}
         value={comment}
@@ -49,13 +56,6 @@ export function RepostForm({ post, onDone }: { post: Post; onDone: () => void })
       <View style={[styles.original, { borderColor: colors.border }]}>
         <PostCard post={post} />
       </View>
-      <FieldError message={errorKey ? t(errorKey) : null} />
-      <Button
-        label={add.isPending ? t('reposts.publishing') : t('reposts.publish')}
-        icon="repost"
-        loading={add.isPending}
-        onPress={() => void submit()}
-      />
     </View>
   );
 }

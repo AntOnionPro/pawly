@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Icon } from '@/components/Icon';
+import { FLOATING_ACTION_SPACE, FloatingAction } from '@/components/FloatingAction';
 import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
@@ -68,12 +69,6 @@ export function AdoptionList() {
                   onPress={() => router.push('/adoption/requests')}
                 />
               ) : null}
-              <IconButton
-                icon="add"
-                size={26}
-                label={t('adoption.give')}
-                onPress={() => router.push(status === 'signedIn' ? '/adoption/new' : '/sign-in')}
-              />
             </View>
             <AdoptionFilters filter={filter} onChange={setFilter} />
           </View>
@@ -116,13 +111,23 @@ export function AdoptionList() {
           />
         }
       />
+      <FloatingAction
+        icon="add"
+        label={t('adoption.give')}
+        onPress={() => router.push(status === 'signedIn' ? '/adoption/new' : '/sign-in')}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { padding: spacing.md, gap: spacing.md, flexGrow: 1 },
+  content: {
+    padding: spacing.md,
+    paddingBottom: FLOATING_ACTION_SPACE,
+    gap: spacing.md,
+    flexGrow: 1,
+  },
   top: { gap: spacing.sm },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   title: { flex: 1 },

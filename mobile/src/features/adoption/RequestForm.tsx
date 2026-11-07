@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { requestErrorKey, requestErrorKind, toFieldErrors } from '@/api/errors';
-import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
+import { HeaderAction } from '@/components/HeaderAction';
 import { TextField } from '@/components/TextField';
 import { ThemedText } from '@/components/ThemedText';
 import { spacing } from '@/theme/typography';
@@ -39,6 +39,13 @@ export function RequestForm({ adoption, onSent }: { adoption: Adoption; onSent: 
 
   return (
     <View style={styles.container}>
+      <HeaderAction
+        label={t('adoptionRequests.send')}
+        pendingLabel={t('adoptionRequests.sending')}
+        loading={send.isPending}
+        onPress={() => void submit()}
+      />
+      <FieldError message={error} />
       <ThemedText variant="title" accessibilityRole="header">
         {t('adoptionRequests.heading', { name })}
       </ThemedText>
@@ -52,13 +59,6 @@ export function RequestForm({ adoption, onSent }: { adoption: Adoption; onSent: 
         onChangeText={setMessage}
         multiline
         maxLength={REQUEST_MESSAGE_MAX}
-      />
-      <FieldError message={error} />
-      <Button
-        icon="send"
-        label={send.isPending ? t('adoptionRequests.sending') : t('adoptionRequests.send')}
-        onPress={submit}
-        loading={send.isPending}
       />
     </View>
   );

@@ -5,8 +5,9 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { requestErrorKey, requestErrorKind, toFieldErrors } from '@/api/errors';
 import { avatarUrl, useAuth } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
-import { Button } from '@/components/Button';
 import { FieldError } from '@/components/FieldError';
+import { GlassButton } from '@/components/GlassButton';
+import { HeaderAction } from '@/components/HeaderAction';
 import { ThemedText } from '@/components/ThemedText';
 import { usePets } from '@/features/pets/hooks';
 import { useFontStyle, useThemeColors } from '@/preferences/PreferencesProvider';
@@ -37,12 +38,18 @@ interface PostEditorProps {
   submitLabel: string;
   pendingLabel: string;
   pending: boolean;
+  /**
+   * Where the button to save goes: in the top bar (a screen with one, like editing), or at the
+   * top right of the content (the Post tab, which has no top bar).
+   */
+  actionIn?: 'header' | 'content';
   /** Saves; when it throws, what was written and chosen stays and the error is shown. */
   onSubmit: (values: PostEditorValues) => Promise<void>;
 }
 
 /**
- * Writing a post, in the order it is read: who posts (and the button to publish, at the top),
+ * Writing a post, in the order it is read: who posts (and the button to publish, at the top,
+ * or in the top bar),
  * the text, the photos and videos (with "+" to add more) and the tagged pets. The same screen
  * edits a post, including its photos and videos.
  */
@@ -52,6 +59,7 @@ export function PostEditor({
   submitLabel,
   pendingLabel,
   pending,
+  actionIn = 'content',
   onSubmit,
 }: PostEditorProps) {
   const { t } = useTranslation();
@@ -113,6 +121,15 @@ export function PostEditor({
 
   return (
     <View style={styles.container}>
+      {actionIn === 'header' ? (
+        <HeaderAction
+          label={submitLabel}
+          pendingLabel={pendingLabel}
+          loading={pending}
+          disabled={isEmpty}
+          onPress={() => void submit()}
+        />
+      ) : null}
       <View style={styles.top}>
         {user ? (
           <Avatar uri={avatarUrl(client, user, '100x100')} username={user.username} size={40} />
@@ -120,13 +137,14 @@ export function PostEditor({
         <ThemedText style={styles.username} numberOfLines={1}>
           {user ? `@${user.username}` : ''}
         </ThemedText>
-        <Button
-          size="compact"
-          label={pending ? pendingLabel : submitLabel}
-          onPress={() => void submit()}
-          loading={pending}
-          disabled={isEmpty}
-        />
+        {actionIn === 'content' ? (
+          <GlassButton
+            label={pending ? pendingLabel : submitLabel}
+            onPress={() => void submit()}
+            loading={pending}
+            disabled={isEmpty}
+          />
+        ) : null}
       </View>
       <TextInput
         accessibilityLabel={t('posts.text')}

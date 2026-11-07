@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/auth/AuthProvider';
+import { ButtonRow } from '@/components/ButtonRow';
 import { Loading, LoadError } from '@/components/QueryState';
 import { Screen } from '@/components/Screen';
 import { PetAdoptionButton } from '@/features/adoption/PetAdoptionButton';
@@ -36,8 +37,10 @@ export default function PetScreen() {
             }
           />
           <PetAdoptionHistory pet={pet} />
-          <PetAdoptionButton pet={pet} isOwner={user?.id === pet.ownerId} />
-          {user?.id === pet.ownerId ? <PetLostButton pet={pet} /> : null}
+          <ButtonRow align="center">
+            <PetAdoptionButton pet={pet} isOwner={user?.id === pet.ownerId} />
+            {user?.id === pet.ownerId ? <PetLostButton pet={pet} /> : null}
+          </ButtonRow>
           <PostGrid filter={{ petId: pet.id }} title={t('user.posts')} empty={t('user.noPosts')} />
         </>
       ) : null}
