@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -10,10 +11,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { CommentButton } from '@/features/comments/CommentButton';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
+import { useReduceMotion } from '@/utils/useReduceMotion';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
 import type { Post } from './api';
 import { MediaCarousel } from './MediaCarousel';
+import { PawBurst } from './PawBurst';
 import { PawButton } from './PawButton';
 import { RepostButton } from './RepostButton';
 
@@ -23,7 +26,10 @@ interface PostCardProps {
   onPressAuthor?: (authorId: string) => void;
   /** Opens the post page (from the feed). */
   onOpen?: () => void;
-  /** Adds or removes the paw print. Without it the count is shown read-only. */
+  /**
+   * Adds or removes the paw print. Without it the count is shown read-only. A double tap on the
+   * photos and videos also calls it, only to give the paw print (never to remove it).
+   */
   onPaw?: () => void;
   /** Opens or focuses the comments. Without it the count is shown read-only. */
   onComments?: () => void;
@@ -59,10 +65,19 @@ export function PostCard({
   fullText = false,
 }: PostCardProps) {
   const { t } = useTranslation();
-  const { client } = useAuth();
+  const { client, status } = useAuth();
+  const reduceMotion = useReduceMotion();
+  // Each double tap shows a new big paw print (a new key restarts it).
+  const [burst, setBurst] = useState(0);
   const author = post.author;
   const date = useRelativeDate(post.created);
   const pets = <TaggedPets post={post} onPressPet={onPressPet} />;
+
+  function doubleTap() {
+    if (!post.pawedByMe) onPaw?.();
+    // Visitors go to sign in instead.
+    if (status === 'signedIn' && !reduceMotion) setBurst((current) => current + 1);
+  }
 
   return (
     <View style={styles.card}>
@@ -109,7 +124,11 @@ export function PostCard({
         )
       ) : null}
       {pets}
-      <MediaCarousel record={post} />
+      <MediaCarousel
+        record={post}
+        onDoubleTap={onPaw ? doubleTap : undefined}
+        overlay={burst > 0 ? <PawBurst key={burst} onEnd={() => setBurst(0)} /> : null}
+      />
       <View style={styles.actions}>
         <PawButton count={post.pawCount} pawed={post.pawedByMe} onPress={onPaw} />
         <CommentButton count={post.commentCount} onPress={onComments} />
