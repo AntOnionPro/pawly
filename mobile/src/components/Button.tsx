@@ -16,6 +16,11 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   accessibilityHint?: string;
+  /**
+   * compact: a pill as wide as its label (for example "Publish" at the top of a screen). The
+   * text keeps the button size: 19 pt bold counts as large text, so white on the accent passes.
+   */
+  size?: 'regular' | 'compact';
 }
 
 export function Button({
@@ -26,6 +31,7 @@ export function Button({
   disabled = false,
   loading = false,
   accessibilityHint,
+  size = 'regular',
 }: ButtonProps) {
   const colors = useThemeColors();
   const { font } = usePreferences();
@@ -50,6 +56,7 @@ export function Button({
           borderWidth: StyleSheet.hairlineWidth * 2,
         },
         variant === 'link' && styles.link,
+        size === 'compact' && variant !== 'link' && styles.compact,
         (pressed || inactive) && styles.dimmed,
       ]}>
       {loading ? (
@@ -73,6 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   link: { minHeight: 44, paddingHorizontal: spacing.xs },
+  compact: { minHeight: 44, borderRadius: 22, paddingHorizontal: spacing.lg },
   content: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   dimmed: { opacity: 0.6 },
 });

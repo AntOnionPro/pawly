@@ -9,18 +9,25 @@ import { radius, spacing } from '@/theme/typography';
 
 import { formatDuration, type ComposerMedia } from './media';
 
+/** What a tile shows: a chosen file, or one already saved (`uri` is then its thumbnail). */
+export type MediaTile = Pick<ComposerMedia, 'uri' | 'kind' | 'duration'>;
+
 interface MediaStripProps {
-  media: ComposerMedia[];
+  media: MediaTile[];
   onRemove: (index: number) => void;
+  /** Shows a last "+" tile that adds more files. */
+  onAdd?: () => void;
+  /** Read by screen readers on the "+" tile (for example, how many files are left). */
+  addHint?: string;
 }
 
 const SIZE = 96;
 
-/** Previews of the photos and videos chosen for a new post, each with a remove button. */
-export function MediaStrip({ media, onRemove }: MediaStripProps) {
+/** Previews of the photos and videos of a post, each with a remove button, and "+" to add. */
+export function MediaStrip({ media, onRemove, onAdd, addHint }: MediaStripProps) {
   const { t } = useTranslation();
   const colors = useThemeColors();
-  if (media.length === 0) return null;
+  if (media.length === 0 && !onAdd) return null;
   return (
     <ScrollView
       horizontal
@@ -53,6 +60,21 @@ export function MediaStrip({ media, onRemove }: MediaStripProps) {
           </Pressable>
         </View>
       ))}
+      {onAdd ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('posts.addMedia')}
+          accessibilityHint={addHint}
+          onPress={onAdd}
+          style={({ pressed }) => [
+            styles.tile,
+            styles.add,
+            { borderColor: colors.textSecondary },
+            pressed && styles.pressed,
+          ]}>
+          <Icon name="add" size={32} color={colors.text} />
+        </Pressable>
+      ) : null}
     </ScrollView>
   );
 }
@@ -69,4 +91,6 @@ const styles = StyleSheet.create({
   video: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xs },
   remove: { position: 'absolute', top: spacing.xs, right: spacing.xs },
   removeBackground: { backgroundColor: palette.black, borderRadius: 12 },
+  add: { borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  pressed: { opacity: 0.6 },
 });
