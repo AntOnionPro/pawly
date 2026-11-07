@@ -260,6 +260,7 @@ const en = {
     textCount: '{{used}}/{{max}}',
     tagPets: 'Tag your pets',
     publish: 'Publish',
+    seeMore: 'see more',
     publishing: 'Publishing…',
     edit: 'Edit post',
     save: 'Save',

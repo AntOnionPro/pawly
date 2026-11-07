@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { avatarUrl, useAuth } from '@/auth/AuthProvider';
 import { Avatar } from '@/components/Avatar';
+import { CollapsibleText } from '@/components/CollapsibleText';
 import { Icon } from '@/components/Icon';
 import { IconButton } from '@/components/IconButton';
 import { ThemedText } from '@/components/ThemedText';
@@ -35,9 +36,14 @@ interface PostCardProps {
   onDelete?: () => void;
   /** Reports the post (for posts by someone else). */
   onReport?: () => void;
+  /** The whole text (the post page); otherwise long texts are cut with "See more". */
+  fullText?: boolean;
 }
 
-/** Author, date, photos and videos, text and tagged pets of a post. */
+/**
+ * A post, in reading order: author and date, text, tagged pets, photos and videos, and the
+ * paw prints, comments and reposts with their counts.
+ */
 export function PostCard({
   post,
   onPressPet,
@@ -50,12 +56,13 @@ export function PostCard({
   onEdit,
   onDelete,
   onReport,
+  fullText = false,
 }: PostCardProps) {
   const { t } = useTranslation();
   const { client } = useAuth();
-  const colors = useThemeColors();
   const author = post.author;
   const date = useRelativeDate(post.created);
+  const pets = <TaggedPets post={post} onPressPet={onPressPet} />;
 
   return (
     <View style={styles.card}>
@@ -94,6 +101,14 @@ export function PostCard({
           <IconButton icon="flag" size={20} label={t('report.post')} onPress={onReport} />
         ) : null}
       </View>
+      {post.text ? (
+        fullText ? (
+          <ThemedText>{post.text}</ThemedText>
+        ) : (
+          <CollapsibleText>{post.text}</CollapsibleText>
+        )
+      ) : null}
+      {pets}
       <MediaCarousel record={post} />
       <View style={styles.actions}>
         <PawButton count={post.pawCount} pawed={post.pawedByMe} onPress={onPaw} />
@@ -105,7 +120,15 @@ export function PostCard({
           </View>
         ) : null}
       </View>
-      {post.text ? <ThemedText>{post.text}</ThemedText> : null}
+    </View>
+  );
+}
+
+/** Chips of the pets tagged in a post, which open their pages. */
+function TaggedPets({ post, onPressPet }: Pick<PostCardProps, 'post' | 'onPressPet'>) {
+  const colors = useThemeColors();
+  return (
+    <>
       {post.pets.length > 0 ? (
         <View style={styles.pets}>
           {post.pets.map((pet) => (
@@ -127,7 +150,7 @@ export function PostCard({
           ))}
         </View>
       ) : null}
-    </View>
+    </>
   );
 }
 

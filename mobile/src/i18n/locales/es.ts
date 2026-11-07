@@ -264,6 +264,7 @@ const es: Resources = {
     textCount: '{{used}}/{{max}}',
     tagPets: 'Etiqueta a tus mascotas',
     publish: 'Publicar',
+    seeMore: 'ver más',
     publishing: 'Publicando…',
     edit: 'Editar publicación',
     save: 'Guardar',
