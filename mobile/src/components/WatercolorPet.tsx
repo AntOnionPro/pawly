@@ -4,7 +4,8 @@ import { Image, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useColorSchemeName } from '@/preferences/PreferencesProvider';
 
 /**
- * The watercolor cats and dogs (cut out of their painted background), with width / height.
+ * The watercolor cats, dogs and rabbits (cut out of their painted background), with
+ * width / height.
  */
 export const WATERCOLOR_PETS = {
   blackCat: { source: require('../../assets/images/cats/gato-negro.png'), ratio: 370 / 487 },
@@ -16,6 +17,11 @@ export const WATERCOLOR_PETS = {
     source: require('../../assets/images/dogs/perro-salchicha.png'),
     ratio: 394 / 461,
   },
+  lopRabbit: {
+    source: require('../../assets/images/rabbits/conejo-orejon.png'),
+    ratio: 227 / 339,
+  },
+  grayRabbit: { source: require('../../assets/images/rabbits/conejo-gris.png'), ratio: 233 / 354 },
 } as const;
 export type WatercolorPetName = keyof typeof WATERCOLOR_PETS;
 
@@ -40,7 +46,7 @@ interface WatercolorPetProps {
 }
 
 /**
- * One of the watercolor cats and dogs, chosen at random each time the screen opens. It goes last in a
+ * One of the watercolor cats, dogs and rabbits, chosen at random each time the screen opens. It goes last in a
  * screen's content, at the bottom, so it never sits under text. Decorative: screen readers
  * ignore it, and it takes no touches.
  */
