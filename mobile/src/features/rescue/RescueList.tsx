@@ -23,6 +23,7 @@ import { TabBar } from '@/components/TabBar';
 import { ThemedText } from '@/components/ThemedText';
 import { useBlockedIds } from '@/features/moderation/hooks';
 import { usePreferences, useThemeColors } from '@/preferences/PreferencesProvider';
+import { column, tabBarTopSpace, WIDE_COLUMN_WIDTH } from '@/theme/layout';
 import { radius, spacing } from '@/theme/typography';
 import { DATE_RANGES, type DateRange } from '@/utils/dateRange';
 import { useDebouncedValue } from '@/utils/useDebouncedValue';
@@ -197,7 +198,10 @@ export function RescueList() {
     const selectedReport = reports.find((report) => report.id === selected?.id);
     return (
       <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: colors.background }]}>
-        <View style={styles.mapHeader}>{header}</View>
+        <View
+          style={[styles.mapHeader, styles.column, { paddingTop: spacing.md + tabBarTopSpace() }]}>
+          {header}
+        </View>
         <View style={styles.mapArea}>
           <RescueMap
             reports={reports}
@@ -228,7 +232,11 @@ export function RescueList() {
         testID="rescue"
         data={reports}
         keyExtractor={(report) => report.id}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          styles.column,
+          { paddingTop: spacing.md + tabBarTopSpace() },
+        ]}
         ListHeaderComponent={header}
         ListEmptyComponent={empty}
         ListFooterComponent={
@@ -261,6 +269,7 @@ export function RescueList() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  column: column(WIDE_COLUMN_WIDTH),
   content: {
     padding: spacing.md,
     paddingBottom: FLOATING_ACTION_SPACE,

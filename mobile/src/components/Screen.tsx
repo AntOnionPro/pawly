@@ -10,6 +10,7 @@ import {
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { column, tabBarTopSpace } from '@/theme/layout';
 import { spacing } from '@/theme/typography';
 import { useHeaderOverlap } from '@/utils/useHeaderOverlap';
 
@@ -20,6 +21,8 @@ interface ScreenProps extends PropsWithChildren {
   footer?: ReactNode;
   scrollRef?: Ref<ScrollViewInstance>;
   onContentSizeChange?: (width: number, height: number) => void;
+  /** A tab screen: on the web, it leaves room at the top for the floating tab bar. */
+  tab?: boolean;
 }
 
 /** Scrollable screen with the theme background, safe area padding and room for the keyboard. */
@@ -29,6 +32,7 @@ export function Screen({
   footer,
   scrollRef,
   onContentSizeChange,
+  tab = false,
 }: ScreenProps) {
   const colors = useThemeColors();
   // The keyboard is measured from the top of the window: the offset is where this screen
@@ -53,13 +57,15 @@ export function Screen({
             onLayout={(event) => setFrameHeight(event.nativeEvent.layout.height)}
             contentContainerStyle={[
               styles.content,
+              styles.column,
+              tab && { paddingTop: spacing.md + tabBarTopSpace() },
               visibleHeight > 0 ? { minHeight: visibleHeight } : styles.grow,
             ]}
             contentInsetAdjustmentBehavior="automatic"
             keyboardShouldPersistTaps="handled">
             {children}
           </ScrollView>
-          {footer}
+          {footer ? <View style={styles.column}>{footer}</View> : null}
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
@@ -70,4 +76,5 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: spacing.md, gap: spacing.md },
   grow: { flexGrow: 1 },
+  column: column(),
 });

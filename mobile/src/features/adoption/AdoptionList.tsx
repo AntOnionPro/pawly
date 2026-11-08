@@ -13,6 +13,7 @@ import { SearchField } from '@/components/SearchField';
 import { ThemedText } from '@/components/ThemedText';
 import { useBlockedIds } from '@/features/moderation/hooks';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { column, tabBarTopSpace, WIDE_COLUMN_WIDTH } from '@/theme/layout';
 import { spacing } from '@/theme/typography';
 import { useDebouncedValue } from '@/utils/useDebouncedValue';
 
@@ -60,7 +61,11 @@ export function AdoptionList() {
         testID="adoptions"
         data={adoptions}
         keyExtractor={(adoption) => adoption.id}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          styles.column,
+          { paddingTop: spacing.md + tabBarTopSpace() },
+        ]}
         ListHeaderComponent={
           <View style={styles.top}>
             <View style={styles.header}>
@@ -131,6 +136,7 @@ export function AdoptionList() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  column: column(WIDE_COLUMN_WIDTH),
   content: {
     padding: spacing.md,
     paddingBottom: FLOATING_ACTION_SPACE,

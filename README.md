@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 7.5, Design and details (done, pending the `v0.8.5` release to `main`).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 7.5, Design and details (in progress: the Adoption and Rescue rows, [#120](https://github.com/AntOnionPro/pawly/issues/120), are left before the `v0.8.5` release to `main`).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -21,13 +21,13 @@ Current stage: **Stage 7.5, Design and details (done, pending the `v0.8.5` relea
 | 5 | Adoption | Done |
 | 6 | Rescue | Done |
 | 7 | Moderation | Done |
-| 7.5 | Design and details | Done |
+| 7.5 | Design and details | In progress |
 | 8 | Infrastructure and web | Postponed |
 | 9 | Launch | Postponed |
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83)), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)), the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)), the sign-in cat needing a scroll to be seen whole ([#113](https://github.com/AntOnionPro/pawly/issues/113)), watercolor dogs on sign-in ([#115](https://github.com/AntOnionPro/pawly/issues/115)) and watercolor rabbits on sign-in ([#117](https://github.com/AntOnionPro/pawly/issues/117)). It is released as `v0.8.5`.
+Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83)), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)), the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)), the sign-in cat needing a scroll to be seen whole ([#113](https://github.com/AntOnionPro/pawly/issues/113)), watercolor dogs on sign-in ([#115](https://github.com/AntOnionPro/pawly/issues/115)), watercolor rabbits on sign-in ([#117](https://github.com/AntOnionPro/pawly/issues/117)) and the computer view of the web ([#119](https://github.com/AntOnionPro/pawly/issues/119)). It will be released as `v0.8.5`.
 
 ## Features
 
@@ -116,7 +116,7 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
 - Font: Ubuntu (light, regular, medium and bold), also in the top bars and the tab bar. In settings it can be changed to the phone's own font (San Francisco on iOS, Roboto on Android). What the system draws (alerts, keyboard, share sheet) always uses the system font.
 - The reaction is a paw print, not a heart.
 - Buttons: a form's main action ("Save", "Publish") is in the top bar, on the right: Liquid Glass tinted with the accent on iOS 26, bold text on earlier iOS, a Material 3 text button on Android and a compact button on the web. The main action of Adoption and Rescue ("Put up for adoption", "Report a case") floats at the bottom right: Liquid Glass on iOS 26, a Material 3 extended FAB on Android and a pill with a shadow elsewhere. Other actions in details and profiles are compact buttons side by side. The Post tab has no top bar, so "Publish" is a glass button at the top of the screen. Every button keeps its accessible name and a touch area of at least 44 points.
-- The desktop web version has the lowest priority.
+- The desktop web version has the lowest priority. On a wide screen the content goes in a centered column (640 px, and 760 px for the Adoption and Rescue lists), so photos and buttons do not stretch to the width of the window. On the web the tab bar floats at the top, and the tabs leave room for it.
 
 ### Colors
 

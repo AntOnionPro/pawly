@@ -17,6 +17,7 @@ import { useRescuePhoto } from '@/features/rescue/RescueCard';
 import { useAskForPushOnce } from '@/features/push/hooks';
 import { mediaKind, mediaUrl } from '@/features/posts/api';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { column } from '@/theme/layout';
 import { radius, spacing } from '@/theme/typography';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
@@ -230,7 +231,7 @@ export function NotificationList() {
         data={notifications}
         keyExtractor={(notification) => notification.id}
         renderItem={({ item }) => <NotificationRow notification={item} />}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, styles.column]}
         ListEmptyComponent={
           isPending ? (
             <Loading />
@@ -261,6 +262,7 @@ export function NotificationList() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  column: column(),
   content: { padding: spacing.sm, gap: spacing.xs, flexGrow: 1 },
   row: {
     flexDirection: 'row',

@@ -30,7 +30,7 @@ export default function ProfileScreen() {
   );
 
   return (
-    <Screen>
+    <Screen tab>
       {status === 'signedIn' && user ? (
         <>
           <ProfileHeader

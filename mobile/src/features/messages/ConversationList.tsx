@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { useBlockedIds } from '@/features/moderation/hooks';
 import { useAskForPushOnce } from '@/features/push/hooks';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { column } from '@/theme/layout';
 import { spacing } from '@/theme/typography';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
@@ -98,7 +99,7 @@ export function ConversationList() {
         data={conversations}
         keyExtractor={(conversation) => conversation.id}
         renderItem={({ item }) => <ConversationRow conversation={item} />}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, styles.column]}
         ListEmptyComponent={
           isPending ? (
             <Loading />
@@ -129,6 +130,7 @@ export function ConversationList() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  column: column(),
   content: { padding: spacing.md, gap: spacing.md, flexGrow: 1 },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, minHeight: 56 },
   text: { flex: 1, gap: 2 },

@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8.5` a `main`).** Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 7.5, Diseño y detalles (en curso: faltan las filas de Adopción y Rescate, [#120](https://github.com/AntOnionPro/pawly/issues/120), antes de la release `v0.8.5` a `main`).** Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -21,13 +21,13 @@ Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8
 | 5 | Adopción | Hecho |
 | 6 | Rescate | Hecho |
 | 7 | Moderación | Hecho |
-| 7.5 | Diseño y detalles | Hecho |
+| 7.5 | Diseño y detalles | En curso |
 | 8 | Infraestructura y web | Pospuesta |
 | 9 | Lanzamiento | Pospuesta |
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83)), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84)), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)), el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)), el gato de iniciar sesión que obligaba a deslizar para verlo completo ([#113](https://github.com/AntOnionPro/pawly/issues/113)), perros en acuarela al iniciar sesión ([#115](https://github.com/AntOnionPro/pawly/issues/115)) y conejos en acuarela al iniciar sesión ([#117](https://github.com/AntOnionPro/pawly/issues/117)). Se publica como `v0.8.5`.
+Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83)), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84)), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)), el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)), el gato de iniciar sesión que obligaba a deslizar para verlo completo ([#113](https://github.com/AntOnionPro/pawly/issues/113)), perros en acuarela al iniciar sesión ([#115](https://github.com/AntOnionPro/pawly/issues/115)), conejos en acuarela al iniciar sesión ([#117](https://github.com/AntOnionPro/pawly/issues/117)) y la vista de computadora en la web ([#119](https://github.com/AntOnionPro/pawly/issues/119)). Se publicará como `v0.8.5`.
 
 ## Funcionalidades
 
@@ -116,7 +116,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de
 - Letra: Ubuntu (ligera, normal, media y negrita), también en las barras de arriba y en la de pestañas. En ajustes se puede cambiar por la letra del celular (San Francisco en iOS, Roboto en Android). Lo que dibuja el sistema (avisos, teclado, menú de compartir) siempre usa la letra del sistema.
 - La reacción es una huella, no un corazón.
 - Botones: la acción principal de un formulario ("Guardar", "Publicar") está en la barra superior, a la derecha: Liquid Glass teñido con el acento en iOS 26, texto en negritas en iOS anteriores, un botón de texto de Material 3 en Android y un botón compacto en la web. La acción principal de Adopción y Rescate ("Dar en adopción", "Reportar un caso") flota abajo a la derecha: Liquid Glass en iOS 26, un FAB extendido de Material 3 en Android y una píldora con sombra en lo demás. Las demás acciones en detalles y perfiles son botones compactos uno junto a otro. La pestaña Publicar no tiene barra superior, así que "Publicar" es un botón de vidrio arriba de la pantalla. Todos los botones conservan su nombre accesible y un área de toque de al menos 44 puntos.
-- La versión web para computadora es la de menor prioridad.
+- La versión web para computadora es la de menor prioridad. En una pantalla ancha el contenido va en una columna centrada (640 px, y 760 px en las listas de Adopción y Rescate), así que las fotos y los botones no se estiran al ancho de la ventana. En la web la barra de pestañas flota arriba, y las pestañas le dejan espacio.
 
 ### Colores
 
