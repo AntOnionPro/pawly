@@ -14,6 +14,7 @@ import { MessagesButton } from '@/features/messages/MessagesButton';
 import { isHiddenPost, useBlockedIds } from '@/features/moderation/hooks';
 import { NotificationsButton } from '@/features/notifications/NotificationsButton';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { column, tabBarTopSpace } from '@/theme/layout';
 import { spacing } from '@/theme/typography';
 
 import type { Post, PostFilter } from './api';
@@ -83,7 +84,11 @@ export function FeedList() {
         viewabilityConfig={VIEWABILITY}
         onViewableItemsChanged={onViewableItemsChanged}
         extraData={playingId}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          styles.column,
+          { paddingTop: spacing.md + tabBarTopSpace() },
+        ]}
         ItemSeparatorComponent={() => (
           <View style={[styles.separator, { backgroundColor: colors.border }]} />
         )}
@@ -160,6 +165,7 @@ export function FeedList() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: spacing.md, flexGrow: 1 },
+  column: column(),
   top: { gap: spacing.sm, marginBottom: spacing.md },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   title: { flex: 1 },

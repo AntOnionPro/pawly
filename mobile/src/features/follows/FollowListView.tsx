@@ -7,6 +7,7 @@ import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
 import { UserRow } from '@/features/users/UserRow';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { column } from '@/theme/layout';
 import { spacing } from '@/theme/typography';
 
 import type { FollowList } from './api';
@@ -28,7 +29,7 @@ export function FollowListView({ userId, list }: { userId: string; list: FollowL
         contentInsetAdjustmentBehavior="automatic"
         data={users}
         keyExtractor={(user) => user.id}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, styles.column]}
         renderItem={({ item }) => (
           <UserRow
             user={item}
@@ -60,6 +61,7 @@ export function FollowListView({ userId, list }: { userId: string; list: FollowL
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  column: column(),
   content: { padding: spacing.md, gap: spacing.sm, flexGrow: 1 },
   empty: { textAlign: 'center', padding: spacing.lg },
 });

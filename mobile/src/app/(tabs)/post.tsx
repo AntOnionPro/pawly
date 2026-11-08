@@ -12,7 +12,7 @@ export default function PostScreen() {
   const { status } = useAuth();
   const { petId } = useLocalSearchParams<{ petId?: string }>();
   return (
-    <Screen>
+    <Screen tab>
       {status === 'signedIn' ? (
         <PostComposer
           // A new pet to tag starts a fresh composer.

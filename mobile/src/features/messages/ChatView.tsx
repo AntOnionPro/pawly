@@ -21,6 +21,7 @@ import { Loading, LoadError } from '@/components/QueryState';
 import { ThemedText } from '@/components/ThemedText';
 import { useBlockAction, useBlockedIds, useReportAction } from '@/features/moderation/hooks';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
+import { column } from '@/theme/layout';
 import { radius, spacing } from '@/theme/typography';
 import { confirm } from '@/utils/confirm';
 import { parseServerDate } from '@/utils/time';
@@ -167,7 +168,7 @@ export function ChatView({ conversationId }: { conversationId: string }) {
               data={items}
               keyExtractor={(message) => message.id}
               renderItem={({ item }) => <Bubble message={item} mine={item.senderId === user?.id} />}
-              contentContainerStyle={styles.list}
+              contentContainerStyle={[styles.list, styles.column]}
               onEndReachedThreshold={0.3}
               onEndReached={() => {
                 if (messages.hasNextPage && !messages.isFetchingNextPage) {
@@ -181,24 +182,26 @@ export function ChatView({ conversationId }: { conversationId: string }) {
               }
             />
           )}
-          {other && iBlocked ? (
-            <BlockedNotice other={other} />
-          ) : (
-            <ComposerBar
-              value={text}
-              onChangeText={(value) => {
-                setText(value);
-                if (send.error) send.reset();
-              }}
-              onSend={() => void submit()}
-              sending={send.isPending}
-              label={t('messages.label')}
-              placeholder={t('messages.placeholder')}
-              sendLabel={t('messages.send')}
-              maxLength={MESSAGE_TEXT_MAX}
-              error={send.error ? t(messageErrorKey(send.error)) : null}
-            />
-          )}
+          <View style={styles.column}>
+            {other && iBlocked ? (
+              <BlockedNotice other={other} />
+            ) : (
+              <ComposerBar
+                value={text}
+                onChangeText={(value) => {
+                  setText(value);
+                  if (send.error) send.reset();
+                }}
+                onSend={() => void submit()}
+                sending={send.isPending}
+                label={t('messages.label')}
+                placeholder={t('messages.placeholder')}
+                sendLabel={t('messages.send')}
+                maxLength={MESSAGE_TEXT_MAX}
+                error={send.error ? t(messageErrorKey(send.error)) : null}
+              />
+            )}
+          </View>
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
@@ -221,6 +224,7 @@ function BlockedNotice({ other }: { other: User }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  column: column(),
   header: {
     flexDirection: 'row',
     alignItems: 'center',
