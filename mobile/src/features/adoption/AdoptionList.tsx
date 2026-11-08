@@ -21,6 +21,9 @@ import { AdoptionCard } from './AdoptionCard';
 import { AdoptionFilters } from './AdoptionFilters';
 import { useAdoptionList } from './hooks';
 
+/** Searches once the person stops typing for this long. */
+const SEARCH_DELAY_MS = 350;
+
 /**
  * Adoption tab: a list of pets up for adoption, newest first, with a search box and filters by
  * species, size, sex and date. Loads more at the end; pull down to refresh.
@@ -33,7 +36,7 @@ export function AdoptionList() {
   const [choices, setChoices] = useState<AdoptionFilter>({});
   const [search, setSearch] = useState('');
   // Searches once the person stops typing.
-  const query = useDebouncedValue(search.trim());
+  const query = useDebouncedValue(search.trim(), SEARCH_DELAY_MS);
   const filter: AdoptionFilter = query ? { ...choices, query } : choices;
   const {
     data,

@@ -34,6 +34,9 @@ import { mapsAvailable, RescueMap } from './maps';
 import { useDeviceLocation, type DeviceLocationStatus } from './useDeviceLocation';
 
 type KindTab = RescueKind | 'all';
+
+/** Searches once the person stops typing for this long. */
+const SEARCH_DELAY_MS = 350;
 type ListedReport = RescueReport & { distanceKm?: number };
 
 /** Without the location: invite to use it (or explain how to turn it on). */
@@ -83,7 +86,7 @@ export function RescueList() {
   const [since, setSince] = useState<DateRange | 'any'>('any');
   const [search, setSearch] = useState('');
   // Searches once the person stops typing.
-  const searchText = useDebouncedValue(search.trim());
+  const searchText = useDebouncedValue(search.trim(), SEARCH_DELAY_MS);
   const [view, setView] = useState<'list' | 'map'>('list');
   const [selected, setSelected] = useState<RescueReport | null>(null);
   const location = useDeviceLocation();
