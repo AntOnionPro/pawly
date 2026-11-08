@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/Screen';
-import { WatercolorCat } from '@/components/WatercolorCat';
+import { WatercolorPet } from '@/components/WatercolorPet';
 import { Wordmark } from '@/components/Wordmark';
 import { SignInForm } from '@/features/auth/SignInForm';
 import { spacing } from '@/theme/typography';
@@ -19,7 +19,7 @@ export default function SignInScreen() {
         onForgotPassword={() => router.push('/forgot-password')}
         onSignUp={() => router.replace('/sign-up')}
       />
-      <WatercolorCat fit />
+      <WatercolorPet fit />
     </Screen>
   );
 }

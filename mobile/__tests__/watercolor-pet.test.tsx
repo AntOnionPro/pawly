@@ -5,7 +5,7 @@ import { Text } from 'react-native';
 import SignInScreen from '@/app/sign-in';
 import SignUpScreen from '@/app/sign-up';
 import { Screen } from '@/components/Screen';
-import { catsFor } from '@/components/WatercolorCat';
+import { petsFor } from '@/components/WatercolorPet';
 import { PREFERENCES_KEY } from '@/preferences/storage';
 
 import { renderWith } from '../test-utils/render';
@@ -23,21 +23,21 @@ async function withTheme(theme: 'light' | 'dark') {
 }
 
 /** Which cat is on screen (hidden from screen readers, so the query includes hidden ones). */
-function shownCat() {
-  const id = screen.getByTestId(/^watercolor-cat-/, { includeHiddenElements: true }).props
+function shownPet() {
+  const id = screen.getByTestId(/^watercolor-pet-/, { includeHiddenElements: true }).props
     .testID as string;
-  return id.replace('watercolor-cat-', '');
+  return id.replace('watercolor-pet-', '');
 }
 
 /** Gives the sign-in cat the room left under the form, as the layout would. */
-async function roomForCat(height: number) {
-  await fireEvent(screen.getByTestId('watercolor-cat', { includeHiddenElements: true }), 'layout', {
+async function roomForPet(height: number) {
+  await fireEvent(screen.getByTestId('watercolor-pet', { includeHiddenElements: true }), 'layout', {
     nativeEvent: { layout: { x: 0, y: 0, width: 390, height } },
   });
 }
 
-function catImage() {
-  return screen.queryByTestId(/^watercolor-cat-/, { includeHiddenElements: true });
+function petImage() {
+  return screen.queryByTestId(/^watercolor-pet-/, { includeHiddenElements: true });
 }
 
 beforeEach(async () => {
@@ -56,29 +56,32 @@ describe('sign in and sign up', () => {
     expect(screen.getByLabelText('Correo')).toBeOnTheScreen();
   });
 
-  it('show a watercolor cat at the end, hidden from screen readers and touches', async () => {
+  it('show a watercolor cat or dog at the end, hidden from screen readers and touches', async () => {
     jest.spyOn(Math, 'random').mockReturnValue(0);
     await renderWith(<SignUpScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
-    expect(screen.queryByTestId('watercolor-cat')).toBeNull();
-    const cat = screen.getByTestId('watercolor-cat', { includeHiddenElements: true });
+    expect(screen.queryByTestId('watercolor-pet')).toBeNull();
+    const cat = screen.getByTestId('watercolor-pet', { includeHiddenElements: true });
     expect(cat).toHaveProp('pointerEvents', 'none');
     expect(cat).toHaveProp('importantForAccessibility', 'no-hide-descendants');
     expect(cat).toHaveProp('accessibilityElementsHidden', true);
     // Pushed to the bottom of the screen: it never sits under the fields.
     expect(cat).toHaveStyle({ marginTop: 'auto' });
-    expect(shownCat()).toBe('black');
+    expect(shownPet()).toBe('blackCat');
   });
 
   it.each([
-    [0.5, 'siamese'],
-    [0.99, 'ginger'],
-  ])('choose the cat at random (%s → %s)', async (random, name) => {
+    [0.2, 'siameseCat'],
+    [0.4, 'gingerCat'],
+    [0.5, 'husky'],
+    [0.7, 'pitbull'],
+    [0.99, 'dachshund'],
+  ])('choose a cat or a dog at random (%s → %s)', async (random, name) => {
     jest.spyOn(Math, 'random').mockReturnValue(random);
     await renderWith(<SignInScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
-    await roomForCat(300);
-    expect(shownCat()).toBe(name);
+    await roomForPet(300);
+    expect(shownPet()).toBe(name);
   });
 
   it('never show the black cat on the black of the dark theme', async () => {
@@ -86,14 +89,22 @@ describe('sign in and sign up', () => {
     jest.spyOn(Math, 'random').mockReturnValue(0);
     await renderWith(<SignInScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
-    await roomForCat(300);
-    expect(shownCat()).toBe('siamese');
-    expect(catsFor('dark')).not.toContain('black');
-    expect(catsFor('light')).toEqual(['black', 'siamese', 'ginger']);
+    await roomForPet(300);
+    expect(shownPet()).toBe('siameseCat');
+    expect(petsFor('dark')).not.toContain('blackCat');
+    expect(petsFor('dark')).toHaveLength(5);
+    expect(petsFor('light')).toEqual([
+      'blackCat',
+      'siameseCat',
+      'gingerCat',
+      'husky',
+      'pitbull',
+      'dachshund',
+    ]);
   });
 });
 
-describe('the sign-in cat fits the screen', () => {
+describe('the sign-in pet fits the screen', () => {
   beforeEach(() => {
     jest.spyOn(Math, 'random').mockReturnValue(0);
   });
@@ -101,29 +112,29 @@ describe('the sign-in cat fits the screen', () => {
   it('takes the room left under the form, up to 260 points, so nothing needs scrolling', async () => {
     await renderWith(<SignInScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
-    const room = screen.getByTestId('watercolor-cat', { includeHiddenElements: true });
+    const room = screen.getByTestId('watercolor-pet', { includeHiddenElements: true });
     // It takes exactly the room left: the image never makes it taller.
     expect(room).toHaveStyle({ flex: 1 });
-    await roomForCat(400);
-    expect(catImage()).toHaveStyle({ height: 260 });
-    await roomForCat(150);
-    expect(catImage()).toHaveStyle({ height: 150 });
+    await roomForPet(400);
+    expect(petImage()).toHaveStyle({ height: 260 });
+    await roomForPet(150);
+    expect(petImage()).toHaveStyle({ height: 150 });
   });
 
   it('does not show when there is too little room (a small phone, or the keyboard open)', async () => {
     await renderWith(<SignInScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
-    await roomForCat(60);
-    expect(catImage()).toBeNull();
+    await roomForPet(60);
+    expect(petImage()).toBeNull();
   });
 
   it('on sign up it goes after the content, which scrolls anyway', async () => {
     await renderWith(<SignUpScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
-    expect(screen.getByTestId('watercolor-cat', { includeHiddenElements: true })).toHaveStyle({
+    expect(screen.getByTestId('watercolor-pet', { includeHiddenElements: true })).toHaveStyle({
       marginTop: 'auto',
     });
-    expect(catImage()).toBeOnTheScreen();
+    expect(petImage()).toBeOnTheScreen();
   });
 });
 
