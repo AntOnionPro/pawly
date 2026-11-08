@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { createQueryClient } from '@/api/queryClient';
+import { useResetOnAccountChange } from '@/api/useResetOnAccountChange';
 import { AuthProvider, useAuth } from '@/auth/AuthProvider';
 import { usePushRegistration, usePushTaps } from '@/features/push/hooks';
 import { useRescueAlertSync } from '@/features/rescue/alertHooks';
@@ -46,6 +47,7 @@ function PushHandlers() {
 }
 
 function RootNavigator() {
+  useResetOnAccountChange();
   const { ready } = usePreferences();
   const { status } = useAuth();
   const scheme = useColorSchemeName();

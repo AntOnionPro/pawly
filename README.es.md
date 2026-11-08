@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8.5` a `main`).** Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 7.5, Diseño y detalles (en progreso).** Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -21,13 +21,13 @@ Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8
 | 5 | Adopción | Hecho |
 | 6 | Rescate | Hecho |
 | 7 | Moderación | Hecho |
-| 7.5 | Diseño y detalles | Hecho |
+| 7.5 | Diseño y detalles | En progreso |
 | 8 | Infraestructura y web | Pospuesta |
 | 9 | Lanzamiento | Pospuesta |
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83)), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84)), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)) y botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)). Se publica como `v0.8.5`.
+Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87), hecho), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88), hecho), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89), hecho), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90), hecho), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91), hecho), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92), hecho), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93), hecho), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94), hecho), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107), hecho), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)) y el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)). Se publica como `v0.8.5`.
 
 ## Funcionalidades
 

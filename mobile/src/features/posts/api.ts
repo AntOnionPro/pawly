@@ -1,5 +1,5 @@
 import type PocketBase from 'pocketbase';
-import type { RecordModel } from 'pocketbase';
+import { ClientResponseError, type RecordModel } from 'pocketbase';
 
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toPet, type Pet } from '@/features/pets/api';
@@ -184,23 +184,32 @@ export async function addPaw(client: PocketBase, userId: string, postId: string)
   return paw.id;
 }
 
-/** Removes the user's paw print from a post (looks it up if the id is not known yet). */
+/**
+ * Removes the user's paw print from a post (looks it up if the id is not known yet). A paw print
+ * that is already gone is not an error.
+ */
 export async function removePaw(
   client: PocketBase,
   userId: string,
   postId: string,
   pawId: string | null,
 ): Promise<void> {
-  const id =
-    pawId ??
-    (
-      await client
-        .collection(PAWS)
-        .getFirstListItem(
-          client.filter('user = {:user} && post = {:post}', { user: userId, post: postId }),
-        )
-    ).id;
-  await client.collection(PAWS).delete(id);
+  try {
+    const id =
+      pawId ??
+      (
+        await client
+          .collection(PAWS)
+          .getFirstListItem(
+            client.filter('user = {:user} && post = {:post}', { user: userId, post: postId }),
+          )
+      ).id;
+    await client.collection(PAWS).delete(id);
+  } catch (error) {
+    // Already gone (for example, taken back from another phone): nothing left to remove.
+    if (error instanceof ClientResponseError && error.status === 404) return;
+    throw error;
+  }
 }
 
 /**
