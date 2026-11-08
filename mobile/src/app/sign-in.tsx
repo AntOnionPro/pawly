@@ -19,7 +19,7 @@ export default function SignInScreen() {
         onForgotPassword={() => router.push('/forgot-password')}
         onSignUp={() => router.replace('/sign-up')}
       />
-      <WatercolorCat />
+      <WatercolorCat fit />
     </Screen>
   );
 }
