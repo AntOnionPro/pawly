@@ -16,21 +16,39 @@ export function catsFor(scheme: 'light' | 'dark'): WatercolorCatName[] {
   return scheme === 'dark' ? ['siamese', 'ginger'] : ['black', 'siamese', 'ginger'];
 }
 
+/** The tallest the cat is drawn, and the least room it needs to be worth showing. */
+const MAX_HEIGHT = 260;
+const MIN_HEIGHT = 72;
+
+interface WatercolorCatProps {
+  /**
+   * Fits in the room left at the bottom of the screen, so nothing needs scrolling to see it
+   * whole (and does not show when there is too little room, for example with the keyboard
+   * open). Without it the cat goes after the content (screens that scroll anyway).
+   */
+  fit?: boolean;
+}
+
 /**
  * One of the watercolor cats, chosen at random each time the screen opens. It goes last in a
- * screen's content: pushed to the bottom when the content is short, after it when it is long,
- * so it never sits under text. Decorative: screen readers ignore it, and it takes no touches.
+ * screen's content, at the bottom, so it never sits under text. Decorative: screen readers
+ * ignore it, and it takes no touches.
  */
-export function WatercolorCat() {
+export function WatercolorCat({ fit = false }: WatercolorCatProps) {
   const scheme = useColorSchemeName();
   const { width, height } = useWindowDimensions();
   const [name] = useState(() => {
     const cats = catsFor(scheme);
     return cats[Math.floor(Math.random() * cats.length)] ?? 'siamese';
   });
+  // The room left under the content, once measured (only when fitting).
+  const [room, setRoom] = useState<number | null>(null);
   const cat = WATERCOLOR_CATS[name];
-  // About a quarter of the screen high, and never wider than half of it.
-  const catHeight = Math.min(height * 0.28, (width * 0.5) / cat.ratio, 260);
+  // Never wider than half the screen nor taller than MAX_HEIGHT; when fitting, never taller
+  // than the room left; otherwise about a quarter of the screen.
+  const largest = Math.min((width * 0.5) / cat.ratio, MAX_HEIGHT);
+  const catHeight = fit ? Math.min(room ?? 0, largest) : Math.min(height * 0.28, largest);
+  const shown = !fit || catHeight >= MIN_HEIGHT;
   return (
     <View
       testID="watercolor-cat"
@@ -38,18 +56,23 @@ export function WatercolorCat() {
       accessible={false}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={styles.place}>
-      <Image
-        testID={`watercolor-cat-${name}`}
-        source={cat.source}
-        resizeMode="contain"
-        style={{ height: catHeight, width: catHeight * cat.ratio }}
-      />
+      onLayout={fit ? (event) => setRoom(event.nativeEvent.layout.height) : undefined}
+      style={fit ? styles.fill : styles.after}>
+      {shown ? (
+        <Image
+          testID={`watercolor-cat-${name}`}
+          source={cat.source}
+          resizeMode="contain"
+          style={{ height: catHeight, width: catHeight * cat.ratio }}
+        />
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // In a scroll view that grows to the screen, `auto` takes the space left above.
-  place: { marginTop: 'auto', alignItems: 'center' },
+  // After the content: in a screen that fills the visible height, `auto` takes the space above.
+  after: { marginTop: 'auto', alignItems: 'center' },
+  // Takes exactly the room left (flex basis 0: the image never makes it taller).
+  fill: { flex: 1, alignItems: 'center', justifyContent: 'flex-end' },
 });
