@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 7.5, Design and details (in progress).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 7.5, Design and details (done, pending the `v0.8.5` release to `main`).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -21,13 +21,13 @@ Current stage: **Stage 7.5, Design and details (in progress).** Stages 8 and 9 a
 | 5 | Adoption | Done |
 | 6 | Rescue | Done |
 | 7 | Moderation | Done |
-| 7.5 | Design and details | In progress |
+| 7.5 | Design and details | Done |
 | 8 | Infrastructure and web | Postponed |
 | 9 | Launch | Postponed |
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89), done), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90), done), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91), done), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92), done), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93), done), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94), done), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107), done), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108), done) and the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)). It is released as `v0.8.5`.
+Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83)), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)) and the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)). It is released as `v0.8.5`.
 
 ## Features
 
@@ -112,7 +112,7 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
 - Vertical layout like Instagram, with a bottom navigation bar.
 - Tabs: **Home · Adoption · Post (+) · Rescue · Profile**. Search and notifications live in the top bar.
 - Icons only, never emojis, in the interface. Native look on each platform: SF Symbols on iOS and Material Symbols on Android.
-- Logo: a cat that forms the letter P (`mobile/assets/brand/logo.svg`), in pink `#FF2981`, which stays the same whatever palette is chosen. The app icon is the white logo on that pink (with dark and tinted versions on iOS and a monochrome one on Android), and Home shows "Pawly" written with that P (`mobile/assets/brand/wordmark.svg`) in the accent color. Sign-in and sign-up show the logo's cat in the background, barely visible.
+- Logo: a cat that forms the letter P (`mobile/assets/brand/logo.svg`), in pink `#FF2981`, which stays the same whatever palette is chosen. The app icon is the white logo on that pink (with dark and tinted versions on iOS and a monochrome one on Android), and Home shows "Pawly" written with that P (`mobile/assets/brand/wordmark.svg`) in the accent color. Sign-in and sign-up show "Pawly" with that P above the fields and, at the bottom, one of three watercolor cats (black, Siamese and ginger, in `mobile/assets/images/cats/`) chosen at random each time; in the dark theme only the Siamese and the ginger one, since the black one would not show. The cat never sits under text.
 - Font: Ubuntu (light, regular, medium and bold), also in the top bars and the tab bar. In settings it can be changed to the phone's own font (San Francisco on iOS, Roboto on Android). What the system draws (alerts, keyboard, share sheet) always uses the system font.
 - The reaction is a paw print, not a heart.
 - Buttons: a form's main action ("Save", "Publish") is in the top bar, on the right: Liquid Glass tinted with the accent on iOS 26, bold text on earlier iOS, a Material 3 text button on Android and a compact button on the web. The main action of Adoption and Rescue ("Put up for adoption", "Report a case") floats at the bottom right: Liquid Glass on iOS 26, a Material 3 extended FAB on Android and a pill with a shadow elsewhere. Other actions in details and profiles are compact buttons side by side. The Post tab has no top bar, so "Publish" is a glass button at the top of the screen. Every button keeps its accessible name and a touch area of at least 44 points.

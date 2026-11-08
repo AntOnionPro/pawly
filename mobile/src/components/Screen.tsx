@@ -20,8 +20,6 @@ interface ScreenProps extends PropsWithChildren {
   footer?: ReactNode;
   scrollRef?: Ref<ScrollViewInstance>;
   onContentSizeChange?: (width: number, height: number) => void;
-  /** Decoration drawn behind the content (for example `CatSilhouette`). */
-  background?: ReactNode;
 }
 
 /** Scrollable screen with the theme background, safe area padding and room for the keyboard. */
@@ -29,7 +27,6 @@ export function Screen({
   children,
   edges = ['top'],
   footer,
-  background,
   scrollRef,
   onContentSizeChange,
 }: ScreenProps) {
@@ -39,7 +36,6 @@ export function Screen({
   const position = useHeaderOverlap();
   return (
     <SafeAreaView edges={edges} style={[styles.root, { backgroundColor: colors.background }]}>
-      {background}
       <View onLayout={position.onLayout} style={styles.root}>
         <KeyboardAvoidingView
           style={styles.root}
