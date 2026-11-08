@@ -9,26 +9,35 @@ import { Icon } from '@/components/Icon';
 import { FLOATING_ACTION_SPACE, FloatingAction } from '@/components/FloatingAction';
 import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
+import { SearchField } from '@/components/SearchField';
 import { ThemedText } from '@/components/ThemedText';
 import { useBlockedIds } from '@/features/moderation/hooks';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import { spacing } from '@/theme/typography';
+import { useDebouncedValue } from '@/utils/useDebouncedValue';
 
 import type { AdoptionFilter } from './api';
 import { AdoptionCard } from './AdoptionCard';
 import { AdoptionFilters } from './AdoptionFilters';
 import { useAdoptionList } from './hooks';
 
+/** Searches once the person stops typing for this long. */
+const SEARCH_DELAY_MS = 350;
+
 /**
- * Adoption tab: pets up for adoption in two columns, newest first, with filters by species,
- * size and sex. Loads more at the end; pull down to refresh.
+ * Adoption tab: a list of pets up for adoption, newest first, with a search box and filters by
+ * species, size, sex and date. Loads more at the end; pull down to refresh.
  */
 export function AdoptionList() {
   const { t } = useTranslation();
   const router = useRouter();
   const colors = useThemeColors();
   const { status } = useAuth();
-  const [filter, setFilter] = useState<AdoptionFilter>({});
+  const [choices, setChoices] = useState<AdoptionFilter>({});
+  const [search, setSearch] = useState('');
+  // Searches once the person stops typing.
+  const query = useDebouncedValue(search.trim(), SEARCH_DELAY_MS);
+  const filter: AdoptionFilter = query ? { ...choices, query } : choices;
   const {
     data,
     error,
@@ -51,8 +60,6 @@ export function AdoptionList() {
         testID="adoptions"
         data={adoptions}
         keyExtractor={(adoption) => adoption.id}
-        numColumns={2}
-        columnWrapperStyle={styles.columns}
         contentContainerStyle={styles.content}
         ListHeaderComponent={
           <View style={styles.top}>
@@ -70,7 +77,12 @@ export function AdoptionList() {
                 />
               ) : null}
             </View>
-            <AdoptionFilters filter={filter} onChange={setFilter} />
+            <SearchField
+              value={search}
+              onChangeText={setSearch}
+              placeholder={t('adoption.search')}
+            />
+            <AdoptionFilters filter={choices} onChange={setChoices} />
           </View>
         }
         ListEmptyComponent={
@@ -89,14 +101,11 @@ export function AdoptionList() {
             <ActivityIndicator color={colors.accent} style={styles.footer} />
           ) : undefined
         }
-        renderItem={({ item, index }) => (
-          <View
-            style={[styles.cell, index === adoptions.length - 1 && index % 2 === 0 && styles.half]}>
-            <AdoptionCard
-              adoption={item}
-              onPress={() => router.push({ pathname: '/adoption/[id]', params: { id: item.id } })}
-            />
-          </View>
+        renderItem={({ item }) => (
+          <AdoptionCard
+            adoption={item}
+            onPress={() => router.push({ pathname: '/adoption/[id]', params: { id: item.id } })}
+          />
         )}
         onEndReachedThreshold={0.5}
         onEndReached={() => {
@@ -131,10 +140,6 @@ const styles = StyleSheet.create({
   top: { gap: spacing.sm },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   title: { flex: 1 },
-  columns: { gap: spacing.md },
-  cell: { flex: 1 },
-  // A last card alone in its row keeps the width of one column.
-  half: { maxWidth: '50%', paddingRight: spacing.md / 2 },
   center: { textAlign: 'center', padding: spacing.lg },
   footer: { marginVertical: spacing.lg },
 });

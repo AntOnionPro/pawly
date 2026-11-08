@@ -146,6 +146,27 @@ describe('rescue API helpers', () => {
     });
   });
 
+  it('searches the description, place and pet, and filters by date, also nearby', async () => {
+    const getList = jest.fn().mockResolvedValue({ items: [] });
+    const client = {
+      collection: () => ({ getList }),
+      filter: (expression: string, params: Record<string, unknown>) =>
+        expression.replace(/\{:(\w+)\}/g, (_, key: string) =>
+          params[key] instanceof Date ? 'DATE' : `"${String(params[key])}"`,
+        ),
+    } as unknown as PocketBase;
+    const wanted =
+      "status != 'closed' && created >= DATE && " +
+      '(description ~ "mercado" || place ~ "mercado" || pet.name ~ "mercado")';
+    await actual.listRescueReports(client, { since: 'day', query: 'mercado' }, 1);
+    expect(getList.mock.calls[0]?.[2].filter).toBe(wanted);
+    await actual.listNearbyRescueReports(client, { latitude: 19.35, longitude: -99.16 }, 5, {
+      since: 'day',
+      query: 'mercado',
+    });
+    expect(getList.mock.calls[1]?.[2].filter).toContain(wanted);
+  });
+
   it('sends only the fields of each kind', async () => {
     const create = jest.fn().mockResolvedValue({ id: 'r1', collectionId: 'rescue_reports' });
     const client = { collection: () => ({ create }) } as unknown as PocketBase;
@@ -218,6 +239,32 @@ describe('Rescue tab', () => {
       ),
     );
     expect(await screen.findByText('No hay casos abiertos de este tipo.')).toBeOnTheScreen();
+  });
+
+  it('searches as you type and filters by date', async () => {
+    await renderWith(<RescueList />, authValue());
+    await screen.findByText('Perrito herido junto al mercado');
+    jest.mocked(api.listRescueReports).mockResolvedValue({ items: [], page: 1, hasMore: false });
+    await fireEvent.changeText(screen.getByLabelText('Buscar'), 'gato');
+    await waitFor(() =>
+      expect(api.listRescueReports).toHaveBeenLastCalledWith(
+        expect.anything(),
+        { query: 'gato' },
+        1,
+      ),
+    );
+    expect(screen.getByLabelText('Fecha').props.horizontal).toBe(true);
+    await fireEvent.press(screen.getByRole('radio', { name: 'Hoy' }));
+    await waitFor(() =>
+      expect(api.listRescueReports).toHaveBeenLastCalledWith(
+        expect.anything(),
+        { since: 'day', query: 'gato' },
+        1,
+      ),
+    );
+    expect(
+      await screen.findByText('Ningún caso abierto coincide con la búsqueda o la fecha.'),
+    ).toBeOnTheScreen();
   });
 
   it('hides reports by blocked users', async () => {

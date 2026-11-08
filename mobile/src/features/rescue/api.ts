@@ -4,6 +4,7 @@ import type { RecordModel } from 'pocketbase';
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toPet, type Pet } from '@/features/pets/api';
 import type { ComposerMedia } from '@/features/posts/media';
+import { rangeStart, type DateRange } from '@/utils/dateRange';
 import { boundingBox, distanceKm, type Point } from '@/utils/geo';
 import { appendFile, uploadFetch } from '@/utils/upload';
 
@@ -64,6 +65,27 @@ export interface RescueValues {
 
 export interface RescueFilter {
   kind?: RescueKind;
+  /** Reported today, in the last 7 days or in the last 30. */
+  since?: DateRange;
+  /** Text to find in the description, the place or the lost pet's name. */
+  query?: string;
+}
+
+/** The parts of a filter that both the list and the nearby cases use. */
+function filterParts(client: PocketBase, filter: RescueFilter): string[] {
+  const parts = ["status != 'closed'"];
+  if (filter.kind) parts.push(client.filter('kind = {:kind}', { kind: filter.kind }));
+  if (filter.since)
+    parts.push(client.filter('created >= {:since}', { since: rangeStart(filter.since) }));
+  const query = filter.query?.trim();
+  if (query) {
+    parts.push(
+      client.filter('(description ~ {:query} || place ~ {:query} || pet.name ~ {:query})', {
+        query,
+      }),
+    );
+  }
+  return parts;
 }
 
 export interface RescuePage {
@@ -109,8 +131,7 @@ export async function listRescueReports(
   page: number,
   perPage: number = RESCUE_PER_PAGE,
 ): Promise<RescuePage> {
-  const parts = ["status != 'closed'"];
-  if (filter.kind) parts.push(client.filter('kind = {:kind}', { kind: filter.kind }));
+  const parts = filterParts(client, filter);
   const result = await client.collection(RESCUE_REPORTS).getList(page, perPage, {
     filter: parts.join(' && '),
     sort: '-created,-id',
@@ -142,13 +163,12 @@ export async function listNearbyRescueReports(
 ): Promise<NearbyReport[]> {
   const box = boundingBox(center, radiusKm);
   const parts = [
-    "status != 'closed'",
+    ...filterParts(client, filter),
     client.filter(
       'latitude >= {:minLat} && latitude <= {:maxLat} && longitude >= {:minLng} && longitude <= {:maxLng}',
       box,
     ),
   ];
-  if (filter.kind) parts.push(client.filter('kind = {:kind}', { kind: filter.kind }));
   const result = await client.collection(RESCUE_REPORTS).getList(1, NEARBY_MAX, {
     filter: parts.join(' && '),
     sort: '-created,-id',

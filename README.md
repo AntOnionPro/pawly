@@ -27,7 +27,7 @@ Current stage: **Stage 7.5, Design and details (in progress).** Stages 8 and 9 a
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89), done), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90), done), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91), done), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92), done), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93), done), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94), done), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107), done), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)) and the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)). It is released as `v0.8.5`.
+Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83), done), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84), done), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85), done), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86), done), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87), done), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88), done), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89), done), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90), done), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91), done), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92), done), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93), done), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94), done), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107), done), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108), done) and the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)). It is released as `v0.8.5`.
 
 ## Features
 
@@ -64,6 +64,7 @@ Stage 7.5 issues: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro
 #### Adoption
 
 - An adoption post includes a profile: species, age, sex, size, vaccines, spay/neuter, health, approximate location and requirements.
+- The Adoption tab lists the pets up for adoption, with a search box (name, breed, description or area) and filters by species, size, sex and publication date (today, last 7 days or last 30 days), each in one line that scrolls sideways.
 - Interested users send a request. The publisher accepts or rejects it and marks the pet as adopted.
 - **Follow-up:** the adopter gets reminders to post photos or videos after 1 week, 1 month, 3 months and 6 months. The previous owner sees these updates and can report the adopter if they are not posted.
 
@@ -77,7 +78,7 @@ Three kinds of report, each with photos or videos, a description and a GPS locat
 | Lost | An owner reports a missing pet (it can start from the pet's profile), with the place and date it was last seen. | Lost → Reunited |
 | Found | Someone found an animal that seems to have an owner. | Found → Reunited |
 
-Reports appear as a list and on a map of nearby cases. Users can opt in to push alerts for reports near them.
+Reports appear as a list and on a map of nearby cases, with a search box (description, place or pet's name) and filters by kind and date. Users can opt in to push alerts for reports near them.
 
 #### Moderation
 

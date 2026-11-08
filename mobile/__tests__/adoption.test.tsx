@@ -134,6 +134,22 @@ describe('adoption API helpers', () => {
     });
   });
 
+  it('searches the name, breed, description and zone, and filters by date', async () => {
+    const getList = jest.fn().mockResolvedValue({ items: [] });
+    const client = {
+      collection: () => ({ getList }),
+      filter: (expression: string, params: Record<string, unknown>) =>
+        expression.replace(/\{:(\w+)\}/g, (_, key: string) =>
+          params[key] instanceof Date ? 'DATE' : `"${String(params[key])}"`,
+        ),
+    } as unknown as PocketBase;
+    await actual.listAdoptions(client, { since: 'week', query: ' luna ' }, 1);
+    expect(getList.mock.calls[0]?.[2].filter).toBe(
+      "status = 'available' && created >= DATE && " +
+        '(pet.name ~ "luna" || pet.breed ~ "luna" || description ~ "luna" || zone ~ "luna")',
+    );
+  });
+
   const values: api.AdoptionValues = {
     petId: 'p1',
     sex: 'male',
@@ -199,6 +215,37 @@ describe('Adoption tab', () => {
       ),
     );
     await fireEvent.press(screen.getByRole('button', { name: 'Quitar filtros' }));
+    await waitFor(() =>
+      expect(api.listAdoptions).toHaveBeenLastCalledWith(expect.anything(), {}, 1),
+    );
+  });
+
+  it('searches as you type, adds the date filter, and keeps the search when clearing filters', async () => {
+    await renderWith(<AdoptionList />, authValue());
+    await screen.findByText('Firulais');
+    await fireEvent.changeText(screen.getByLabelText('Buscar'), 'luna');
+    await waitFor(() =>
+      expect(api.listAdoptions).toHaveBeenLastCalledWith(expect.anything(), { query: 'luna' }, 1),
+    );
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Filtros' }));
+    // Each filter is one line that scrolls sideways.
+    expect(screen.getByLabelText('Especie').props.horizontal).toBe(true);
+    await fireEvent.press(screen.getByRole('radio', { name: 'Últimos 7 días' }));
+    await waitFor(() =>
+      expect(api.listAdoptions).toHaveBeenLastCalledWith(
+        expect.anything(),
+        { since: 'week', query: 'luna' },
+        1,
+      ),
+    );
+    expect(screen.getByRole('button', { name: 'Filtros (1)' })).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Quitar filtros' }));
+    await waitFor(() =>
+      expect(api.listAdoptions).toHaveBeenLastCalledWith(expect.anything(), { query: 'luna' }, 1),
+    );
+    await fireEvent.press(screen.getByRole('button', { name: 'Borrar búsqueda' }));
     await waitFor(() =>
       expect(api.listAdoptions).toHaveBeenLastCalledWith(expect.anything(), {}, 1),
     );

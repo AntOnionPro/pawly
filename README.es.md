@@ -27,7 +27,7 @@ Etapa actual: **etapa 7.5, Diseño y detalles (en progreso).** Las etapas 8 y 9 
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87), hecho), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88), hecho), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89), hecho), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90), hecho), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91), hecho), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92), hecho), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93), hecho), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94), hecho), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107), hecho), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)) y el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)). Se publica como `v0.8.5`.
+Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83), hecho), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84), hecho), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85), hecho), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86), hecho), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87), hecho), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88), hecho), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89), hecho), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90), hecho), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91), hecho), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92), hecho), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93), hecho), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94), hecho), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107), hecho), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108), hecho) y el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)). Se publica como `v0.8.5`.
 
 ## Funcionalidades
 
@@ -64,6 +64,7 @@ Issues de la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionP
 #### Adopción
 
 - La publicación de adopción incluye una ficha: especie, edad, sexo, tamaño, vacunas, esterilización, salud, ubicación aproximada y requisitos.
+- La pestaña Adopción muestra las mascotas en adopción en una lista, con un campo de búsqueda (nombre, raza, descripción o zona) y filtros por especie, tamaño, sexo y fecha de publicación (hoy, últimos 7 días o últimos 30 días), cada uno en una fila que se desliza de lado.
 - Los interesados envían una solicitud. Quien publica la acepta o la rechaza y marca la mascota como adoptada.
 - **Seguimiento:** el adoptante recibe recordatorios para subir fotos o videos a la semana, al mes, a los 3 meses y a los 6 meses. Quien la dio en adopción ve esas actualizaciones y puede reportar al adoptante si no las sube.
 
@@ -77,7 +78,7 @@ Tres tipos de reporte, todos con fotos o videos, descripción y ubicación por G
 | Perdido | Un dueño reporta a su mascota perdida (puede empezar desde el perfil de la mascota), con el lugar y la fecha en que se vio por última vez. | Perdido → Reunido |
 | Encontrado | Alguien encontró un animal que parece tener dueño. | Encontrado → Reunido |
 
-Los reportes se ven en una lista y en un mapa de casos cercanos. Los usuarios pueden activar avisos push de reportes cerca de ellos.
+Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de búsqueda (descripción, lugar o nombre de la mascota) y filtros por tipo y fecha. Los usuarios pueden activar avisos push de reportes cerca de ellos.
 
 #### Moderación
 

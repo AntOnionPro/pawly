@@ -13,23 +13,30 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
+import { ChipGroup } from '@/components/ChipGroup';
 import { Icon } from '@/components/Icon';
 import { FLOATING_ACTION_SPACE, FloatingAction } from '@/components/FloatingAction';
 import { IconButton } from '@/components/IconButton';
 import { Loading, LoadError } from '@/components/QueryState';
+import { SearchField } from '@/components/SearchField';
 import { TabBar } from '@/components/TabBar';
 import { ThemedText } from '@/components/ThemedText';
 import { useBlockedIds } from '@/features/moderation/hooks';
 import { usePreferences, useThemeColors } from '@/preferences/PreferencesProvider';
 import { radius, spacing } from '@/theme/typography';
+import { DATE_RANGES, type DateRange } from '@/utils/dateRange';
+import { useDebouncedValue } from '@/utils/useDebouncedValue';
 
-import { RESCUE_KINDS, type RescueKind, type RescueReport } from './api';
+import { RESCUE_KINDS, type RescueFilter, type RescueKind, type RescueReport } from './api';
 import { RescueCard } from './RescueCard';
 import { useNearbyRescue, useRescueList } from './hooks';
 import { mapsAvailable, RescueMap } from './maps';
 import { useDeviceLocation, type DeviceLocationStatus } from './useDeviceLocation';
 
 type KindTab = RescueKind | 'all';
+
+/** Searches once the person stops typing for this long. */
+const SEARCH_DELAY_MS = 350;
 type ListedReport = RescueReport & { distanceKm?: number };
 
 /** Without the location: invite to use it (or explain how to turn it on). */
@@ -65,8 +72,9 @@ function LocationNote({
 }
 
 /**
- * Rescue tab: open cases filtered by kind. With the location, the cases within the nearby
- * radius, nearest first, as a list or on a map; without it, every open case, newest first.
+ * Rescue tab: open cases, with a search box and filters by kind and date. With the location,
+ * the cases within the nearby radius, nearest first, as a list or on a map; without it, every
+ * open case, newest first.
  */
 export function RescueList() {
   const { t } = useTranslation();
@@ -75,11 +83,19 @@ export function RescueList() {
   const { status } = useAuth();
   const { nearbyRadiusKm } = usePreferences();
   const [tab, setTab] = useState<KindTab>('all');
+  const [since, setSince] = useState<DateRange | 'any'>('any');
+  const [search, setSearch] = useState('');
+  // Searches once the person stops typing.
+  const searchText = useDebouncedValue(search.trim(), SEARCH_DELAY_MS);
   const [view, setView] = useState<'list' | 'map'>('list');
   const [selected, setSelected] = useState<RescueReport | null>(null);
   const location = useDeviceLocation();
   const nearbyMode = location.point !== null;
-  const filter = tab === 'all' ? {} : { kind: tab };
+  const filter: RescueFilter = {
+    ...(tab === 'all' ? {} : { kind: tab }),
+    ...(since === 'any' ? {} : { since }),
+    ...(searchText ? { query: searchText } : {}),
+  };
   // Every open case only once it is clear there is no location (no request while checking).
   const all = useRescueList(filter, !nearbyMode && location.status !== 'checking');
   const nearby = useNearbyRescue(location.point, nearbyRadiusKm, filter);
@@ -120,6 +136,7 @@ export function RescueList() {
           />
         ) : null}
       </View>
+      <SearchField value={search} onChangeText={setSearch} placeholder={t('rescue.search')} />
       <TabBar<KindTab>
         tabs={[
           { value: 'all', label: t('rescue.all') },
@@ -130,6 +147,19 @@ export function RescueList() {
           setSelected(null);
           setTab(value);
         }}
+      />
+      <ChipGroup<DateRange | 'any'>
+        label={t('dates.label')}
+        chips={[
+          { value: 'any', label: t('dates.any') },
+          ...DATE_RANGES.map((value) => ({ value, label: t(`dates.${value}`) })),
+        ]}
+        selected={since}
+        onSelect={(value) => {
+          setSelected(null);
+          setSince(value);
+        }}
+        layout="row"
       />
       <LocationNote status={location.status} onEnable={location.enable} />
       {nearbyMode ? (
@@ -153,11 +183,13 @@ export function RescueList() {
     <LoadError error={query.error} onRetry={() => void query.refetch()} />
   ) : (
     <ThemedText color="textSecondary" style={styles.center}>
-      {nearbyMode
-        ? t('rescue.nearbyEmpty', { radius: nearbyRadiusKm })
-        : tab === 'all'
-          ? t('rescue.empty')
-          : t('rescue.emptyFiltered')}
+      {searchText || since !== 'any'
+        ? t('rescue.emptySearch')
+        : nearbyMode
+          ? t('rescue.nearbyEmpty', { radius: nearbyRadiusKm })
+          : tab === 'all'
+            ? t('rescue.empty')
+            : t('rescue.emptyFiltered')}
     </ThemedText>
   );
 
