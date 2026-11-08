@@ -4,6 +4,7 @@ import type { RecordModel } from 'pocketbase';
 import { toUser, type User } from '@/auth/AuthProvider';
 import { toPet, type Pet, type Species } from '@/features/pets/api';
 import type { ComposerMedia } from '@/features/posts/media';
+import { rangeStart, type DateRange } from '@/utils/dateRange';
 import { appendFile, uploadFetch } from '@/utils/upload';
 
 export const ADOPTIONS = 'adoptions';
@@ -73,6 +74,10 @@ export interface AdoptionFilter {
   species?: Species;
   size?: Size;
   sex?: Sex;
+  /** Published today, in the last 7 days or in the last 30. */
+  since?: DateRange;
+  /** Text to find in the pet's name or breed, the description or the zone. */
+  query?: string;
 }
 
 export interface AdoptionPage {
@@ -123,6 +128,17 @@ function filterExpression(client: PocketBase, filter: AdoptionFilter): string {
   if (filter.species) parts.push(client.filter('pet.species = {:species}', filter));
   if (filter.size) parts.push(client.filter('size = {:size}', filter));
   if (filter.sex) parts.push(client.filter('sex = {:sex}', filter));
+  if (filter.since)
+    parts.push(client.filter('created >= {:since}', { since: rangeStart(filter.since) }));
+  const query = filter.query?.trim();
+  if (query) {
+    parts.push(
+      client.filter(
+        '(pet.name ~ {:query} || pet.breed ~ {:query} || description ~ {:query} || zone ~ {:query})',
+        { query },
+      ),
+    );
+  }
   return parts.join(' && ');
 }
 

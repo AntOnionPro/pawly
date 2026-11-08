@@ -20,7 +20,7 @@ export function useAdoptionPhoto(adoption: Adoption): string | null {
   return adoption.pet ? petPhotoUrl(client, adoption.pet) : null;
 }
 
-/** Tile of the Adoption tab: photo, name, species, age, sex, size and zone. */
+/** Row of the Adoption tab: photo, name, species, age, sex, size and zone. */
 export function AdoptionCard({ adoption, onPress }: { adoption: Adoption; onPress: () => void }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -52,11 +52,11 @@ export function AdoptionCard({ adoption, onPress }: { adoption: Adoption; onPres
         {photo ? (
           <Image source={{ uri: photo }} style={StyleSheet.absoluteFill} />
         ) : (
-          <Icon name={hasVideo ? 'video' : 'paw'} selected size={40} color={colors.textSecondary} />
+          <Icon name={hasVideo ? 'video' : 'paw'} selected size={32} color={colors.textSecondary} />
         )}
       </View>
       <View style={styles.text}>
-        <ThemedText numberOfLines={1} style={styles.name}>
+        <ThemedText variant="heading" numberOfLines={1} style={styles.name}>
           {name}
         </ThemedText>
         <ThemedText variant="caption" color="textSecondary" numberOfLines={1}>
@@ -76,19 +76,32 @@ export function AdoptionCard({ adoption, onPress }: { adoption: Adoption; onPres
           </ThemedText>
         </View>
       </View>
+      <Icon name="chevron" size={18} color={colors.textSecondary} />
     </Pressable>
   );
 }
 
+const PHOTO = 88;
+
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.sm,
+    paddingRight: spacing.md,
     borderRadius: radius.md,
     borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
   },
-  photo: { aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
-  text: { padding: spacing.sm, gap: 2 },
+  photo: {
+    width: PHOTO,
+    height: PHOTO,
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: { flex: 1, gap: 2 },
   name: { fontWeight: '700' },
   zone: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   zoneText: { flex: 1 },

@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react';
 
-/** `value`, updated only after it stops changing for `delay` ms (for example while typing). */
-export function useDebouncedValue<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value);
+/** The value once it stops changing for `delayMs` (for example, a search while typing). */
+export function useDebouncedValue<T>(value: T, delayMs = 300): T {
+  const [settled, setSettled] = useState(value);
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebounced(value);
-    }, delay);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [value, delay]);
-  return debounced;
+    const timer = setTimeout(() => setSettled(value), delayMs);
+    return () => clearTimeout(timer);
+  }, [value, delayMs]);
+  return settled;
 }
