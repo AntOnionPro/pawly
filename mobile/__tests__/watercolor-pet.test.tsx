@@ -56,7 +56,7 @@ describe('sign in and sign up', () => {
     expect(screen.getByLabelText('Correo')).toBeOnTheScreen();
   });
 
-  it('show a watercolor cat or dog at the end, hidden from screen readers and touches', async () => {
+  it('show a watercolor pet at the end, hidden from screen readers and touches', async () => {
     jest.spyOn(Math, 'random').mockReturnValue(0);
     await renderWith(<SignUpScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
@@ -72,11 +72,13 @@ describe('sign in and sign up', () => {
 
   it.each([
     [0.2, 'siameseCat'],
-    [0.4, 'gingerCat'],
-    [0.5, 'husky'],
-    [0.7, 'pitbull'],
-    [0.99, 'dachshund'],
-  ])('choose a cat or a dog at random (%s → %s)', async (random, name) => {
+    [0.3, 'gingerCat'],
+    [0.4, 'husky'],
+    [0.55, 'pitbull'],
+    [0.7, 'dachshund'],
+    [0.8, 'lopRabbit'],
+    [0.99, 'grayRabbit'],
+  ])('choose a cat, a dog or a rabbit at random (%s → %s)', async (random, name) => {
     jest.spyOn(Math, 'random').mockReturnValue(random);
     await renderWith(<SignInScreen />);
     await screen.findByRole('header', { name: 'Pawly' });
@@ -92,7 +94,7 @@ describe('sign in and sign up', () => {
     await roomForPet(300);
     expect(shownPet()).toBe('siameseCat');
     expect(petsFor('dark')).not.toContain('blackCat');
-    expect(petsFor('dark')).toHaveLength(5);
+    expect(petsFor('dark')).toHaveLength(7);
     expect(petsFor('light')).toEqual([
       'blackCat',
       'siameseCat',
@@ -100,6 +102,8 @@ describe('sign in and sign up', () => {
       'husky',
       'pitbull',
       'dachshund',
+      'lopRabbit',
+      'grayRabbit',
     ]);
   });
 });
