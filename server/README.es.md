@@ -259,6 +259,7 @@ El adoptante recibe una notificación `adopted`. Las publicaciones anteriores qu
 | ------------- | ------------------------------------------------------------------------------------------------------------ |
 | `reporter`    | El usuario con sesión; no se puede cambiar. Borrar la cuenta borra sus reportes.                             |
 | `kind`        | `help`, `lost` o `found`; no se puede cambiar.                                                               |
+| `species`     | El animal (opcional), con los valores de las mascotas. Un `lost` con `pet` toma la especie de la mascota.    |
 | `description` | Obligatorio, hasta 2,200 caracteres.                                                                         |
 | `media`       | Hasta 10 fotos o videos, con los mismos límites y miniaturas que las publicaciones.                          |
 | `latitude`    | Ubicación GPS junto con `longitude`; las dos son obligatorias (no ambas en 0).                               |

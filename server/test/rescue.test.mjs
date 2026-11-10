@@ -85,6 +85,28 @@ describe('reporting', () => {
     assert.equal(body.pet, pet.id);
     assert.ok(body.lastSeenAt);
     assert.equal(body.urgency, '');
+    // The report takes the pet's species, whatever was sent.
+    assert.equal(body.species, 'dog');
+    const edited = await patch(user, body.id, { species: 'fish' });
+    assert.equal(edited.body.species, 'dog');
+  });
+
+  test('the species of the animal is optional and one of the pet species', async () => {
+    const user = await verifiedUser();
+    const withSpecies = await create(user, report(user, { species: 'cat' }));
+    assert.equal(withSpecies.status, 200, JSON.stringify(withSpecies.body));
+    assert.equal(withSpecies.body.species, 'cat');
+    const withoutSpecies = await create(user, report(user));
+    assert.equal(withoutSpecies.body.species, '');
+    const lostWithoutPet = await create(
+      user,
+      report(user, { kind: 'lost', species: 'bird', lastSeenAt: serverDate(new Date()) }),
+    );
+    assert.equal(lostWithoutPet.body.species, 'bird');
+    const changed = await patch(user, withSpecies.body.id, { species: 'rabbit' });
+    assert.equal(changed.body.species, 'rabbit');
+    const unknown = await create(user, report(user, { species: 'dragon' }));
+    assert.ok(unknown.body.data.species);
   });
 
   test('a found animal drops the fields of the other kinds', async () => {

@@ -153,6 +153,7 @@ const en = {
     place: 'Place reference (optional)',
     placeHint: 'For example "In front of the Coyoacán market".',
     pet: 'Pet (optional)',
+    species: 'Animal (optional)',
     lastSeenDate: 'Date it was last seen',
     location: 'Location',
     useLocation: 'Use my current location',

@@ -56,6 +56,7 @@ function report(id: string, overrides: Partial<api.RescueReport> = {}): api.Resc
     reporterId: 'u2',
     reporter: SOL,
     kind: 'help',
+    species: '',
     description: `Caso ${id}`,
     media: [],
     ...COYOACAN,

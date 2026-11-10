@@ -7,6 +7,7 @@
 // - needs help requires an urgency; only lost reports have a pet (one of the reporter's) and
 //   a last-seen date (required, not in the future; the app sends the chosen day at noon UTC,
 //   so a day and a half of margin covers every time zone); the other kinds drop those fields;
+// - a lost report with a pet takes the pet's species;
 // - texts are trimmed, and photos are limited to 10 MB (videos keep the 50 MB field limit).
 function validateRescue(e) {
   const { isPhoto, MAX_PHOTO_SIZE } = require(`${__hooks}/lib/posts.js`);
@@ -44,17 +45,21 @@ function validateRescue(e) {
       fail('lastSeenAt', 'date_future', 'The date cannot be in the future.');
     }
     const petId = record.getString('pet');
-    if (petId && (record.isNew() || petId !== record.original().getString('pet'))) {
-      let owner = '';
+    let pet = null;
+    if (petId) {
       try {
-        owner = e.app.findRecordById('pets', petId).getString('owner');
+        pet = e.app.findRecordById('pets', petId);
       } catch {
         // A missing pet is rejected by the relation field itself.
       }
-      if (owner && owner !== record.getString('reporter')) {
+    }
+    if (pet && (record.isNew() || petId !== record.original().getString('pet'))) {
+      if (pet.getString('owner') !== record.getString('reporter')) {
         fail('pet', 'pet_not_owned', 'You can only report your own pets as lost.');
       }
     }
+    // A lost pet is the animal of the report.
+    if (pet) record.set('species', pet.getString('species'));
   } else {
     record.set('pet', '');
     record.set('lastSeenAt', '');

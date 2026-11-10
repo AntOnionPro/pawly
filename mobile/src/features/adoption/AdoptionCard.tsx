@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Icon } from '@/components/Icon';
+import { PhotoRow } from '@/components/PhotoRow';
 import { ThemedText } from '@/components/ThemedText';
 import { petPhotoUrl } from '@/features/pets/api';
+import { SpeciesIcon } from '@/features/pets/SpeciesIcon';
 import { mediaKind, mediaUrl } from '@/features/posts/api';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
-import { radius, spacing } from '@/theme/typography';
 
 import type { Adoption } from './api';
 import { useAgeText } from './useAgeText';
@@ -20,7 +21,10 @@ export function useAdoptionPhoto(adoption: Adoption): string | null {
   return adoption.pet ? petPhotoUrl(client, adoption.pet) : null;
 }
 
-/** Row of the Adoption tab: photo, name, species, age, sex, size and zone. */
+/**
+ * Row of the Adoption tab: the animal on the left; name, species, age, sex, size and zone in
+ * the middle; and the photo on the right.
+ */
 export function AdoptionCard({ adoption, onPress }: { adoption: Adoption; onPress: () => void }) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -37,73 +41,39 @@ export function AdoptionCard({ adoption, onPress }: { adoption: Adoption; onPres
   const hasVideo = adoption.media.some((file) => mediaKind(file) === 'video');
 
   return (
-    <Pressable
-      accessibilityRole="link"
+    <PhotoRow
+      leading={<SpeciesIcon species={adoption.pet?.species ?? 'other'} color={colors.text} />}
+      photo={photo}
+      placeholder={hasVideo ? 'video' : undefined}
       accessibilityLabel={[name, kind, traits, t('adoption.zoneLabel', { zone: adoption.zone })]
         .filter(Boolean)
         .join(', ')}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.card,
-        { backgroundColor: colors.surface, borderColor: colors.border },
-        pressed && styles.pressed,
-      ]}>
-      <View style={[styles.photo, { backgroundColor: colors.background }]}>
-        {photo ? (
-          <Image source={{ uri: photo }} style={StyleSheet.absoluteFill} />
-        ) : (
-          <Icon name={hasVideo ? 'video' : 'paw'} selected size={32} color={colors.textSecondary} />
-        )}
+      onPress={onPress}>
+      <ThemedText variant="heading" numberOfLines={1} style={styles.name}>
+        {name}
+      </ThemedText>
+      <ThemedText variant="caption" color="textSecondary" numberOfLines={1}>
+        {kind}
+      </ThemedText>
+      <ThemedText variant="caption" numberOfLines={1}>
+        {traits}
+      </ThemedText>
+      <View style={styles.zone}>
+        <Icon name="location" size={14} color={colors.textSecondary} />
+        <ThemedText
+          variant="caption"
+          color="textSecondary"
+          numberOfLines={1}
+          style={styles.zoneText}>
+          {adoption.zone}
+        </ThemedText>
       </View>
-      <View style={styles.text}>
-        <ThemedText variant="heading" numberOfLines={1} style={styles.name}>
-          {name}
-        </ThemedText>
-        <ThemedText variant="caption" color="textSecondary" numberOfLines={1}>
-          {kind}
-        </ThemedText>
-        <ThemedText variant="caption" numberOfLines={1}>
-          {traits}
-        </ThemedText>
-        <View style={styles.zone}>
-          <Icon name="location" size={14} color={colors.textSecondary} />
-          <ThemedText
-            variant="caption"
-            color="textSecondary"
-            numberOfLines={1}
-            style={styles.zoneText}>
-            {adoption.zone}
-          </ThemedText>
-        </View>
-      </View>
-      <Icon name="chevron" size={18} color={colors.textSecondary} />
-    </Pressable>
+    </PhotoRow>
   );
 }
 
-const PHOTO = 88;
-
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.sm,
-    paddingRight: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  photo: {
-    width: PHOTO,
-    height: PHOTO,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: { flex: 1, gap: 2 },
   name: { fontWeight: '700' },
   zone: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   zoneText: { flex: 1 },
-  pressed: { opacity: 0.6 },
 });

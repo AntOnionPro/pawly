@@ -2,7 +2,7 @@ import type PocketBase from 'pocketbase';
 import type { RecordModel } from 'pocketbase';
 
 import { toUser, type User } from '@/auth/AuthProvider';
-import { toPet, type Pet } from '@/features/pets/api';
+import { SPECIES, toPet, type Pet, type Species } from '@/features/pets/api';
 import type { ComposerMedia } from '@/features/posts/media';
 import { rangeStart, type DateRange } from '@/utils/dateRange';
 import { boundingBox, distanceKm, type Point } from '@/utils/geo';
@@ -29,6 +29,8 @@ export interface RescueReport {
   /** Present when the reporter was expanded. */
   reporter?: User;
   kind: RescueKind;
+  /** The animal ('' in reports saved before it was asked). A lost pet's report takes its species. */
+  species: Species | '';
   description: string;
   /** Stored file names, in order. */
   media: string[];
@@ -49,6 +51,7 @@ export interface RescueReport {
 /** What the form edits. */
 export interface RescueValues {
   kind: RescueKind | '';
+  species: Species | '';
   description: string;
   place: string;
   urgency: Urgency | '';
@@ -109,6 +112,7 @@ export function toRescueReport(record: RecordModel): RescueReport {
     reporterId: String(record.reporter ?? ''),
     reporter: toUser(expand.reporter) ?? undefined,
     kind: oneOf(RESCUE_KINDS, record.kind) ?? 'help',
+    species: oneOf(SPECIES, record.species) ?? '',
     description: String(record.description ?? ''),
     media: Array.isArray(record.media) ? record.media.map(String) : [],
     latitude: Number(record.latitude ?? 0),
@@ -192,6 +196,7 @@ async function toFormData(values: RescueValues, reporterId?: string): Promise<Fo
     data.append('reporter', reporterId);
     data.append('kind', values.kind);
   }
+  data.append('species', values.species);
   data.append('description', values.description.trim());
   data.append('place', values.place.trim());
   data.append('urgency', values.kind === 'help' ? values.urgency : '');

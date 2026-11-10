@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 7.5, Design and details (in progress: the Adoption and Rescue rows, [#120](https://github.com/AntOnionPro/pawly/issues/120), are left before the `v0.8.5` release to `main`).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 7.5, Design and details (done, pending the `v0.8.5` release to `main`).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -21,13 +21,13 @@ Current stage: **Stage 7.5, Design and details (in progress: the Adoption and Re
 | 5 | Adoption | Done |
 | 6 | Rescue | Done |
 | 7 | Moderation | Done |
-| 7.5 | Design and details | In progress |
+| 7.5 | Design and details | Done |
 | 8 | Infrastructure and web | Postponed |
 | 9 | Launch | Postponed |
 | 10 | Phase 2: veterinary clinics | Not started |
 | 11 | Phase 2: donations | Not started |
 
-Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83)), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)), the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)), the sign-in cat needing a scroll to be seen whole ([#113](https://github.com/AntOnionPro/pawly/issues/113)), watercolor dogs on sign-in ([#115](https://github.com/AntOnionPro/pawly/issues/115)), watercolor rabbits on sign-in ([#117](https://github.com/AntOnionPro/pawly/issues/117)) and the computer view of the web ([#119](https://github.com/AntOnionPro/pawly/issues/119)). It will be released as `v0.8.5`.
+Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83)), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)), the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)), the sign-in cat needing a scroll to be seen whole ([#113](https://github.com/AntOnionPro/pawly/issues/113)), watercolor dogs on sign-in ([#115](https://github.com/AntOnionPro/pawly/issues/115)), watercolor rabbits on sign-in ([#117](https://github.com/AntOnionPro/pawly/issues/117)), the computer view of the web ([#119](https://github.com/AntOnionPro/pawly/issues/119)) and Adoption and Rescue rows with the animal's icon and the photo on the right ([#120](https://github.com/AntOnionPro/pawly/issues/120)). It will be released as `v0.8.5`.
 
 ## Features
 
@@ -64,13 +64,13 @@ Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnion
 #### Adoption
 
 - An adoption post includes a profile: species, age, sex, size, vaccines, spay/neuter, health, approximate location and requirements.
-- The Adoption tab lists the pets up for adoption, with a search box (name, breed, description or area) and filters by species, size, sex and publication date (today, last 7 days or last 30 days), each in one line that scrolls sideways.
+- The Adoption tab lists the pets up for adoption, with a search box (name, breed, description or area) and filters by species, size, sex and publication date (today, last 7 days or last 30 days), each in one line that scrolls sideways. Each row shows the animal's icon on the left and the photo on the right.
 - Interested users send a request. The publisher accepts or rejects it and marks the pet as adopted.
 - **Follow-up:** the adopter gets reminders to post photos or videos after 1 week, 1 month, 3 months and 6 months. The previous owner sees these updates and can report the adopter if they are not posted.
 
 #### Rescue
 
-Three kinds of report, each with photos or videos, a description and a GPS location:
+Three kinds of report, each with photos or videos, a description, a GPS location and, optionally, the animal (dog, cat, bird…; a lost pet's report takes the pet's):
 
 | Kind | Description | Statuses |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ Three kinds of report, each with photos or videos, a description and a GPS locat
 | Lost | An owner reports a missing pet (it can start from the pet's profile), with the place and date it was last seen. | Lost → Reunited |
 | Found | Someone found an animal that seems to have an owner. | Found → Reunited |
 
-Reports appear as a list and on a map of nearby cases, with a search box (description, place or pet's name) and filters by kind and date. Users can opt in to push alerts for reports near them.
+Reports appear as a list and on a map of nearby cases, with a search box (description, place or pet's name) and filters by kind and date. Each row shows the animal's icon on the left (or the kind of case, for reports without an animal) and the photo on the right. Users can opt in to push alerts for reports near them.
 
 #### Moderation
 
@@ -111,7 +111,7 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
 
 - Vertical layout like Instagram, with a bottom navigation bar.
 - Tabs: **Home · Adoption · Post (+) · Rescue · Profile**. Search and notifications live in the top bar.
-- Icons only, never emojis, in the interface. Native look on each platform: SF Symbols on iOS and Material Symbols on Android.
+- Icons only, never emojis, in the interface. Native look on each platform: SF Symbols on iOS and Material Symbols on Android. The animals (dog, cat, bird, rabbit, rodent, reptile and fish) use the Material Design community icons on Android and the web, because Material Symbols has no dog, cat, fish or reptile, and also on iOS where SF Symbols has none (the rodent, and the dog and the cat before iOS 17).
 - Logo: a cat that forms the letter P (`mobile/assets/brand/logo.svg`), in pink `#FF2981`, which stays the same whatever palette is chosen. The app icon is the white logo on that pink (with dark and tinted versions on iOS and a monochrome one on Android), and Home shows "Pawly" written with that P (`mobile/assets/brand/wordmark.svg`) in the accent color. Sign-in and sign-up show "Pawly" with that P above the fields and, at the bottom, one of eight watercolor pets chosen at random each time: three cats (black, Siamese and ginger, in `mobile/assets/images/cats/`), three dogs (husky, pit bull and dachshund, in `mobile/assets/images/dogs/`) and two rabbits (a lop and a gray one, in `mobile/assets/images/rabbits/`); the dark theme leaves out the black cat, which would not show. The pet never sits under text; on sign-in it fits in the room left under the fields, so nothing needs scrolling (with too little room, for example with the keyboard open, it does not show).
 - Font: Ubuntu (light, regular, medium and bold), also in the top bars and the tab bar. In settings it can be changed to the phone's own font (San Francisco on iOS, Roboto on Android). What the system draws (alerts, keyboard, share sheet) always uses the system font.
 - The reaction is a paw print, not a heart.

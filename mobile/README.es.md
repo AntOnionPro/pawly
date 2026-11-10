@@ -131,7 +131,7 @@ mobile/
 
 - **Colores:** nunca escribas un color en una pantalla. Usa `useThemeColors()`; los tokens están en `src/theme/colors.ts` y una prueba revisa su contraste.
 - **Texto:** usa `ThemedText`. El texto pequeño usa `text` o `textSecondary`, nunca el color de acento.
-- **Íconos:** solo con `Icon` y `src/theme/icons.ts` (SF Symbols en iOS, Material Symbols en Android y web). Sin emojis en la interfaz.
+- **Íconos:** solo con `Icon` y `src/theme/icons.ts` (SF Symbols en iOS, Material Symbols en Android y web). Los animales van con `SpeciesIcon` (`src/features/pets/SpeciesIcon.tsx`), que usa los íconos de la comunidad de Material Design donde esos conjuntos no tienen el animal. Sin emojis en la interfaz.
 - **Datos del servidor:** se leen y cambian con hooks de React Query por funcionalidad (por ejemplo `src/features/pets/hooks.ts`), así las pantallas comparten la caché y se actualizan después de cada cambio.
 - **Traducciones:** todo texto va en `src/i18n/locales/es.ts` y `en.ts`. TypeScript falla si falta una clave en cualquiera de los dos idiomas.
 - **Cambios al instante:** para acciones rápidas como una huella, cambia la publicación en todas las pantallas a la vez con `updateCachedPost` (`src/features/posts/cache.ts`) y deshazlo si la petición falla.
