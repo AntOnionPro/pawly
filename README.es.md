@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8.5` a `main`).** Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 10, Refugios y rescatistas (en curso).** La etapa 7.5 está terminada y falta su release `v0.8.5` a `main`. Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -24,12 +24,14 @@ Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8
 | 7.5 | Diseño y detalles | Hecho |
 | 8 | Infraestructura y web | Pospuesta |
 | 9 | Lanzamiento | Pospuesta |
-| 10 | Fase 2: refugios y rescatistas | Sin empezar |
+| 10 | Fase 2: refugios y rescatistas | En curso |
 | 11 | Fase 2: donaciones | Sin empezar |
 
 Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83)), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84)), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)), el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)), el gato de iniciar sesión que obligaba a deslizar para verlo completo ([#113](https://github.com/AntOnionPro/pawly/issues/113)), perros en acuarela al iniciar sesión ([#115](https://github.com/AntOnionPro/pawly/issues/115)), conejos en acuarela al iniciar sesión ([#117](https://github.com/AntOnionPro/pawly/issues/117)), la vista de computadora en la web ([#119](https://github.com/AntOnionPro/pawly/issues/119)) y filas de Adopción y Rescate con el ícono del animal y la foto a la derecha ([#120](https://github.com/AntOnionPro/pawly/issues/120)). Se publicará como `v0.8.5`.
 
 La fase 2 se replanteó ([#123](https://github.com/AntOnionPro/pawly/issues/123)): los refugios y rescatistas toman el lugar de las veterinarias, y quedaron escritas las reglas de las donaciones.
+
+Etapa 10 hasta ahora: verificación de cuentas de refugio y rescatista ([#125](https://github.com/AntOnionPro/pawly/issues/125)). Falta: el perfil de refugio o rescatista ([#126](https://github.com/AntOnionPro/pawly/issues/126)), la insignia en toda la app y los refugios en Adopción ([#127](https://github.com/AntOnionPro/pawly/issues/127)), los casos de rescate a su cargo ([#128](https://github.com/AntOnionPro/pawly/issues/128)) y buscar refugios y rescatistas ([#129](https://github.com/AntOnionPro/pawly/issues/129)).
 
 ## Funcionalidades
 
@@ -89,15 +91,18 @@ Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de
 
 #### Notificaciones
 
-- Push y dentro de la app para reacciones, comentarios, nuevos seguidores, mensajes, solicitudes de adopción, recordatorios de seguimiento de adopción y reportes de rescate cercanos (opcional).
+- Push y dentro de la app para reacciones, comentarios, nuevos seguidores, mensajes, solicitudes de adopción, recordatorios de seguimiento de adopción y reportes de rescate cercanos (opcional). Avisos de Pawly dentro de la app por la revisión de un reporte y por el resultado de una solicitud de refugio o rescatista.
 
 #### Ajustes
 
-- Idioma, tema, paleta de color, letra, videos automáticos, preferencias de notificaciones, radio de cercanía, usuarios bloqueados, cambiar contraseña, eliminar cuenta, términos y aviso de privacidad, cerrar sesión.
+- Idioma, tema, paleta de color, letra, videos automáticos, preferencias de notificaciones, radio de cercanía, usuarios bloqueados, cuenta de refugio o rescatista, cambiar contraseña, eliminar cuenta, términos y aviso de privacidad, cerrar sesión.
 
 ### Fase 2
 
-- **Refugios y rescatistas:** cuentas especiales verificadas, con perfil (ubicación, horarios y qué necesitan). Atienden casos de rescate y publican sus animales en adopción. Un administrador las verifica: a un refugio constituido (asociación civil) con sus documentos (acta constitutiva y constancia fiscal), y a un rescatista independiente con una revisión de su actividad.
+- **Refugios y rescatistas:** cuentas especiales verificadas, con perfil (ubicación, horarios y qué necesitan). Atienden casos de rescate y publican sus animales en adopción.
+  - **Verificación:** desde ajustes ("Cuenta de refugio o rescatista"), una persona pide que su cuenta sea de un refugio constituido (asociación civil) o de un rescatista independiente, con un nombre público, a qué se dedica y enlaces donde se vea su actividad. Un refugio adjunta sus documentos (acta constitutiva y constancia de situación fiscal, en PDF o foto), que solo pueden abrir esa persona y los administradores.
+  - Un administrador revisa cada solicitud en el panel: la aprueba, la rechaza con un motivo o retira la verificación después. La persona recibe el aviso en la app, y puede cancelar una solicitud mientras está en revisión.
+  - Una cuenta verificada muestra en su perfil su nombre público y la insignia "Refugio verificado" o "Rescatista verificado". El nombre público solo cambia con otra solicitud.
 - **Donaciones** a quien publicó, sea una persona, un rescatista o un refugio:
   - El dinero va directo de quien da a quien recibe por el proveedor de pagos, donde cada quien conecta su propia cuenta. Nunca pasa por Pawly, y Pawly no cobra comisión: el 100 % llega a quien recibe, como exige la App Store para los regalos de dinero entre personas.
   - Una donación puede ser de hasta 5,000 MXN.
@@ -111,7 +116,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de
 | --- | --- |
 | Visitante | Ver publicaciones, adopciones y reportes de rescate. |
 | Usuario | Usar todas las funcionalidades de la fase 1. |
-| Administrador | Revisar reportes, eliminar contenido y suspender usuarios desde el panel de PocketBase. |
+| Administrador | Revisar reportes, eliminar contenido, suspender usuarios y revisar las solicitudes de refugios y rescatistas desde el panel de PocketBase. |
 | Refugio o rescatista | Fase 2. |
 
 ## Diseño
@@ -241,6 +246,7 @@ Costos externos:
 - Límites de video (tamaño y duración).
 - Versiones mínimas soportadas de iOS y Android.
 - Proveedor de pagos para las donaciones, y la confirmación de un contador sobre el trato fiscal de las donaciones en México (antes de la etapa 11).
+- El aviso de privacidad definitivo (etapa 9) debe cubrir los documentos que envían los refugios para verificarse.
 
 ## Flujo de trabajo
 

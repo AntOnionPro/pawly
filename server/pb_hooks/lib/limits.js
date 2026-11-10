@@ -47,6 +47,7 @@ const LIMITS = {
   adoption_requests: { owner: 'applicant', windows: [[10, DAY]] },
   rescue_reports: { owner: 'reporter', windows: [[10, DAY]] },
   rescue_helpers: { owner: 'helper', windows: [[20, DAY]] },
+  verification_requests: { owner: 'user', windows: [[3, DAY]] },
 };
 
 /** Accounts younger than this get half of each limit. */

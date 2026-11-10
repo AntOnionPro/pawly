@@ -17,6 +17,8 @@ import type { FontPreference } from '@/theme/fonts';
 export interface AccountActions {
   onNotifications: () => void;
   onBlockedUsers: () => void;
+  /** "Shelter or rescuer account". */
+  onVerification: () => void;
   onChangePassword: () => void;
   onSignOut: () => void;
   onDeleteAccount: () => void;
@@ -85,6 +87,12 @@ export function SettingsContent({ account, onOpenLegal }: SettingsContentProps) 
             onPress={account.onNotifications}
           />
           <NavRow icon="block" label={t('blocks.title')} onPress={account.onBlockedUsers} divider />
+          <NavRow
+            icon="verified"
+            label={t('verification.title')}
+            onPress={account.onVerification}
+            divider
+          />
           <NavRow
             icon="lock"
             label={t('account.password.title')}

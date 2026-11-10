@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fireEvent, screen } from '@testing-library/react-native';
+import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { isLiquidGlassAvailable } from 'expo-glass-effect';
 import type { ReactNode } from 'react';
 import { Platform, Text } from 'react-native';
@@ -30,10 +30,11 @@ jest.mock('expo-router', () => {
   };
   const Screen = ({ options }: { options: { headerRight?: () => ReactNode } }) =>
     options.headerRight?.() ?? null;
-  return { Stack: { Toolbar, Screen } };
+  return { Stack: { Toolbar, Screen }, useNavigation: () => mockNavigation };
 });
 
 const mockTopBar: { toolbar?: object; button?: Record<string, unknown> } = {};
+const mockNavigation = { setOptions: jest.fn() };
 const pink = lightThemes.pink;
 
 async function withTheme(theme: 'light' | 'dark') {
@@ -98,6 +99,22 @@ describe('the main action of a form, in the top bar', () => {
     jest.replaceProperty(Platform, 'OS', 'web');
     await renderWith(<HeaderAction label="Guardar" disabled onPress={jest.fn()} />);
     expect(screen.getByRole('button', { name: 'Guardar' })).toBeDisabled();
+  });
+
+  it('leaves the top bar with its form on Android and the web', async () => {
+    jest.replaceProperty(Platform, 'OS', 'web');
+    const view = await renderWith(<HeaderAction label="Enviar" onPress={jest.fn()} />);
+    await screen.findByRole('button', { name: 'Enviar' });
+    expect(mockNavigation.setOptions).not.toHaveBeenCalled();
+    await view.unmount();
+    expect(mockNavigation.setOptions).toHaveBeenCalledWith({ headerRight: undefined });
+  });
+
+  it('on iOS the toolbar button goes away by itself', async () => {
+    const view = await renderWith(<HeaderAction label="Enviar" onPress={jest.fn()} />);
+    await waitFor(() => expect(mockTopBar.button).toBeDefined());
+    await view.unmount();
+    expect(mockNavigation.setOptions).not.toHaveBeenCalled();
   });
 });
 

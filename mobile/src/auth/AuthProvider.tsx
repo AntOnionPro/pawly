@@ -21,6 +21,10 @@ import { appendFile, uploadFetch } from '@/utils/upload';
 import { suspensionText, type Suspension } from './suspension';
 import { normalizeUsername, type SignUpValues } from './validation';
 
+/** A verified account of a constituted shelter or of an independent rescuer. */
+export const ACCOUNT_KINDS = ['shelter', 'rescuer'] as const;
+export type AccountKind = (typeof ACCOUNT_KINDS)[number];
+
 /** Public profile plus the owner's own email. */
 export interface User {
   id: string;
@@ -29,7 +33,12 @@ export interface User {
   email?: string;
   bio: string;
   avatar: string;
+  /** Whether the email was confirmed. */
   verified: boolean;
+  /** Set by the server when Pawly verifies the account as a shelter or a rescuer ('' if not). */
+  accountKind: AccountKind | '';
+  /** The name a verified shelter or rescuer shows ('' for everyone else). */
+  publicName: string;
   /** Kept by the server (follows). */
   followerCount: number;
   followingCount: number;
@@ -83,6 +92,8 @@ export function toUser(record: RecordModel | null | undefined): User | null {
     bio: String(record.bio ?? ''),
     avatar: String(record.avatar ?? ''),
     verified: Boolean(record.verified),
+    accountKind: ACCOUNT_KINDS.find((kind) => kind === record.accountKind) ?? '',
+    publicName: String(record.publicName ?? ''),
     followerCount: Number(record.followerCount ?? 0),
     followingCount: Number(record.followingCount ?? 0),
   };

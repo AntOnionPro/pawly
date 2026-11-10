@@ -247,6 +247,33 @@ describe('notification list', () => {
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 
+  it('tells the result of a shelter or rescuer request and opens it', async () => {
+    const fromPawly = { actorId: '', actor: undefined, postId: '' };
+    jest.mocked(api.listNotifications).mockResolvedValue({
+      items: [
+        notification('n1', 'verification_approved', fromPawly),
+        notification('n2', 'verification_rejected', { ...fromPawly, read: true }),
+        notification('n3', 'verification_revoked', { ...fromPawly, read: true }),
+      ],
+      page: 1,
+      hasMore: false,
+    });
+    await renderWith(<NotificationList />, signedIn());
+    const approved = 'Aprobamos tu solicitud: tu cuenta ya está verificada.';
+    expect(await screen.findByText(approved)).toBeOnTheScreen();
+    expect(
+      screen.getByText('No aprobamos tu solicitud de verificación. Toca para ver el motivo.'),
+    ).toBeOnTheScreen();
+    expect(
+      screen.getByText('Retiramos la verificación de tu cuenta. Toca para ver el motivo.'),
+    ).toBeOnTheScreen();
+    expect(screen.getAllByLabelText('Pawly')).toHaveLength(3);
+
+    await fireEvent.press(screen.getByRole('link', { name: new RegExp(`^Nueva, ${approved}`) }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith('/verification');
+    expect(screen.getAllByRole('link')).toHaveLength(3);
+  });
+
   it('hides notifications from blocked users and says when there are none', async () => {
     jest.mocked(moderationApi.listBlocks).mockResolvedValue([{ id: 'b1', blockedId: 'u2' }]);
     await renderWith(<NotificationList />, signedIn());

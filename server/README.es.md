@@ -70,12 +70,15 @@ La colección `users` guarda las cuentas (etapa 1):
 | `email`           | Solo el dueño  |                                                                                 |
 | `birthdate`       | Nadie (oculto) | Se guarda al registrarse y no se puede cambiar.                                 |
 | `termsAcceptedAt` | Nadie (oculto) | Lo guarda el servidor al registrarse.                                           |
+| `accountKind`     | Todos          | `shelter` o `rescuer` en una cuenta verificada; solo lo cambia el servidor.     |
+| `publicName`      | Todos          | Nombre que muestra un refugio o rescatista verificado; lo pone el servidor.     |
 
 Reglas aplicadas en `pb_hooks/accounts.pb.js`:
 
 - **Registro:** se envía `username`, `email`, `password`, `passwordConfirm`, `dateOfBirth` y `acceptTerms: true`. La fecha de nacimiento va como `dateOfBirth` porque PocketBase quita los campos ocultos de las peticiones de usuarios; el hook la valida (13 años o más) y la guarda en `birthdate`. Errores por campo: `dateOfBirth` (`birthdate_required`, `birthdate_invalid`, `too_young`) y `acceptTerms` (`terms_required`).
 - **Verificación:** el correo se envía justo después del registro. Solo las cuentas verificadas inician sesión: una cuenta sin verificar recibe **403**, una contraseña incorrecta recibe **400**.
 - **Perfiles:** cualquiera puede ver uno; para listarlos hace falta sesión; cada usuario edita y borra solo su propia cuenta.
+- **Cuentas verificadas:** `accountKind` y `publicName` salen de una [solicitud de verificación](#cuentas-de-refugio-y-rescatista) aprobada; los cambios que un usuario les haga a los suyos se ignoran.
 
 ### Correos durante el desarrollo
 
@@ -167,6 +170,7 @@ Cada cuenta solo puede crear cierta cantidad de cosas en un periodo (etapa 7, `p
 | Solicitudes de adopción | 10 por día |
 | Reportes de rescate | 10 por día |
 | Ofertas de "Puedo ayudar" | 20 por día |
+| Solicitudes de verificación | 3 por día |
 
 El mismo comentario o mensaje de 20 caracteres o más solo se puede enviar 3 veces en 10 minutos; los cortos ("¡Qué linda!") no cuentan.
 
@@ -185,6 +189,38 @@ Los superusuarios suspenden una cuenta desde el panel de administración (etapa 
 
 Al pasar `suspendedUntil`, la cuenta vuelve a funcionar sola. Para quitar la suspensión antes, vacía `suspendedUntil` y apaga `suspendedForever`.
 
+## Cuentas de refugio y rescatista
+
+Una persona pide que su cuenta sea de un refugio constituido o de un rescatista independiente con un registro en `verification_requests` (etapa 10):
+
+| Campo | Reglas |
+| --- | --- |
+| `user` | El usuario con sesión; no se puede cambiar. Borrar la cuenta borra sus solicitudes y documentos. |
+| `kind` | `shelter` (refugio) o `rescuer` (rescatista); no se puede cambiar. |
+| `publicName` | Obligatorio, 3–60 caracteres: el nombre que mostrará la cuenta. |
+| `about` | Obligatorio, hasta 1,000 caracteres: a qué se dedica. |
+| `links` | Hasta 500 caracteres: dónde se ve su actividad. |
+| `documents` | Hasta 5 archivos (PDF, JPEG, PNG, WebP o HEIC) de hasta 10 MB cada uno. Obligatorios en `shelter`. Están protegidos: abrir uno pide un token de archivo, que solo reciben quien envió la solicitud y los superusuarios. |
+| `status` | `pending`, `approved`, `rejected`, `revoked` o `replaced`. Una solicitud nueva siempre está `pending`. |
+| `reviewNote` | Por qué se rechazó o se retiró; quien envió la solicitud lo lee. Obligatorio para rechazar. |
+| `reviewedAt` | Lo guarda el servidor en cada revisión. |
+
+Solo quien la envió ve sus solicitudes. Una cuenta tiene una sola solicitud `pending` a la vez, envía hasta 3 por día y puede cancelar una pendiente borrándola. Los errores de campo usan los códigos `documents_required`, `already_pending`, `invalid_status` y `note_required`. Las reglas están en `pb_hooks/verification.pb.js`.
+
+En la cuenta (`users`), `accountKind` (`shelter` o `rescuer`) y `publicName` dicen que está verificada. Todos los ven y solo el servidor los cambia: nadie puede cambiarlos en su propia cuenta ni al registrarse.
+
+### Revisar solicitudes
+
+1. Abre el panel de administración (`/_/`) y la colección `verification_requests`, y filtra por `status = "pending"`.
+2. Abre una solicitud. Revisa el `publicName`, a qué se dedica (`about`), sus enlaces (`links`) y, si es un refugio, sus `documents` (acta constitutiva y constancia de situación fiscal; el panel los abre). Si es un rescatista, mira también su actividad en Pawly: busca el id de `user` en `posts`, `rescue_reports` y `adoptions`.
+3. Cambia el `status` y guarda:
+   - `approved` deja la cuenta como refugio o rescatista verificado: el servidor copia `kind` y `publicName` a `accountKind` y `publicName` del usuario. Una solicitud aprobada anterior de la misma cuenta pasa a `replaced`.
+   - `rejected` pide un `reviewNote` con el motivo, que la persona lee en la app. Puede enviar otra solicitud.
+4. Para retirar una verificación después, abre la solicitud aprobada y ponla en `revoked`, con un `reviewNote` si la persona debe saber por qué. La cuenta vuelve a ser una cuenta normal.
+5. Una solicitud rechazada o retirada todavía se puede aprobar. No se permite ningún otro cambio de estado, y ni quién pidió ni el tipo cambian nunca.
+
+En cada caso la persona recibe un aviso en la app (`verification_approved`, `verification_rejected` o `verification_revoked`), sin `actor` y sin push. Cambiar `accountKind` o `publicName` directamente en el usuario también funciona, pero no avisa a nadie: es mejor usar la solicitud.
+
 ## Mensajes directos
 
 `conversations` guarda una conversación por par de usuarios (etapa 4), en orden (`userA` < `userB`). Solo sus dos participantes la ven. El servidor guarda una vista previa del último mensaje (`lastMessageText`, `lastMessageAt`, `lastSender`) y una fecha de "leído hasta" para cada participante (`readA`, `readB`): un participante la marca como leída con una actualización vacía, y ningún otro campo puede cambiar. `messages` guarda los mensajes: hasta 1000 caracteres y, opcionalmente, una publicación compartida (`post`); hace falta texto o publicación. Solo los participantes los leen y escriben, y nadie escribe si hay un bloqueo (`pb_hooks/messages.pb.js`). Si se borra una publicación compartida, `post` queda vacío y `hasPost` (lo pone el servidor) sigue en verdadero. Ambos se borran con la cuenta. Los reportes también pueden ser de un mensaje (`message`).
@@ -197,7 +233,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notificaciones
 
-`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help`, `rescue_nearby`, o `content_removed`, `report_actioned` y `report_dismissed` para la [revisión de un reporte](#revisar-reportes), que no tienen `actor` y dicen qué se reportó en `contentKind` y por qué se quitó en `reportReason`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`, `rescue`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
+`notifications` guarda las notificaciones dentro de la app (etapa 4): el destinatario (`recipient`), quién lo hizo (`actor`), el tipo (`type`: `paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help`, `rescue_nearby`, o `content_removed`, `report_actioned` y `report_dismissed` para la [revisión de un reporte](#revisar-reportes), que no tienen `actor` y dicen qué se reportó en `contentKind` y por qué se quitó en `reportReason`, o `verification_approved`, `verification_rejected` y `verification_revoked` para una [solicitud de verificación](#revisar-solicitudes), que tampoco tienen `actor`), la publicación, el comentario o la ficha relacionados (`post`, `comment`, `adoption`, `followup`, `rescue`) y si ya se leyó (`read`). Solo el servidor las crea, después de cada acción (`pb_hooks/notifications.pb.js`): nadie recibe avisos de sí mismo ni de alguien a quien bloqueó, y las huellas, los seguimientos y las republicaciones avisan una sola vez por persona aunque se deshagan y se vuelvan a hacer. Solo el destinatario las ve, y `POST /api/pawly/notifications/read` marca como leídas todas las del usuario con sesión. Una solicitud de adopción nueva avisa a quien publica, aceptarla o rechazarla avisa al solicitante, cerrar la adopción felicita al adoptante, y el seguimiento le recuerda al adoptante cada fecha y avisa al dueño anterior de cada actualización. Se borran con cualquiera de las dos cuentas y con la publicación, el comentario o la ficha relacionados.
 
 ## Notificaciones push
 

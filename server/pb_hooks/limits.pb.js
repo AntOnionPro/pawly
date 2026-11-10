@@ -25,6 +25,7 @@ onRecordCreateRequest(
   'adoption_requests',
   'rescue_reports',
   'rescue_helpers',
+  'verification_requests',
 );
 
 // Who started a conversation does not change.

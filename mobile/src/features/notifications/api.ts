@@ -31,13 +31,22 @@ export type NotificationType =
   | 'rescue_nearby'
   | 'content_removed'
   | 'report_actioned'
-  | 'report_dismissed';
+  | 'report_dismissed'
+  | 'verification_approved'
+  | 'verification_rejected'
+  | 'verification_revoked';
 
-/** Notices from Pawly itself, about a report review: they have no actor. */
+/**
+ * Notices from Pawly itself, about a report review or about the person's request for a
+ * shelter or rescuer account: they have no actor.
+ */
 export const PAWLY_NOTICES: readonly NotificationType[] = [
   'content_removed',
   'report_actioned',
   'report_dismissed',
+  'verification_approved',
+  'verification_rejected',
+  'verification_revoked',
 ];
 
 /** Named so it does not clash with the browser's `Notification`. */

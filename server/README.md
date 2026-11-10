@@ -70,12 +70,15 @@ The `users` collection holds the accounts (stage 1):
 | `email`           | Owner only      |                                                                                      |
 | `birthdate`       | Nobody (hidden) | Set at sign-up and cannot be changed.                                                |
 | `termsAcceptedAt` | Nobody (hidden) | Set by the server at sign-up.                                                        |
+| `accountKind`     | Everyone        | `shelter` or `rescuer` on a verified account; only the server sets it.               |
+| `publicName`      | Everyone        | The name a verified shelter or rescuer shows; only the server sets it.               |
 
 Rules enforced in `pb_hooks/accounts.pb.js`:
 
 - **Sign-up** sends `username`, `email`, `password`, `passwordConfirm`, `dateOfBirth` and `acceptTerms: true`. The birth date goes as `dateOfBirth` because PocketBase drops hidden fields from a user's request; the hook validates it (13 or older) and stores it in `birthdate`. Field errors: `dateOfBirth` (`birthdate_required`, `birthdate_invalid`, `too_young`) and `acceptTerms` (`terms_required`).
 - **Verification:** the email is sent right after sign-up. Only verified accounts can sign in: an unverified account gets **403**, a wrong password gets **400**.
 - **Profiles:** anyone can view one; listing them requires a session; each user edits and deletes only their own account.
+- **Verified accounts:** `accountKind` and `publicName` come from an approved [verification request](#shelter-and-rescuer-accounts); a user's own changes to them are ignored.
 
 ### Emails during development
 
@@ -167,6 +170,7 @@ Each account can only create so much in a period (stage 7, `pb_hooks/limits.pb.j
 | Adoption requests | 10 per day |
 | Rescue reports | 10 per day |
 | "I can help" offers | 20 per day |
+| Verification requests | 3 per day |
 
 The same comment or message of 20 characters or more can only be sent 3 times in 10 minutes; short ones ("So cute!") are not affected.
 
@@ -185,6 +189,38 @@ Superusers suspend an account from the admin panel (stage 7), in the `users` col
 
 When `suspendedUntil` passes, the account works again by itself. To lift a suspension earlier, empty `suspendedUntil` and turn off `suspendedForever`.
 
+## Shelter and rescuer accounts
+
+A person asks for their account to be a constituted shelter's or an independent rescuer's with a record in `verification_requests` (stage 10):
+
+| Field | Rules |
+| --- | --- |
+| `user` | The signed-in user; cannot be changed. Deleting the account deletes their requests and documents. |
+| `kind` | `shelter` or `rescuer`; cannot be changed. |
+| `publicName` | Required, 3–60 characters: the name the account will show. |
+| `about` | Required, up to 1,000 characters: what they do. |
+| `links` | Up to 500 characters: where their work can be seen. |
+| `documents` | Up to 5 files (PDF, JPEG, PNG, WebP or HEIC) of up to 10 MB each. Required for `shelter`. They are protected: opening one needs a file token, which only the applicant and superusers get. |
+| `status` | `pending`, `approved`, `rejected`, `revoked` or `replaced`. A new request is always `pending`. |
+| `reviewNote` | Why it was rejected or revoked; the applicant reads it. Required to reject. |
+| `reviewedAt` | Set by the server at each review. |
+
+Only the applicant sees their requests. An account has one `pending` request at a time, sends up to 3 per day, and can cancel a pending one by deleting it. Field errors use the codes `documents_required`, `already_pending`, `invalid_status` and `note_required`. The rules live in `pb_hooks/verification.pb.js`.
+
+On the account (`users`), `accountKind` (`shelter` or `rescuer`) and `publicName` say that it is verified. Everyone sees them and only the server sets them: nobody can change them on their own account or at sign-up.
+
+### Reviewing requests
+
+1. Open the admin panel (`/_/`) and the `verification_requests` collection, and filter by `status = "pending"`.
+2. Open a request. Check the `publicName`, what they do (`about`), their `links` and, for a shelter, its `documents` (incorporation deed and tax registration; the panel opens them). For a rescuer, look at their activity in Pawly too: search the `user` id in `posts`, `rescue_reports` and `adoptions`.
+3. Change the `status` and save:
+   - `approved` makes the account a verified shelter or rescuer: the server copies `kind` and `publicName` to the user's `accountKind` and `publicName`. An earlier approved request of the same account becomes `replaced`.
+   - `rejected` needs a `reviewNote` with the reason, which the person reads in the app. They can send another request.
+4. To take a verification back later, open the approved request and set it to `revoked`, with a `reviewNote` if the person should know why. The account becomes a regular one again.
+5. A rejected or revoked request can still be approved. No other change of status is allowed, and who asked and the kind never change.
+
+In each case the person gets a notice in the app (`verification_approved`, `verification_rejected` or `verification_revoked`), without `actor` and without push. Changing `accountKind` or `publicName` directly on the user also works, but tells nobody: prefer the request.
+
 ## Direct messages
 
 `conversations` holds one conversation per pair of users (stage 4), stored in order (`userA` < `userB`). Only its two participants see it. The server keeps a preview of the last message (`lastMessageText`, `lastMessageAt`, `lastSender`) and a "read up to" date for each participant (`readA`, `readB`): a participant marks it as read with an empty update, and no other field can change. `messages` holds the messages: up to 1000 characters and optionally a shared `post` (text or a post is required). Only the participants read and write them, and nobody writes across a block (`pb_hooks/messages.pb.js`). If a shared post is deleted, `post` becomes empty and `hasPost` (set by the server) stays true. Both are deleted with the account. Reports can also be about a `message`.
@@ -197,7 +233,7 @@ lastSender != "<id>" && lastMessageAt != '' && ((userA = "<id>" && (readA = '' |
 
 ## Notifications
 
-`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help`, `rescue_nearby`, or `content_removed`, `report_actioned` and `report_dismissed` for a [report review](#reviewing-reports), which have no `actor` and say what was reported in `contentKind` and why it was removed in `reportReason`), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
+`notifications` holds the in-app notifications (stage 4): the `recipient`, who did it (`actor`), the `type` (`paw`, `comment`, `follow`, `repost`, `adoption_request`, `request_accepted`, `request_rejected`, `adopted`, `followup_due`, `followup_posted`, `rescue_help`, `rescue_nearby`, or `content_removed`, `report_actioned` and `report_dismissed` for a [report review](#reviewing-reports), which have no `actor` and say what was reported in `contentKind` and why it was removed in `reportReason`, or `verification_approved`, `verification_rejected` and `verification_revoked` for a [verification request](#reviewing-requests), which have no `actor` either), the related `post`, `comment`, `adoption`, `followup` or `rescue`, and whether it was `read`. Only the server creates them, after each action (`pb_hooks/notifications.pb.js`): nobody is notified about themselves or by someone they blocked, and paw prints, follows and reposts notify once per person even if they are undone and done again. Only the recipient sees them, and `POST /api/pawly/notifications/read` marks all of the signed-in user's notifications as read. A new adoption request notifies the publisher, accepting or rejecting it notifies the applicant, and completing the adoption congratulates the adopter, and follow-ups remind the adopter and tell the previous owner about each update. They are deleted with either account and with the related post, comment or listing.
 
 ## Push notifications
 
