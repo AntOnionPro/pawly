@@ -49,6 +49,7 @@ const REPORT: RescueReport = {
   reporterId: 'u2',
   reporter: SOL,
   kind: 'help',
+  species: '',
   description: 'Perrito atrapado',
   media: [],
   latitude: 19.35,

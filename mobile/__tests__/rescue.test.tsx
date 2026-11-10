@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import * as Location from 'expo-location';
 import type PocketBase from 'pocketbase';
 import { Linking } from 'react-native';
@@ -71,6 +71,7 @@ function report(id: string, overrides: Partial<api.RescueReport> = {}): api.Resc
     reporterId: 'u2',
     reporter: SOL,
     kind: 'help',
+    species: '',
     description: 'Perrito herido junto al mercado',
     media: [],
     latitude: 19.35,
@@ -126,6 +127,11 @@ describe('rescue API helpers', () => {
       },
     });
     expect(mapped).toMatchObject({ kind: 'lost', latitude: 19.4, petId: 'p1', urgency: '' });
+    // Reports saved before the species was asked have none.
+    expect(mapped.species).toBe('');
+    expect(actual.toRescueReport({ ...mapped, collectionName: '', species: 'cat' }).species).toBe(
+      'cat',
+    );
     expect(mapped.reporter?.username).toBe('sol');
     expect(mapped.pet?.name).toBe('Luna');
   });
@@ -172,6 +178,7 @@ describe('rescue API helpers', () => {
     const client = { collection: () => ({ create }) } as unknown as PocketBase;
     await actual.createRescueReport(client, 'u1', {
       kind: 'lost',
+      species: 'dog',
       description: ' Se escapó ',
       place: '',
       urgency: 'high',
@@ -185,6 +192,7 @@ describe('rescue API helpers', () => {
     const form = create.mock.calls[0]?.[0] as FormData;
     expect(form.get('reporter')).toBe('u1');
     expect(form.get('kind')).toBe('lost');
+    expect(form.get('species')).toBe('dog');
     expect(form.get('description')).toBe('Se escapó');
     expect(form.get('urgency')).toBe('');
     expect(form.get('pet')).toBe('p1');
@@ -196,6 +204,7 @@ describe('rescue API helpers', () => {
     expect(
       validateRescue({
         kind: 'help',
+        species: '',
         description: ' ',
         place: '',
         urgency: '',
@@ -224,6 +233,34 @@ describe('Rescue tab', () => {
       pathname: '/rescue/[id]',
       params: { id: 'r1' },
     });
+  });
+
+  it('shows the animal on the left, or the kind of case when it is not known', async () => {
+    jest.mocked(api.listRescueReports).mockResolvedValue({
+      items: [
+        report('r1', { species: 'cat', description: 'Gatito en un árbol' }),
+        report('r2', {
+          kind: 'lost',
+          petId: 'p1',
+          pet: LUNA_PET,
+          urgency: '',
+          description: 'Luna se escapó',
+        }),
+        report('r3', { kind: 'found', urgency: '', description: 'Sin collar' }),
+      ],
+      page: 1,
+      hasMore: false,
+    });
+    await renderWith(<RescueList />, authValue());
+    const cat = await screen.findByRole('link', { name: /^Necesita ayuda, Gato, / });
+    expect(within(cat).getByTestId('species-icon-cat')).toBeOnTheScreen();
+    expect(within(cat).getByText('Necesita ayuda · Gato')).toBeOnTheScreen();
+    // A lost pet's report shows the pet's species.
+    const lost = screen.getByRole('link', { name: /^Perdido, Perro, / });
+    expect(within(lost).getByTestId('species-icon-dog')).toBeOnTheScreen();
+    const found = screen.getByRole('link', { name: /^Encontrado, Sin collar/ });
+    expect(within(found).queryByTestId(/^species-icon-/)).toBeNull();
+    expect(within(found).getByText('Encontrado')).toBeOnTheScreen();
   });
 
   it('filters by kind', async () => {
@@ -296,6 +333,11 @@ describe('reporting', () => {
 
     await fireEvent.press(screen.getByRole('radio', { name: 'Necesita ayuda' }));
     await fireEvent.press(screen.getByRole('radio', { name: 'Alta' }));
+    // The animal is optional, and a second tap takes the choice back.
+    await fireEvent.press(screen.getByRole('radio', { name: 'Perro' }));
+    await fireEvent.press(screen.getByRole('radio', { name: 'Perro' }));
+    expect(screen.getByRole('radio', { name: 'Perro', checked: false })).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('radio', { name: 'Gato' }));
     await fireEvent.changeText(screen.getByLabelText('Descripción'), 'Gatito atrapado');
     await fireEvent.press(screen.getByRole('button', { name: 'Usar mi ubicación actual' }));
     expect(await screen.findByText('Ubicación lista (±12 m).')).toBeOnTheScreen();
@@ -307,6 +349,7 @@ describe('reporting', () => {
       'u1',
       expect.objectContaining({
         kind: 'help',
+        species: 'cat',
         urgency: 'high',
         description: 'Gatito atrapado',
         place: 'Parque',
@@ -339,6 +382,11 @@ describe('reporting', () => {
     await renderWith(<RescueForm kind="lost" petId="p1" onSaved={jest.fn()} />, signedIn());
     expect(await screen.findByRole('radio', { name: 'Luna', checked: true })).toBeOnTheScreen();
     expect(screen.queryByRole('radio', { name: 'Alta' })).toBeNull();
+    // The report takes the pet's species, so the form does not ask.
+    expect(screen.queryByText('Animal (opcional)')).toBeNull();
+    await fireEvent.press(screen.getByRole('radio', { name: 'Luna' }));
+    expect(screen.getByText('Animal (opcional)')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('radio', { name: 'Luna' }));
     await fireEvent.changeText(
       screen.getByLabelText('Fecha en que se vio por última vez'),
       '2026-11-03',
@@ -414,6 +462,18 @@ describe('report page', () => {
       pathname: '/report',
       params: { kind: 'rescue', id: 'r1' },
     });
+  });
+
+  it('says which animal it is', async () => {
+    await renderWith(
+      <RescueDetail
+        report={report('r1', { species: 'cat' })}
+        onPressPet={jest.fn()}
+        onPressUser={jest.fn()}
+      />,
+      signedIn(),
+    );
+    expect(await screen.findByText(/^Gato · Urgencia alta · /)).toBeOnTheScreen();
   });
 
   it('lets the reporter move the case along', async () => {

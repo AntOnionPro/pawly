@@ -21,7 +21,7 @@ import type { RescueReport, RescueStatus } from './api';
 import { HelpSection } from './HelpSection';
 import { useSetRescueStatus } from './hooks';
 import { PointMap } from './maps';
-import { KIND_ICONS, useRescueDetail } from './RescueCard';
+import { KIND_ICONS, reportSpecies, useRescueDetail } from './RescueCard';
 
 interface RescueDetailProps {
   report: RescueReport;
@@ -63,13 +63,18 @@ function StatusActions({ report }: { report: RescueReport }) {
   );
 }
 
-/** Full rescue report: photos and videos, kind and status, description, place and reporter. */
+/**
+ * Full rescue report: photos and videos, kind and status, the animal, description, place and
+ * reporter.
+ */
 export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: RescueDetailProps) {
   const { t } = useTranslation();
   const { client, user } = useAuth();
   const colors = useThemeColors();
   const detail = useRescueDetail(report);
   const date = useRelativeDate(report.created);
+  const species = reportSpecies(report);
+  const animal = species ? t(`pets.speciesNames.${species}`) : '';
   const reportAction = useReportAction();
   const reporter = report.reporter;
   const isReporter = user?.id === report.reporterId;
@@ -103,7 +108,7 @@ export function RescueDetail({ report, onPressPet, onPressUser, onEdit }: Rescue
         ) : null}
       </View>
       <ThemedText variant="caption" color="textSecondary">
-        {[detail, date].filter(Boolean).join(' · ')}
+        {[animal, detail, date].filter(Boolean).join(' · ')}
       </ThemedText>
       <ThemedText>{report.description}</ThemedText>
       <HelpSection report={report} />

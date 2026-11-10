@@ -156,6 +156,7 @@ const es: Resources = {
     place: 'Referencia del lugar (opcional)',
     placeHint: 'Por ejemplo "Frente al mercado de Coyoacán".',
     pet: 'Mascota (opcional)',
+    species: 'Animal (opcional)',
     lastSeenDate: 'Fecha en que se vio por última vez',
     location: 'Ubicación',
     useLocation: 'Usar mi ubicación actual',

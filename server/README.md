@@ -259,6 +259,7 @@ The adopter gets an `adopted` notification. Earlier posts that tag the pet keep 
 | ------------- | ------------------------------------------------------------------------------------------------- |
 | `reporter`    | The signed-in user; cannot be changed. Deleting the account deletes their reports.                |
 | `kind`        | `help`, `lost` or `found`; cannot be changed.                                                     |
+| `species`     | The animal (optional), with the values of pets. A `lost` report with a `pet` takes its species.   |
 | `description` | Required, up to 2,200 characters.                                                                 |
 | `media`       | Up to 10 photos or videos, with the same limits and thumbnails as posts.                          |
 | `latitude`    | GPS location with `longitude`; both are required (not both 0).                                    |

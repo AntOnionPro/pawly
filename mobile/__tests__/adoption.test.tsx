@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import type PocketBase from 'pocketbase';
 
 import { AdoptionDetail } from '@/features/adoption/AdoptionDetail';
@@ -199,6 +199,16 @@ describe('Adoption tab', () => {
       pathname: '/adoption/[id]',
       params: { id: 'a1' },
     });
+  });
+
+  it('shows the animal on the left and the photo on the right', async () => {
+    await renderWith(<AdoptionList />, authValue());
+    const row = await screen.findByRole('link', { name: /^Firulais, Perro/ });
+    expect(within(row).getByTestId('species-icon-dog')).toBeOnTheScreen();
+    const photo = within(row).getByTestId('row-photo');
+    expect(photo).toBeOnTheScreen();
+    // The photo is the last thing in the row, on the right.
+    expect(row.children.at(-1)).toBe(photo);
   });
 
   it('filters by species, size and sex, and clears the filters', async () => {

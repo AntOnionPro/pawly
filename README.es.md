@@ -8,7 +8,7 @@ Pawly es una red social para mascotas y animales. Funciona en Android e iOS, y t
 
 ## Estado del proyecto
 
-Etapa actual: **etapa 7.5, Diseño y detalles (en curso: faltan las filas de Adopción y Rescate, [#120](https://github.com/AntOnionPro/pawly/issues/120), antes de la release `v0.8.5` a `main`).** Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
+Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8.5` a `main`).** Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Última release: `v0.8.0` (etapa 7). El plan de todas las etapas está en el [plan de trabajo](docs/roadmap.es.md).
 
 | # | Etapa | Estado |
 | --- | --- | --- |
@@ -21,13 +21,13 @@ Etapa actual: **etapa 7.5, Diseño y detalles (en curso: faltan las filas de Ado
 | 5 | Adopción | Hecho |
 | 6 | Rescate | Hecho |
 | 7 | Moderación | Hecho |
-| 7.5 | Diseño y detalles | En curso |
+| 7.5 | Diseño y detalles | Hecho |
 | 8 | Infraestructura y web | Pospuesta |
 | 9 | Lanzamiento | Pospuesta |
 | 10 | Fase 2: veterinarias | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
-Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83)), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84)), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)), el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)), el gato de iniciar sesión que obligaba a deslizar para verlo completo ([#113](https://github.com/AntOnionPro/pawly/issues/113)), perros en acuarela al iniciar sesión ([#115](https://github.com/AntOnionPro/pawly/issues/115)), conejos en acuarela al iniciar sesión ([#117](https://github.com/AntOnionPro/pawly/issues/117)) y la vista de computadora en la web ([#119](https://github.com/AntOnionPro/pawly/issues/119)). Se publicará como `v0.8.5`.
+Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83)), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84)), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)), el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)), el gato de iniciar sesión que obligaba a deslizar para verlo completo ([#113](https://github.com/AntOnionPro/pawly/issues/113)), perros en acuarela al iniciar sesión ([#115](https://github.com/AntOnionPro/pawly/issues/115)), conejos en acuarela al iniciar sesión ([#117](https://github.com/AntOnionPro/pawly/issues/117)), la vista de computadora en la web ([#119](https://github.com/AntOnionPro/pawly/issues/119)) y filas de Adopción y Rescate con el ícono del animal y la foto a la derecha ([#120](https://github.com/AntOnionPro/pawly/issues/120)). Se publicará como `v0.8.5`.
 
 ## Funcionalidades
 
@@ -64,13 +64,13 @@ Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOni
 #### Adopción
 
 - La publicación de adopción incluye una ficha: especie, edad, sexo, tamaño, vacunas, esterilización, salud, ubicación aproximada y requisitos.
-- La pestaña Adopción muestra las mascotas en adopción en una lista, con un campo de búsqueda (nombre, raza, descripción o zona) y filtros por especie, tamaño, sexo y fecha de publicación (hoy, últimos 7 días o últimos 30 días), cada uno en una fila que se desliza de lado.
+- La pestaña Adopción muestra las mascotas en adopción en una lista, con un campo de búsqueda (nombre, raza, descripción o zona) y filtros por especie, tamaño, sexo y fecha de publicación (hoy, últimos 7 días o últimos 30 días), cada uno en una fila que se desliza de lado. Cada fila muestra el ícono del animal a la izquierda y la foto a la derecha.
 - Los interesados envían una solicitud. Quien publica la acepta o la rechaza y marca la mascota como adoptada.
 - **Seguimiento:** el adoptante recibe recordatorios para subir fotos o videos a la semana, al mes, a los 3 meses y a los 6 meses. Quien la dio en adopción ve esas actualizaciones y puede reportar al adoptante si no las sube.
 
 #### Rescate
 
-Tres tipos de reporte, todos con fotos o videos, descripción y ubicación por GPS:
+Tres tipos de reporte, todos con fotos o videos, descripción, ubicación por GPS y, si se quiere, el animal (perro, gato, ave…; el reporte de una mascota perdida toma el de la mascota):
 
 | Tipo | Descripción | Estados |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ Tres tipos de reporte, todos con fotos o videos, descripción y ubicación por G
 | Perdido | Un dueño reporta a su mascota perdida (puede empezar desde el perfil de la mascota), con el lugar y la fecha en que se vio por última vez. | Perdido → Reunido |
 | Encontrado | Alguien encontró un animal que parece tener dueño. | Encontrado → Reunido |
 
-Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de búsqueda (descripción, lugar o nombre de la mascota) y filtros por tipo y fecha. Los usuarios pueden activar avisos push de reportes cerca de ellos.
+Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de búsqueda (descripción, lugar o nombre de la mascota) y filtros por tipo y fecha. Cada fila muestra el ícono del animal a la izquierda (o el tipo de caso, en los reportes sin animal) y la foto a la derecha. Los usuarios pueden activar avisos push de reportes cerca de ellos.
 
 #### Moderación
 
@@ -111,7 +111,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de
 
 - Estructura vertical tipo Instagram, con barra de navegación inferior.
 - Pestañas: **Inicio · Adopción · Publicar (+) · Rescate · Perfil**. La búsqueda y las notificaciones van en la barra superior.
-- Solo íconos en la interfaz, nunca emojis. Aspecto nativo en cada plataforma: SF Symbols en iOS y Material Symbols en Android.
+- Solo íconos en la interfaz, nunca emojis. Aspecto nativo en cada plataforma: SF Symbols en iOS y Material Symbols en Android. Los animales (perro, gato, ave, conejo, roedor, reptil y pez) usan los íconos de la comunidad de Material Design en Android y la web, porque Material Symbols no tiene perro, gato, pez ni reptil, y también en iOS donde SF Symbols no tiene (el roedor, y el perro y el gato antes de iOS 17).
 - Logo: un gato que forma la letra P (`mobile/assets/brand/logo.svg`), en rosa `#FF2981`, que no cambia con la paleta elegida. El ícono de la app es el logo blanco sobre ese rosa (con versiones oscura y tintada en iOS y una monocromática en Android), e Inicio muestra "Pawly" escrito con esa P (`mobile/assets/brand/wordmark.svg`) en el color de acento. Iniciar sesión y registrarse muestran "Pawly" con esa P arriba de los campos y, abajo, una de ocho mascotas en acuarela elegida al azar cada vez: tres gatos (negro, siamés y naranja, en `mobile/assets/images/cats/`), tres perros (husky, pitbull y salchicha, en `mobile/assets/images/dogs/`) y dos conejos (uno de orejas caídas y uno gris, en `mobile/assets/images/rabbits/`); el tema oscuro deja fuera al gato negro, que no se vería. La mascota nunca queda debajo de un texto; en iniciar sesión se ajusta al espacio que queda bajo los campos, así que no hay que deslizar (si casi no hay espacio, por ejemplo con el teclado abierto, no aparece).
 - Letra: Ubuntu (ligera, normal, media y negrita), también en las barras de arriba y en la de pestañas. En ajustes se puede cambiar por la letra del celular (San Francisco en iOS, Roboto en Android). Lo que dibuja el sistema (avisos, teclado, menú de compartir) siempre usa la letra del sistema.
 - La reacción es una huella, no un corazón.

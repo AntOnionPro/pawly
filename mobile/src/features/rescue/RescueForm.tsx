@@ -13,6 +13,7 @@ import { HeaderAction } from '@/components/HeaderAction';
 import { Icon } from '@/components/Icon';
 import { TextField } from '@/components/TextField';
 import { ThemedText } from '@/components/ThemedText';
+import { SPECIES, type Species } from '@/features/pets/api';
 import { usePets } from '@/features/pets/hooks';
 import { mediaKind, mediaUrl } from '@/features/posts/api';
 import { pickPostMedia, type ComposerMedia } from '@/features/posts/media';
@@ -168,6 +169,7 @@ export function RescueForm({ report, kind, petId, onSaved, onDeleted }: RescueFo
   const remove = useDeleteRescueReport();
   const [values, setValues] = useState<FormValues>({
     kind: report?.kind ?? kind ?? '',
+    species: report?.species ?? '',
     description: report?.description ?? '',
     place: report?.place ?? '',
     urgency: report?.urgency ?? '',
@@ -205,7 +207,16 @@ export function RescueForm({ report, kind, petId, onSaved, onDeleted }: RescueFo
   function showError(error: unknown) {
     const fieldErrors = toFieldErrors(error);
     setErrors(fieldErrors);
-    const shown = ['kind', 'description', 'urgency', 'pet', 'lastSeenAt', 'place', 'latitude'];
+    const shown = [
+      'kind',
+      'species',
+      'description',
+      'urgency',
+      'pet',
+      'lastSeenAt',
+      'place',
+      'latitude',
+    ];
     const other = Object.entries(fieldErrors).flatMap(([field, key]) =>
       key && !shown.includes(field) ? [t(key)] : [],
     );
@@ -289,6 +300,16 @@ export function RescueForm({ report, kind, petId, onSaved, onDeleted }: RescueFo
           selected={values.kind}
           onSelect={(value) => update('kind', value)}
           error={message('kind')}
+        />
+      )}
+      {chosenKind === 'lost' && values.petId ? null : (
+        // A lost pet's report takes the pet's species (on the server).
+        <ChipGroup<Species>
+          label={t('rescue.species')}
+          chips={SPECIES.map((value) => ({ value, label: t(`pets.speciesNames.${value}`) }))}
+          selected={values.species}
+          onSelect={(value) => update('species', values.species === value ? '' : value)}
+          error={message('species')}
         />
       )}
       <MediaStrip

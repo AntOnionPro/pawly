@@ -1,14 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthProvider';
 import { Icon } from '@/components/Icon';
+import { PhotoRow } from '@/components/PhotoRow';
 import { ThemedText } from '@/components/ThemedText';
-import { petPhotoUrl } from '@/features/pets/api';
+import { petPhotoUrl, type Species } from '@/features/pets/api';
+import { SpeciesIcon } from '@/features/pets/SpeciesIcon';
 import { mediaKind, mediaUrl } from '@/features/posts/api';
 import { useThemeColors } from '@/preferences/PreferencesProvider';
 import type { IconName } from '@/theme/icons';
-import { radius, spacing } from '@/theme/typography';
+import { spacing } from '@/theme/typography';
 import { parseServerDate } from '@/utils/time';
 import { useRelativeDate } from '@/utils/useRelativeDate';
 
@@ -55,6 +57,11 @@ export function useDistanceText(km: number | undefined): string {
   return t('rescue.distanceKm', { distance: String(rounded) });
 }
 
+/** The animal of a report: its own species, or else the lost pet's ('' when unknown). */
+export function reportSpecies(report: RescueReport): Species | '' {
+  return report.species || report.pet?.species || '';
+}
+
 interface RescueCardProps {
   report: RescueReport;
   /** How far the case is from the person looking, when known. */
@@ -62,7 +69,11 @@ interface RescueCardProps {
   onPress: () => void;
 }
 
-/** Row of the Rescue tab: photo, kind, urgency or date, description, place and time. */
+/**
+ * Row of the Rescue tab: the animal on the left (or the kind of case, for reports without
+ * one); kind, urgency or date, description, place and time in the middle; and the photo on the
+ * right.
+ */
 export function RescueCard({ report, distanceKm, onPress }: RescueCardProps) {
   const { t } = useTranslation();
   const colors = useThemeColors();
@@ -73,79 +84,64 @@ export function RescueCard({ report, distanceKm, onPress }: RescueCardProps) {
   // How far, where and when, in one line under the description.
   const where = [distance, report.place, relative].filter(Boolean).join(' · ');
   const kind = t(`rescue.kinds.${report.kind}`);
+  const species = reportSpecies(report);
+  const animal = species ? t(`pets.speciesNames.${species}`) : '';
   const urgent = report.kind === 'help' && report.urgency === 'high';
+  const hasVideo = report.media.some((file) => mediaKind(file) === 'video');
 
   return (
-    <Pressable
-      accessibilityRole="link"
-      accessibilityLabel={[kind, detail, report.description, where].filter(Boolean).join(', ')}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.card,
-        { backgroundColor: colors.surface, borderColor: colors.border },
-        pressed && styles.pressed,
-      ]}>
-      <View style={[styles.photo, { backgroundColor: colors.background }]}>
-        {photo ? (
-          <Image source={{ uri: photo }} style={StyleSheet.absoluteFill} />
+    <PhotoRow
+      leading={
+        species ? (
+          <SpeciesIcon species={species} color={colors.text} />
         ) : (
-          <Icon name={KIND_ICONS[report.kind]} selected size={36} color={colors.textSecondary} />
-        )}
-      </View>
-      <View style={styles.text}>
-        <View style={styles.kind}>
+          <Icon name={KIND_ICONS[report.kind]} selected size={24} color={colors.text} />
+        )
+      }
+      photo={photo}
+      placeholder={hasVideo ? 'video' : undefined}
+      accessibilityLabel={[kind, animal, detail, report.description, where]
+        .filter(Boolean)
+        .join(', ')}
+      onPress={onPress}>
+      <View style={styles.kind}>
+        {/* Without an animal, the icon on the left is already the kind. */}
+        {species ? (
           <Icon
             name={KIND_ICONS[report.kind]}
             selected
             size={16}
             color={urgent ? colors.accent : colors.text}
           />
-          <ThemedText style={styles.kindText}>{kind}</ThemedText>
-        </View>
-        {detail ? (
-          <ThemedText variant="caption" style={urgent ? styles.urgent : undefined}>
-            {detail}
-          </ThemedText>
         ) : null}
-        <ThemedText numberOfLines={2}>{report.description}</ThemedText>
-        <View style={styles.place}>
-          <Icon name="location" size={14} color={colors.textSecondary} />
-          <ThemedText
-            variant="caption"
-            color="textSecondary"
-            numberOfLines={1}
-            style={styles.placeText}>
-            {where}
-          </ThemedText>
-        </View>
+        <ThemedText style={styles.kindText} numberOfLines={1}>
+          {[kind, animal].filter(Boolean).join(' · ')}
+        </ThemedText>
       </View>
-    </Pressable>
+      {detail ? (
+        <ThemedText variant="caption" style={urgent ? styles.urgent : undefined}>
+          {detail}
+        </ThemedText>
+      ) : null}
+      <ThemedText numberOfLines={2}>{report.description}</ThemedText>
+      <View style={styles.place}>
+        <Icon name="location" size={14} color={colors.textSecondary} />
+        <ThemedText
+          variant="caption"
+          color="textSecondary"
+          numberOfLines={1}
+          style={styles.placeText}>
+          {where}
+        </ThemedText>
+      </View>
+    </PhotoRow>
   );
 }
 
-const PHOTO = 96;
-
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    padding: spacing.sm,
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  photo: {
-    width: PHOTO,
-    height: PHOTO,
-    borderRadius: radius.md,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: { flex: 1, gap: 2 },
   kind: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  kindText: { fontWeight: '700' },
+  kindText: { flex: 1, fontWeight: '700' },
   urgent: { fontWeight: '700' },
   place: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   placeText: { flex: 1 },
-  pressed: { opacity: 0.6 },
 });
