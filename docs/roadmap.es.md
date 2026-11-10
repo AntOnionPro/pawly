@@ -27,14 +27,14 @@ Pawly se construye por etapas. Cada etapa termina con algo que se puede probar e
 | 8 | **Infraestructura y web** | La mini PC en producción (dominio, Cloudflare Tunnel, respaldos fuera de la mini PC, email real); despliegue automático desde `main`; versión web con páginas públicas (privacidad, términos, eliminar cuenta, publicaciones compartidas); inicio de sesión con Google y Apple. | Usar Pawly desde cualquier lugar. |
 | 9 | **Lanzamiento** | Aviso de privacidad y términos definitivos, fichas de tienda, pruebas beta (TestFlight y la prueba interna de Google Play), revisión de las tiendas y versión 1.0. | Descargar Pawly de las tiendas. |
 
-Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Mientras tanto, la etapa 7.5 pule la app.
+Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini PC). Mientras tanto, la etapa 7.5 pule la app, y la etapa 10 puede hacerse porque no necesita infraestructura.
 
 ## Fase 2
 
 | # | Etapa | Qué incluye |
 | --- | --- | --- |
-| 10 | **Veterinarias** | Cuentas de veterinaria con verificación, perfil de negocio, atención de casos de rescate y promoción. |
-| 11 | **Donaciones** | Elegir proveedor de pagos para México, revisar las reglas de las tiendas y donar a publicaciones. |
+| 10 | **Refugios y rescatistas** | Cuentas verificadas para refugios y rescatistas independientes, perfil (ubicación, horarios y necesidades), atención de casos de rescate y adopciones a su nombre. |
+| 11 | **Donaciones** | Elegir un proveedor de pagos para México donde cada quien conecte su propia cuenta, revisar las reglas de las tiendas y donar a personas, rescatistas y refugios: sin comisión, hasta 5,000 MXN por donación y con un aviso visible de que los impuestos y la deducibilidad son responsabilidad de quien da y de quien recibe. |
 
 ## Dependencias y costos
 
@@ -42,6 +42,8 @@ Las etapas 8 y 9 se posponen hasta que esté lista la infraestructura (la mini P
 - **Hasta la etapa 8**, mergear a `main` crea una versión, pero todavía no publica nada en internet.
 - **Etapa 8:** necesita un dominio (unos 10–15 USD al año), un proveedor de email (SMTP) y el Apple Developer Program (99 USD al año) para el inicio de sesión con Apple y las notificaciones push en iPhone.
 - **Etapa 9:** necesita la Google Play Console (25 USD, pago único).
+- **Etapa 10:** no necesita infraestructura, así que puede hacerse mientras las etapas 8 y 9 siguen pospuestas.
+- **Etapa 11:** necesita la etapa 8 (dominio público y versión web) para los pagos reales, una cuenta con el proveedor de pagos y la confirmación de un contador sobre el trato fiscal de las donaciones en México.
 
 ## Pruebas en celulares
 

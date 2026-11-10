@@ -24,10 +24,12 @@ Etapa actual: **etapa 7.5, Diseño y detalles (terminada, falta la release `v0.8
 | 7.5 | Diseño y detalles | Hecho |
 | 8 | Infraestructura y web | Pospuesta |
 | 9 | Lanzamiento | Pospuesta |
-| 10 | Fase 2: veterinarias | Sin empezar |
+| 10 | Fase 2: refugios y rescatistas | Sin empezar |
 | 11 | Fase 2: donaciones | Sin empezar |
 
 Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOnionPro/pawly/issues/83)), la barra superior tapa las listas ([#84](https://github.com/AntOnionPro/pawly/issues/84)), espacio de más arriba del teclado ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, ícono y "Pawly" con la P ([#86](https://github.com/AntOnionPro/pawly/issues/86)), letra Ubuntu ([#87](https://github.com/AntOnionPro/pawly/issues/87)), paletas de color ([#88](https://github.com/AntOnionPro/pawly/issues/88)), silueta del gato al iniciar sesión ([#89](https://github.com/AntOnionPro/pawly/issues/89)), texto arriba en las publicaciones ([#90](https://github.com/AntOnionPro/pawly/issues/90)), nueva pantalla para publicar y editar fotos y videos ([#91](https://github.com/AntOnionPro/pawly/issues/91)), animación de la huella ([#92](https://github.com/AntOnionPro/pawly/issues/92)), videos que se reproducen solos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), botones con Liquid Glass ([#94](https://github.com/AntOnionPro/pawly/issues/94)), las huellas de la cuenta anterior al cambiar de cuenta ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adopción en lista con búsqueda y filtros compactos ([#108](https://github.com/AntOnionPro/pawly/issues/108)), el nombre de la app y gatos en acuarela al iniciar sesión ([#109](https://github.com/AntOnionPro/pawly/issues/109)), el gato de iniciar sesión que obligaba a deslizar para verlo completo ([#113](https://github.com/AntOnionPro/pawly/issues/113)), perros en acuarela al iniciar sesión ([#115](https://github.com/AntOnionPro/pawly/issues/115)), conejos en acuarela al iniciar sesión ([#117](https://github.com/AntOnionPro/pawly/issues/117)), la vista de computadora en la web ([#119](https://github.com/AntOnionPro/pawly/issues/119)) y filas de Adopción y Rescate con el ícono del animal y la foto a la derecha ([#120](https://github.com/AntOnionPro/pawly/issues/120)). Se publicará como `v0.8.5`.
+
+La fase 2 se replanteó ([#123](https://github.com/AntOnionPro/pawly/issues/123)): los refugios y rescatistas toman el lugar de las veterinarias, y quedaron escritas las reglas de las donaciones.
 
 ## Funcionalidades
 
@@ -95,8 +97,13 @@ Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de
 
 ### Fase 2
 
-- **Veterinarias:** cuentas especiales con verificación (cédula profesional) y perfil de negocio (dirección, horarios, servicios). Pueden atender casos de rescate y promocionarse.
-- **Donaciones** a quien publicó, sea una persona o una veterinaria. La App Store solo permite regalos de dinero entre personas fuera de su sistema de pagos cuando el 100 % llega a quien lo recibe, así que las donaciones a negocios hay que revisarlas antes. El proveedor de pagos para México está por definir (por ejemplo Mercado Pago o Stripe).
+- **Refugios y rescatistas:** cuentas especiales verificadas, con perfil (ubicación, horarios y qué necesitan). Atienden casos de rescate y publican sus animales en adopción. Un administrador las verifica: a un refugio constituido (asociación civil) con sus documentos (acta constitutiva y constancia fiscal), y a un rescatista independiente con una revisión de su actividad.
+- **Donaciones** a quien publicó, sea una persona, un rescatista o un refugio:
+  - El dinero va directo de quien da a quien recibe por el proveedor de pagos, donde cada quien conecta su propia cuenta. Nunca pasa por Pawly, y Pawly no cobra comisión: el 100 % llega a quien recibe, como exige la App Store para los regalos de dinero entre personas.
+  - Una donación puede ser de hasta 5,000 MXN.
+  - Un aviso visible dice que la deducibilidad y los impuestos a pagar son responsabilidad exclusiva de quien da y de quien recibe la donación. Pawly solo brinda la plataforma, no asume ninguna responsabilidad legal por ellos y no da recibos fiscales.
+  - Las donaciones a un refugio constituido se pagan en el navegador, porque la App Store solo deja recaudar dentro de la app a organizaciones sin fines de lucro aprobadas. Las reglas de las tiendas se revisan de nuevo al empezar la etapa.
+  - El proveedor de pagos para México está por definir (por ejemplo Mercado Pago o Stripe).
 
 ## Roles
 
@@ -105,7 +112,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de
 | Visitante | Ver publicaciones, adopciones y reportes de rescate. |
 | Usuario | Usar todas las funcionalidades de la fase 1. |
 | Administrador | Revisar reportes, eliminar contenido y suspender usuarios desde el panel de PocketBase. |
-| Veterinaria | Fase 2. |
+| Refugio o rescatista | Fase 2. |
 
 ## Diseño
 
@@ -233,6 +240,7 @@ Costos externos:
 - Proveedor de email (SMTP).
 - Límites de video (tamaño y duración).
 - Versiones mínimas soportadas de iOS y Android.
+- Proveedor de pagos para las donaciones, y la confirmación de un contador sobre el trato fiscal de las donaciones en México (antes de la etapa 11).
 
 ## Flujo de trabajo
 

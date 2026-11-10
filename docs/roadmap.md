@@ -27,14 +27,14 @@ Pawly is built in stages. Each stage ends with something that can be tried on a 
 | 8 | **Infrastructure and web** | Mini PC in production (domain, Cloudflare Tunnel, off-site backups, real email); automatic deployment from `main`; web version with public pages (privacy, terms, account deletion, shared posts); Google and Apple sign-in. | Use Pawly from anywhere. |
 | 9 | **Launch** | Final privacy notice and terms, store listings, beta testing (TestFlight and Google Play internal testing), store review and version 1.0. | Download Pawly from the stores. |
 
-Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Meanwhile, stage 7.5 polishes the app.
+Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Meanwhile, stage 7.5 polishes the app, and stage 10 can be built because it needs no infrastructure.
 
 ## Phase 2
 
 | # | Stage | Scope |
 | --- | --- | --- |
-| 10 | **Veterinary clinics** | Clinic accounts with verification, business profile, rescue case handling and promotion. |
-| 11 | **Donations** | Choose a payment provider for Mexico, review store rules and enable donations to posts. |
+| 10 | **Shelters and rescuers** | Verified accounts for shelters and independent rescuers, profile (location, hours and needs), rescue case handling and adoption listings in their name. |
+| 11 | **Donations** | Choose a payment provider for Mexico where each receiver connects their own account, check the store rules and enable donations to people, rescuers and shelters: no commission, up to MXN 5,000 per donation, and a visible notice that taxes and deductibility are the responsibility of who gives and who receives. |
 
 ## Dependencies and costs
 
@@ -42,6 +42,8 @@ Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Me
 - **Until stage 8**, merging into `main` creates a version but does not publish anything on the internet.
 - **Stage 8** needs a domain (about USD 10–15 per year), an email (SMTP) provider, and the Apple Developer Program (USD 99 per year) for Sign in with Apple and iOS push notifications.
 - **Stage 9** needs the Google Play Console (USD 25, one-time).
+- **Stage 10** needs no infrastructure, so it can be built while stages 8 and 9 are postponed.
+- **Stage 11** needs stage 8 (a public domain and the web version) for real payments, an account with the payment provider, and an accountant's confirmation of how donations are taxed in Mexico.
 
 ## Testing on phones
 

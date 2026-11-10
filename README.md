@@ -24,10 +24,12 @@ Current stage: **Stage 7.5, Design and details (done, pending the `v0.8.5` relea
 | 7.5 | Design and details | Done |
 | 8 | Infrastructure and web | Postponed |
 | 9 | Launch | Postponed |
-| 10 | Phase 2: veterinary clinics | Not started |
+| 10 | Phase 2: shelters and rescuers | Not started |
 | 11 | Phase 2: donations | Not started |
 
 Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83)), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)), the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)), the sign-in cat needing a scroll to be seen whole ([#113](https://github.com/AntOnionPro/pawly/issues/113)), watercolor dogs on sign-in ([#115](https://github.com/AntOnionPro/pawly/issues/115)), watercolor rabbits on sign-in ([#117](https://github.com/AntOnionPro/pawly/issues/117)), the computer view of the web ([#119](https://github.com/AntOnionPro/pawly/issues/119)) and Adoption and Rescue rows with the animal's icon and the photo on the right ([#120](https://github.com/AntOnionPro/pawly/issues/120)). It will be released as `v0.8.5`.
+
+Phase 2 was planned again ([#123](https://github.com/AntOnionPro/pawly/issues/123)): shelters and rescuers take the place of veterinary clinics, and the rules for donations are written down.
 
 ## Features
 
@@ -95,8 +97,13 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
 
 ### Phase 2
 
-- **Veterinary clinics:** special accounts with verification (professional license) and a business profile (address, hours, services). Clinics can take on rescue cases and promote themselves.
-- **Donations** to whoever published a post, whether a person or a clinic. The App Store only allows person-to-person gifts outside in-app purchase when 100% reaches the recipient, so donations to businesses need review first. The payment provider for Mexico is still open (for example Mercado Pago or Stripe).
+- **Shelters and rescuers:** special verified accounts with a profile (location, hours and what they need). They take on rescue cases and publish their animals for adoption. An admin verifies them: a constituted shelter (a non-profit association) with its documents (incorporation deed and tax registration), and an independent rescuer with a review of their activity.
+- **Donations** to whoever published a post, whether a person, a rescuer or a shelter:
+  - The money goes straight from the giver to the receiver through the payment provider, where each receiver connects their own account. It never goes through Pawly, and Pawly charges no commission: 100% reaches the receiver, as the App Store requires for gifts between people.
+  - A donation can be up to MXN 5,000.
+  - A visible notice says that whether a donation is tax-deductible and the taxes to pay are the sole responsibility of who gives and who receives it. Pawly only provides the platform, takes no legal responsibility for them and gives no tax receipts.
+  - Donations to a constituted shelter are paid in the browser, because the App Store only lets approved non-profits collect funds inside an app. The store rules are checked again when the stage starts.
+  - The payment provider for Mexico is still open (for example Mercado Pago or Stripe).
 
 ## Roles
 
@@ -105,7 +112,7 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
 | Visitor | View posts, adoptions and rescue reports. |
 | User | Use every Phase 1 feature. |
 | Admin | Review reports, remove content and suspend users from the PocketBase admin panel. |
-| Veterinary clinic | Phase 2. |
+| Shelter or rescuer | Phase 2. |
 
 ## Design
 
@@ -233,6 +240,7 @@ External costs:
 - Email (SMTP) provider.
 - Video limits (size and duration).
 - Minimum supported iOS and Android versions.
+- Payment provider for donations, and an accountant's confirmation of how donations are taxed in Mexico (before stage 11).
 
 ## Workflow
 
