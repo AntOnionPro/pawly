@@ -217,6 +217,7 @@ describe('SettingsContent account section', () => {
     const account = {
       onNotifications: jest.fn(),
       onBlockedUsers: jest.fn(),
+      onVerification: jest.fn(),
       onChangePassword: jest.fn(),
       onSignOut: jest.fn(),
       onDeleteAccount: jest.fn(),
@@ -226,6 +227,8 @@ describe('SettingsContent account section', () => {
     expect(account.onNotifications).toHaveBeenCalled();
     await fireEvent.press(screen.getByRole('button', { name: 'Usuarios bloqueados' }));
     expect(account.onBlockedUsers).toHaveBeenCalled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Cuenta de refugio o rescatista' }));
+    expect(account.onVerification).toHaveBeenCalled();
     await fireEvent.press(screen.getByRole('button', { name: 'Cambiar contraseña' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Cerrar sesión' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Eliminar cuenta' }));

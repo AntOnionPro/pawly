@@ -32,6 +32,7 @@ export default function SettingsScreen() {
             ? {
                 onNotifications: () => router.push('/notification-settings'),
                 onBlockedUsers: () => router.push('/blocked'),
+                onVerification: () => router.push('/verification'),
                 onChangePassword: () => router.push('/change-password'),
                 onSignOut: confirmSignOut,
                 onDeleteAccount: () => router.push('/delete-account'),

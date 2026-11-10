@@ -43,7 +43,12 @@ export type ErrorKey =
   | 'errors.blocked'
   | 'errors.suspended'
   | 'errors.contentBlocked'
-  | 'errors.rateLimited';
+  | 'errors.rateLimited'
+  | 'errors.nameTooShort'
+  | 'errors.documentsRequired'
+  | 'errors.documentType'
+  | 'errors.documentTooLarge'
+  | 'errors.alreadyPending';
 
 export type FieldErrors = Partial<Record<string, ErrorKey>>;
 
@@ -86,6 +91,7 @@ function codeToKey(field: string, code: string): ErrorKey {
     case 'validation_match_invalid':
       if (field === 'username') return 'errors.usernameFormat';
       if (field === 'password') return 'errors.passwordTooShort';
+      if (field === 'publicName') return 'errors.nameTooShort';
       return 'errors.invalid';
     case 'validation_max_text_constraint':
       return 'errors.tooLong';
@@ -130,12 +136,16 @@ function codeToKey(field: string, code: string): ErrorKey {
       return 'errors.blocked';
     case 'content_blocked':
       return 'errors.contentBlocked';
+    case 'documents_required':
+      return 'errors.documentsRequired';
+    case 'already_pending':
+      return 'errors.alreadyPending';
     case 'validation_too_many_files':
       return 'errors.tooManyFiles';
     case 'validation_invalid_mime_type':
-      return 'errors.fileType';
+      return field === 'documents' ? 'errors.documentType' : 'errors.fileType';
     case 'validation_file_size_limit':
-      return 'errors.fileTooLarge';
+      return field === 'documents' ? 'errors.documentTooLarge' : 'errors.fileTooLarge';
     default:
       return 'errors.invalid';
   }

@@ -100,6 +100,7 @@ function RootNavigator() {
         <Stack.Screen name="search" options={{ title: t('search.title') }} />
         <Stack.Screen name="report" options={{ title: t('report.title') }} />
         <Stack.Screen name="blocked" options={{ title: t('blocks.title') }} />
+        <Stack.Screen name="verification" options={{ title: t('verification.screenTitle') }} />
         <Stack.Screen name="notifications" options={{ title: t('notifications.title') }} />
         <Stack.Screen name="notification-settings" options={{ title: t('pushSettings.title') }} />
         <Stack.Screen name="messages/index" options={{ title: t('messages.title') }} />

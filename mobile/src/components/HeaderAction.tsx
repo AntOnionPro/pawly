@@ -1,4 +1,5 @@
-import { Stack } from 'expo-router';
+import { Stack, useNavigation } from 'expo-router';
+import { useEffect } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -28,6 +29,9 @@ export interface HeaderActionProps {
  *   in the dark theme, whose accent is white) and bold text in the accent before.
  * - Android: a Material 3 text button in the top app bar.
  * - Web: a compact button.
+ *
+ * When it stops being rendered (a form that goes away while its screen stays), the button
+ * leaves the top bar too.
  */
 export function HeaderAction({
   label,
@@ -41,6 +45,14 @@ export function HeaderAction({
   const labelFont = useFontStyle('700');
   const text = loading && pendingLabel ? pendingLabel : label;
   const inactive = disabled || loading;
+  const navigation = useNavigation();
+
+  // iOS takes the toolbar button away by itself. On Android and the web the top bar keeps
+  // the last `headerRight` it was given, so it is cleared here.
+  useEffect(() => {
+    if (Platform.OS === 'ios') return undefined;
+    return () => navigation.setOptions({ headerRight: undefined });
+  }, [navigation]);
 
   if (Platform.OS === 'ios') {
     return (

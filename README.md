@@ -8,7 +8,7 @@ Pawly is a social network for pets and animals. It runs on Android and iOS, and 
 
 ## Project status
 
-Current stage: **Stage 7.5, Design and details (done, pending the `v0.8.5` release to `main`).** Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
+Current stage: **Stage 10, Shelters and rescuers (in progress).** Stage 7.5 is done and pending its `v0.8.5` release to `main`. Stages 8 and 9 are postponed until the infrastructure (the mini PC) is ready. Latest release: `v0.8.0` (stage 7). The plan for every stage is in the [roadmap](docs/roadmap.md).
 
 | # | Stage | Status |
 | --- | --- | --- |
@@ -24,12 +24,14 @@ Current stage: **Stage 7.5, Design and details (done, pending the `v0.8.5` relea
 | 7.5 | Design and details | Done |
 | 8 | Infrastructure and web | Postponed |
 | 9 | Launch | Postponed |
-| 10 | Phase 2: shelters and rescuers | Not started |
+| 10 | Phase 2: shelters and rescuers | In progress |
 | 11 | Phase 2: donations | Not started |
 
 Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnionPro/pawly/issues/83)), top bar covering lists ([#84](https://github.com/AntOnionPro/pawly/issues/84)), extra space above the keyboard ([#85](https://github.com/AntOnionPro/pawly/issues/85)), logo, app icon and wordmark ([#86](https://github.com/AntOnionPro/pawly/issues/86)), Ubuntu font ([#87](https://github.com/AntOnionPro/pawly/issues/87)), color palettes ([#88](https://github.com/AntOnionPro/pawly/issues/88)), cat silhouette on sign-in ([#89](https://github.com/AntOnionPro/pawly/issues/89)), text first in posts ([#90](https://github.com/AntOnionPro/pawly/issues/90)), new post screen and editing media ([#91](https://github.com/AntOnionPro/pawly/issues/91)), paw print animation ([#92](https://github.com/AntOnionPro/pawly/issues/92)), autoplaying videos ([#93](https://github.com/AntOnionPro/pawly/issues/93)), Liquid Glass buttons ([#94](https://github.com/AntOnionPro/pawly/issues/94)), the previous account's paw prints showing after switching accounts ([#107](https://github.com/AntOnionPro/pawly/issues/107)), Adoption as a list with search and compact filters ([#108](https://github.com/AntOnionPro/pawly/issues/108)), the app name and watercolor cats on sign-in ([#109](https://github.com/AntOnionPro/pawly/issues/109)), the sign-in cat needing a scroll to be seen whole ([#113](https://github.com/AntOnionPro/pawly/issues/113)), watercolor dogs on sign-in ([#115](https://github.com/AntOnionPro/pawly/issues/115)), watercolor rabbits on sign-in ([#117](https://github.com/AntOnionPro/pawly/issues/117)), the computer view of the web ([#119](https://github.com/AntOnionPro/pawly/issues/119)) and Adoption and Rescue rows with the animal's icon and the photo on the right ([#120](https://github.com/AntOnionPro/pawly/issues/120)). It will be released as `v0.8.5`.
 
 Phase 2 was planned again ([#123](https://github.com/AntOnionPro/pawly/issues/123)): shelters and rescuers take the place of veterinary clinics, and the rules for donations are written down.
+
+Stage 10 so far: verification of shelter and rescuer accounts ([#125](https://github.com/AntOnionPro/pawly/issues/125)). Still to come: the shelter or rescuer profile ([#126](https://github.com/AntOnionPro/pawly/issues/126)), the badge across the app and shelters in Adoption ([#127](https://github.com/AntOnionPro/pawly/issues/127)), rescue cases in their charge ([#128](https://github.com/AntOnionPro/pawly/issues/128)) and finding shelters and rescuers ([#129](https://github.com/AntOnionPro/pawly/issues/129)).
 
 ## Features
 
@@ -89,15 +91,18 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
 
 #### Notifications
 
-- Push and in-app notifications for reactions, comments, new followers, messages, adoption requests, adoption follow-up reminders, and nearby rescue reports (opt-in).
+- Push and in-app notifications for reactions, comments, new followers, messages, adoption requests, adoption follow-up reminders, and nearby rescue reports (opt-in). In-app notices from Pawly for report reviews and for the result of a shelter or rescuer request.
 
 #### Settings
 
-- Language, theme, color palette, font, autoplay videos, notification preferences, nearby radius, blocked users, change password, delete account, terms and privacy notice, sign out.
+- Language, theme, color palette, font, autoplay videos, notification preferences, nearby radius, blocked users, shelter or rescuer account, change password, delete account, terms and privacy notice, sign out.
 
 ### Phase 2
 
-- **Shelters and rescuers:** special verified accounts with a profile (location, hours and what they need). They take on rescue cases and publish their animals for adoption. An admin verifies them: a constituted shelter (a non-profit association) with its documents (incorporation deed and tax registration), and an independent rescuer with a review of their activity.
+- **Shelters and rescuers:** special verified accounts with a profile (location, hours and what they need). They take on rescue cases and publish their animals for adoption.
+  - **Verification:** from settings ("Shelter or rescuer account"), a person asks for their account to be a constituted shelter's (a non-profit association) or an independent rescuer's, with a public name, what they do and links that show their work. A shelter attaches its documents (incorporation deed and tax registration, as a PDF or a photo), which only the person and the admins can open.
+  - An admin reviews each request in the admin panel: approves it, rejects it with a reason, or takes the verification back later. The person is told in the app, and can cancel a request while it is in review.
+  - A verified account shows its public name and a "Verified shelter" or "Verified rescuer" badge on its profile. The public name only changes with another request.
 - **Donations** to whoever published a post, whether a person, a rescuer or a shelter:
   - The money goes straight from the giver to the receiver through the payment provider, where each receiver connects their own account. It never goes through Pawly, and Pawly charges no commission: 100% reaches the receiver, as the App Store requires for gifts between people.
   - A donation can be up to MXN 5,000.
@@ -111,7 +116,7 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
 | --- | --- |
 | Visitor | View posts, adoptions and rescue reports. |
 | User | Use every Phase 1 feature. |
-| Admin | Review reports, remove content and suspend users from the PocketBase admin panel. |
+| Admin | Review reports, remove content, suspend users and review shelter and rescuer requests from the PocketBase admin panel. |
 | Shelter or rescuer | Phase 2. |
 
 ## Design
@@ -241,6 +246,7 @@ External costs:
 - Video limits (size and duration).
 - Minimum supported iOS and Android versions.
 - Payment provider for donations, and an accountant's confirmation of how donations are taxed in Mexico (before stage 11).
+- The final privacy notice (stage 9) must cover the documents that shelters send to be verified.
 
 ## Workflow
 

@@ -78,6 +78,12 @@ function useNotificationText(notification: AppNotification): string {
       return t('notifications.reportActioned');
     case 'report_dismissed':
       return t('notifications.reportDismissed');
+    case 'verification_approved':
+      return t('notifications.verificationApproved');
+    case 'verification_rejected':
+      return t('notifications.verificationRejected');
+    case 'verification_revoked':
+      return t('notifications.verificationRevoked');
   }
 }
 
@@ -121,6 +127,9 @@ function NotificationRow({ notification }: { notification: AppNotification }) {
     if (notification.type === 'content_removed') {
       // The rules it broke.
       router.push({ pathname: '/legal/[doc]', params: { doc: 'terms' } });
+    } else if (notification.type.startsWith('verification_')) {
+      // The request, with the reason when it was rejected or revoked.
+      router.push('/verification');
     } else if (notification.rescueId) {
       router.push({ pathname: '/rescue/[id]', params: { id: notification.rescueId } });
     } else if (notification.type === 'followup_due' && notification.adoption?.petId) {

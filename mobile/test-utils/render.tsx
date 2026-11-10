@@ -17,6 +17,8 @@ export const TEST_USER: User = {
   bio: 'Tengo una perrita.',
   avatar: '',
   verified: true,
+  accountKind: '',
+  publicName: '',
   followerCount: 0,
   followingCount: 0,
 };

@@ -4,6 +4,7 @@
 // Each handler runs in its own JS runtime, so shared code is loaded with require().
 
 // Sign-up: terms accepted and minimum age 13. The server records when the terms were accepted.
+// A new account is never a shelter's or a rescuer's: that comes from a verification request.
 onRecordCreateRequest((e) => {
   if (e.hasSuperuserAuth()) {
     return e.next();
@@ -32,15 +33,19 @@ onRecordCreateRequest((e) => {
 
   e.record.set('birthdate', birthdate);
   e.record.set('termsAcceptedAt', new DateTime());
+  e.record.set('accountKind', '');
+  e.record.set('publicName', '');
   e.next();
 }, 'users');
 
-// The birth date and the terms acceptance date cannot be changed afterwards.
+// The birth date and the terms acceptance date cannot be changed afterwards, and nobody makes
+// their own account a shelter's or a rescuer's (pb_hooks/verification.pb.js does).
 onRecordUpdateRequest((e) => {
   if (!e.hasSuperuserAuth()) {
     const original = e.record.original();
-    e.record.set('birthdate', original.get('birthdate'));
-    e.record.set('termsAcceptedAt', original.get('termsAcceptedAt'));
+    for (const field of ['birthdate', 'termsAcceptedAt', 'accountKind', 'publicName']) {
+      e.record.set(field, original.get(field));
+    }
   }
   e.next();
 }, 'users');

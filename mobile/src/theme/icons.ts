@@ -31,6 +31,7 @@ export const icons = {
   share: { sf: { default: 'square.and.arrow.up', selected: 'square.and.arrow.up' }, md: 'share' },
   flag: { sf: { default: 'flag', selected: 'flag.fill' }, md: 'flag' },
   shield: { sf: { default: 'checkmark.shield', selected: 'checkmark.shield.fill' }, md: 'shield' },
+  verified: { sf: { default: 'checkmark.seal', selected: 'checkmark.seal.fill' }, md: 'verified' },
   block: { sf: { default: 'hand.raised', selected: 'hand.raised.fill' }, md: 'block' },
   notifications: { sf: { default: 'bell', selected: 'bell.fill' }, md: 'notifications' },
   messages: {
