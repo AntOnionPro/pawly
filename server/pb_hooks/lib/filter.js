@@ -41,7 +41,7 @@ function findTerm(text, terms) {
  * is reported through its owner).
  */
 const FILTERED = {
-  users: { kind: 'user', fields: ['username', 'bio'] },
+  users: { kind: 'user', fields: ['username', 'bio', 'zone', 'hours', 'needsNote'] },
   pets: { kind: 'user', owner: 'owner', fields: ['name', 'breed'] },
   posts: { kind: 'post', fields: ['text'] },
   comments: { kind: 'comment', fields: ['text'] },

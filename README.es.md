@@ -31,7 +31,7 @@ Entregado en la etapa 7.5: etapa 7.5 en el plan ([#83](https://github.com/AntOni
 
 La fase 2 se replanteó ([#123](https://github.com/AntOnionPro/pawly/issues/123)): los refugios y rescatistas toman el lugar de las veterinarias, y quedaron escritas las reglas de las donaciones.
 
-Etapa 10 hasta ahora: verificación de cuentas de refugio y rescatista ([#125](https://github.com/AntOnionPro/pawly/issues/125)). Falta: el perfil de refugio o rescatista ([#126](https://github.com/AntOnionPro/pawly/issues/126)), la insignia en toda la app y los refugios en Adopción ([#127](https://github.com/AntOnionPro/pawly/issues/127)), los casos de rescate a su cargo ([#128](https://github.com/AntOnionPro/pawly/issues/128)) y buscar refugios y rescatistas ([#129](https://github.com/AntOnionPro/pawly/issues/129)).
+Etapa 10 hasta ahora: verificación de cuentas de refugio y rescatista ([#125](https://github.com/AntOnionPro/pawly/issues/125)) y el perfil de refugio o rescatista ([#126](https://github.com/AntOnionPro/pawly/issues/126)). Falta: la insignia en toda la app y los refugios en Adopción ([#127](https://github.com/AntOnionPro/pawly/issues/127)), los casos de rescate a su cargo ([#128](https://github.com/AntOnionPro/pawly/issues/128)) y buscar refugios y rescatistas ([#129](https://github.com/AntOnionPro/pawly/issues/129)).
 
 ## Funcionalidades
 
@@ -103,6 +103,7 @@ Los reportes se ven en una lista y en un mapa de casos cercanos, con un campo de
   - **Verificación:** desde ajustes ("Cuenta de refugio o rescatista"), una persona pide que su cuenta sea de un refugio constituido (asociación civil) o de un rescatista independiente, con un nombre público, a qué se dedica y enlaces donde se vea su actividad. Un refugio adjunta sus documentos (acta constitutiva y constancia de situación fiscal, en PDF o foto), que solo pueden abrir esa persona y los administradores.
   - Un administrador revisa cada solicitud en el panel: la aprueba, la rechaza con un motivo o retira la verificación después. La persona recibe el aviso en la app, y puede cancelar una solicitud mientras está en revisión.
   - Una cuenta verificada muestra en su perfil su nombre público y la insignia "Refugio verificado" o "Rescatista verificado". El nombre público solo cambia con otra solicitud.
+  - **Perfil:** en "Editar perfil", una cuenta verificada dice dónde está (una zona o dirección y, si quiere, un punto en el mapa), sus horarios y qué necesita (alimento, medicinas, cobijas, voluntarios, hogares temporales, transporte u otro, con una nota). Todo es opcional. Su perfil lo muestra a todos, con un botón que abre el punto en mapas. Retirar la verificación lo quita.
 - **Donaciones** a quien publicó, sea una persona, un rescatista o un refugio:
   - El dinero va directo de quien da a quien recibe por el proveedor de pagos, donde cada quien conecta su propia cuenta. Nunca pasa por Pawly, y Pawly no cobra comisión: el 100 % llega a quien recibe, como exige la App Store para los regalos de dinero entre personas.
   - Una donación puede ser de hasta 5,000 MXN.

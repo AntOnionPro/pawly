@@ -7,9 +7,12 @@ import { VerifiedBadge } from '@/components/VerifiedBadge';
 import { FollowCounts } from '@/features/follows/FollowCounts';
 import { spacing } from '@/theme/typography';
 
+import { hasShelterInfo, ShelterInfo } from './ShelterInfo';
+
 /**
  * Photo, @username, bio and follower counts of a profile. A verified shelter or rescuer shows
- * its public name first, and the badge under its @username.
+ * its public name first, the badge under its @username and, at the end, where it is, when it
+ * attends and what it needs.
  */
 export function ProfileHeader({ user }: { user: User }) {
   const { client } = useAuth();
@@ -31,6 +34,9 @@ export function ProfileHeader({ user }: { user: User }) {
       )}
       {user.bio ? <ThemedText style={styles.bio}>{user.bio}</ThemedText> : null}
       <FollowCounts user={user} />
+      {user.accountKind && hasShelterInfo(user.shelter) ? (
+        <ShelterInfo shelter={user.shelter} />
+      ) : null}
     </View>
   );
 }

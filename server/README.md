@@ -72,6 +72,11 @@ The `users` collection holds the accounts (stage 1):
 | `termsAcceptedAt` | Nobody (hidden) | Set by the server at sign-up.                                                        |
 | `accountKind`     | Everyone        | `shelter` or `rescuer` on a verified account; only the server sets it.               |
 | `publicName`      | Everyone        | The name a verified shelter or rescuer shows; only the server sets it.               |
+| `zone`            | Everyone        | Shelter or rescuer profile: the area or address, up to 120 characters.               |
+| `latitude`        | Everyone        | Shelter or rescuer profile: optional map point, with `longitude` (0, 0 = none).      |
+| `hours`           | Everyone        | Shelter or rescuer profile: opening hours, up to 200 characters.                     |
+| `needs`           | Everyone        | Shelter or rescuer profile: what it needs (several values).                          |
+| `needsNote`       | Everyone        | Shelter or rescuer profile: details of what it needs, up to 300 characters.          |
 
 Rules enforced in `pb_hooks/accounts.pb.js`:
 
@@ -79,6 +84,7 @@ Rules enforced in `pb_hooks/accounts.pb.js`:
 - **Verification:** the email is sent right after sign-up. Only verified accounts can sign in: an unverified account gets **403**, a wrong password gets **400**.
 - **Profiles:** anyone can view one; listing them requires a session; each user edits and deletes only their own account.
 - **Verified accounts:** `accountKind` and `publicName` come from an approved [verification request](#shelter-and-rescuer-accounts); a user's own changes to them are ignored.
+- **Shelter or rescuer profile:** only a verified account (`accountKind`) can fill in `zone`, `latitude`, `longitude`, `hours`, `needs` (`food`, `medicine`, `blankets`, `volunteers`, `foster`, `transport`, `other`) and `needsNote`; on any other account they stay empty. The texts are trimmed, and the point is whole or is not there (`location_required`). Taking the verification back empties them.
 
 ### Emails during development
 
@@ -145,7 +151,7 @@ The `blocks` collection holds blocks: `blocker` blocks `blocked`. Only the block
 
 ## Content filter
 
-`blocked_terms` holds the words and phrases the server checks in the texts people save (stage 7, `pb_hooks/content_filter.pb.js`): usernames and bios, pet names and breeds, posts, comments, messages, adoption listings and rescue reports. Each `term` has an `action`:
+`blocked_terms` holds the words and phrases the server checks in the texts people save (stage 7, `pb_hooks/content_filter.pb.js`): usernames, bios and shelter or rescuer profiles (`zone`, `hours`, `needsNote`), pet names and breeds, posts, comments, messages, adoption listings and rescue reports. Each `term` has an `action`:
 
 - `block`: the text is not saved. The server answers 400 with the code `content_blocked` on the field, and the app says "Your text has words that are not allowed in Pawly." and keeps what was written.
 - `review`: the text is saved, and the server sends it to the [moderation queue](#reviewing-reports) with an automatic report: no `reporter`, the term's `reason`, and `details` that say which term and field matched. While it is pending, saving the same content again does not add another one. A pet is reported through its owner.
@@ -216,7 +222,7 @@ On the account (`users`), `accountKind` (`shelter` or `rescuer`) and `publicName
 3. Change the `status` and save:
    - `approved` makes the account a verified shelter or rescuer: the server copies `kind` and `publicName` to the user's `accountKind` and `publicName`. An earlier approved request of the same account becomes `replaced`.
    - `rejected` needs a `reviewNote` with the reason, which the person reads in the app. They can send another request.
-4. To take a verification back later, open the approved request and set it to `revoked`, with a `reviewNote` if the person should know why. The account becomes a regular one again.
+4. To take a verification back later, open the approved request and set it to `revoked`, with a `reviewNote` if the person should know why. The account becomes a regular one again, and its shelter or rescuer profile is emptied.
 5. A rejected or revoked request can still be approved. No other change of status is allowed, and who asked and the kind never change.
 
 In each case the person gets a notice in the app (`verification_approved`, `verification_rejected` or `verification_revoked`), without `actor` and without push. Changing `accountKind` or `publicName` directly on the user also works, but tells nobody: prefer the request.

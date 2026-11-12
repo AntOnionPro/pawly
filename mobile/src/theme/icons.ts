@@ -53,6 +53,7 @@ export const icons = {
     md: 'error',
   },
   calendar: { sf: { default: 'calendar', selected: 'calendar' }, md: 'calendar_month' },
+  clock: { sf: { default: 'clock', selected: 'clock.fill' }, md: 'schedule' },
   document: { sf: { default: 'doc.text', selected: 'doc.text' }, md: 'description' },
   lock: { sf: { default: 'lock', selected: 'lock.fill' }, md: 'lock' },
   signOut: {

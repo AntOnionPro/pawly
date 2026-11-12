@@ -9,7 +9,7 @@ onRecordCreateRequest((e) => {
   if (e.hasSuperuserAuth()) {
     return e.next();
   }
-  const { minimumAgeError } = require(`${__hooks}/lib/accounts.js`);
+  const { minimumAgeError, clearShelterProfile } = require(`${__hooks}/lib/accounts.js`);
 
   const body = e.requestInfo().body;
   if (body.acceptTerms !== true && body.acceptTerms !== 'true') {
@@ -35,16 +35,31 @@ onRecordCreateRequest((e) => {
   e.record.set('termsAcceptedAt', new DateTime());
   e.record.set('accountKind', '');
   e.record.set('publicName', '');
+  clearShelterProfile(e.record);
   e.next();
 }, 'users');
 
 // The birth date and the terms acceptance date cannot be changed afterwards, and nobody makes
 // their own account a shelter's or a rescuer's (pb_hooks/verification.pb.js does).
+// Only a verified shelter or rescuer has a profile with its zone, map point, hours and needs:
+// its texts are trimmed, and the point is whole (latitude and longitude) or is not there.
 onRecordUpdateRequest((e) => {
   if (!e.hasSuperuserAuth()) {
-    const original = e.record.original();
+    const { SHELTER_TEXTS, clearShelterProfile } = require(`${__hooks}/lib/accounts.js`);
+    const record = e.record;
+    const original = record.original();
     for (const field of ['birthdate', 'termsAcceptedAt', 'accountKind', 'publicName']) {
-      e.record.set(field, original.get(field));
+      record.set(field, original.get(field));
+    }
+    if (!record.getString('accountKind')) {
+      clearShelterProfile(record);
+    } else {
+      for (const field of SHELTER_TEXTS) record.set(field, record.getString(field).trim());
+      if ((record.getFloat('latitude') === 0) !== (record.getFloat('longitude') === 0)) {
+        throw new BadRequestError('Invalid location.', {
+          latitude: new ValidationError('location_required', 'Add the whole location.'),
+        });
+      }
     }
   }
   e.next();

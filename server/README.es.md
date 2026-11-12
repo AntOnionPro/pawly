@@ -72,6 +72,11 @@ La colección `users` guarda las cuentas (etapa 1):
 | `termsAcceptedAt` | Nadie (oculto) | Lo guarda el servidor al registrarse.                                           |
 | `accountKind`     | Todos          | `shelter` o `rescuer` en una cuenta verificada; solo lo cambia el servidor.     |
 | `publicName`      | Todos          | Nombre que muestra un refugio o rescatista verificado; lo pone el servidor.     |
+| `zone`            | Todos          | Perfil de refugio o rescatista: zona o dirección, hasta 120 caracteres.         |
+| `latitude`        | Todos          | Perfil de refugio: punto opcional en el mapa, con `longitude` (0, 0 = ninguno). |
+| `hours`           | Todos          | Perfil de refugio o rescatista: horarios, hasta 200 caracteres.                 |
+| `needs`           | Todos          | Perfil de refugio o rescatista: qué necesita (varios valores).                  |
+| `needsNote`       | Todos          | Perfil de refugio: detalles de lo que necesita, hasta 300 caracteres.           |
 
 Reglas aplicadas en `pb_hooks/accounts.pb.js`:
 
@@ -79,6 +84,7 @@ Reglas aplicadas en `pb_hooks/accounts.pb.js`:
 - **Verificación:** el correo se envía justo después del registro. Solo las cuentas verificadas inician sesión: una cuenta sin verificar recibe **403**, una contraseña incorrecta recibe **400**.
 - **Perfiles:** cualquiera puede ver uno; para listarlos hace falta sesión; cada usuario edita y borra solo su propia cuenta.
 - **Cuentas verificadas:** `accountKind` y `publicName` salen de una [solicitud de verificación](#cuentas-de-refugio-y-rescatista) aprobada; los cambios que un usuario les haga a los suyos se ignoran.
+- **Perfil de refugio o rescatista:** solo una cuenta verificada (`accountKind`) puede llenar `zone`, `latitude`, `longitude`, `hours`, `needs` (`food`, `medicine`, `blankets`, `volunteers`, `foster`, `transport`, `other`) y `needsNote`; en cualquier otra cuenta se quedan vacíos. Los textos se recortan, y el punto va completo o no va (`location_required`). Retirar la verificación los vacía.
 
 ### Correos durante el desarrollo
 
@@ -145,7 +151,7 @@ La colección `blocks` guarda los bloqueos: `blocker` bloquea a `blocked`. Solo 
 
 ## Filtro de contenido
 
-`blocked_terms` guarda las palabras y frases que el servidor revisa en los textos que la gente guarda (etapa 7, `pb_hooks/content_filter.pb.js`): nombres de usuario y biografías, nombres y razas de mascotas, publicaciones, comentarios, mensajes, fichas de adopción y reportes de rescate. Cada término (`term`) tiene una acción (`action`):
+`blocked_terms` guarda las palabras y frases que el servidor revisa en los textos que la gente guarda (etapa 7, `pb_hooks/content_filter.pb.js`): nombres de usuario, biografías y perfiles de refugio o rescatista (`zone`, `hours`, `needsNote`), nombres y razas de mascotas, publicaciones, comentarios, mensajes, fichas de adopción y reportes de rescate. Cada término (`term`) tiene una acción (`action`):
 
 - `block`: el texto no se guarda. El servidor responde 400 con el código `content_blocked` en el campo, y la app dice "Tu texto tiene palabras que no se permiten en Pawly." y conserva lo escrito.
 - `review`: el texto se guarda, y el servidor lo manda a la [cola de moderación](#revisar-reportes) con un reporte automático: sin `reporter`, con el motivo del término (`reason`) y un `details` que dice qué término y qué campo coincidieron. Mientras esté pendiente, volver a guardar el mismo contenido no agrega otro. Una mascota se reporta a través de su dueño.
@@ -216,7 +222,7 @@ En la cuenta (`users`), `accountKind` (`shelter` o `rescuer`) y `publicName` dic
 3. Cambia el `status` y guarda:
    - `approved` deja la cuenta como refugio o rescatista verificado: el servidor copia `kind` y `publicName` a `accountKind` y `publicName` del usuario. Una solicitud aprobada anterior de la misma cuenta pasa a `replaced`.
    - `rejected` pide un `reviewNote` con el motivo, que la persona lee en la app. Puede enviar otra solicitud.
-4. Para retirar una verificación después, abre la solicitud aprobada y ponla en `revoked`, con un `reviewNote` si la persona debe saber por qué. La cuenta vuelve a ser una cuenta normal.
+4. Para retirar una verificación después, abre la solicitud aprobada y ponla en `revoked`, con un `reviewNote` si la persona debe saber por qué. La cuenta vuelve a ser una cuenta normal, y su perfil de refugio o rescatista se vacía.
 5. Una solicitud rechazada o retirada todavía se puede aprobar. No se permite ningún otro cambio de estado, y ni quién pidió ni el tipo cambian nunca.
 
 En cada caso la persona recibe un aviso en la app (`verification_approved`, `verification_rejected` o `verification_revoked`), sin `actor` y sin push. Cambiar `accountKind` o `publicName` directamente en el usuario también funciona, pero no avisa a nadie: es mejor usar la solicitud.

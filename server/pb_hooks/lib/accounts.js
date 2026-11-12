@@ -66,10 +66,23 @@ function suspendedResponse(e, suspension) {
   });
 }
 
+/** The texts of a shelter's or rescuer's profile (plus `latitude`, `longitude` and `needs`). */
+const SHELTER_TEXTS = ['zone', 'hours', 'needsNote'];
+
+/** Empties the shelter or rescuer profile of a user record: a regular account has none. */
+function clearShelterProfile(record) {
+  for (const field of SHELTER_TEXTS) record.set(field, '');
+  record.set('latitude', 0);
+  record.set('longitude', 0);
+  record.set('needs', []);
+}
+
 module.exports = {
   MINIMUM_AGE,
   ageOn,
   minimumAgeError,
   activeSuspension,
   suspendedResponse,
+  SHELTER_TEXTS,
+  clearShelterProfile,
 };

@@ -31,7 +31,7 @@ Stage 7.5 delivered: stage 7.5 in the roadmap ([#83](https://github.com/AntOnion
 
 Phase 2 was planned again ([#123](https://github.com/AntOnionPro/pawly/issues/123)): shelters and rescuers take the place of veterinary clinics, and the rules for donations are written down.
 
-Stage 10 so far: verification of shelter and rescuer accounts ([#125](https://github.com/AntOnionPro/pawly/issues/125)). Still to come: the shelter or rescuer profile ([#126](https://github.com/AntOnionPro/pawly/issues/126)), the badge across the app and shelters in Adoption ([#127](https://github.com/AntOnionPro/pawly/issues/127)), rescue cases in their charge ([#128](https://github.com/AntOnionPro/pawly/issues/128)) and finding shelters and rescuers ([#129](https://github.com/AntOnionPro/pawly/issues/129)).
+Stage 10 so far: verification of shelter and rescuer accounts ([#125](https://github.com/AntOnionPro/pawly/issues/125)) and the shelter or rescuer profile ([#126](https://github.com/AntOnionPro/pawly/issues/126)). Still to come: the badge across the app and shelters in Adoption ([#127](https://github.com/AntOnionPro/pawly/issues/127)), rescue cases in their charge ([#128](https://github.com/AntOnionPro/pawly/issues/128)) and finding shelters and rescuers ([#129](https://github.com/AntOnionPro/pawly/issues/129)).
 
 ## Features
 
@@ -103,6 +103,7 @@ Reports appear as a list and on a map of nearby cases, with a search box (descri
   - **Verification:** from settings ("Shelter or rescuer account"), a person asks for their account to be a constituted shelter's (a non-profit association) or an independent rescuer's, with a public name, what they do and links that show their work. A shelter attaches its documents (incorporation deed and tax registration, as a PDF or a photo), which only the person and the admins can open.
   - An admin reviews each request in the admin panel: approves it, rejects it with a reason, or takes the verification back later. The person is told in the app, and can cancel a request while it is in review.
   - A verified account shows its public name and a "Verified shelter" or "Verified rescuer" badge on its profile. The public name only changes with another request.
+  - **Profile:** in "Edit profile", a verified account says where it is (an area or address and, if it wants, a point on the map), its hours and what it needs (food, medicine, blankets, volunteers, foster homes, transport or other, with a note). All of it is optional. Its profile shows it to everyone, with a button that opens the point in maps. Taking the verification back removes it.
 - **Donations** to whoever published a post, whether a person, a rescuer or a shelter:
   - The money goes straight from the giver to the receiver through the payment provider, where each receiver connects their own account. It never goes through Pawly, and Pawly charges no commission: 100% reaches the receiver, as the App Store requires for gifts between people.
   - A donation can be up to MXN 5,000.
