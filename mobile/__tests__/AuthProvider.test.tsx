@@ -274,5 +274,38 @@ describe('AuthProvider', () => {
       expect(body.get('avatar')).toBe('');
       expect(await screen.findByText('signedIn:luna.mx')).toBeOnTheScreen();
     });
+
+    it('saves the shelter or rescuer profile, with its point and its needs', async () => {
+      await renderSignedIn();
+      fetchMock.mockImplementation(() => jsonResponse(200, RECORD));
+      await auth.updateProfile({
+        shelter: {
+          zone: ' Tlalpan, CDMX ',
+          location: { latitude: 19.2869, longitude: -99.1672 },
+          hours: ' 10 a 17 h ',
+          needs: ['food', 'foster'],
+          needsNote: ' Croquetas ',
+        },
+      });
+      const sent = fetchMock.mock.calls[0]?.[1]?.body as FormData;
+      expect(sent.get('zone')).toBe('Tlalpan, CDMX');
+      expect(sent.get('latitude')).toBe('19.2869');
+      expect(sent.get('longitude')).toBe('-99.1672');
+      expect(sent.get('hours')).toBe('10 a 17 h');
+      expect(sent.getAll('needs')).toEqual(['food', 'foster']);
+      expect(sent.get('needsNote')).toBe('Croquetas');
+      // The username, the bio and the photo are left as they are.
+      expect(sent.has('username')).toBe(false);
+      expect(sent.has('avatar')).toBe(false);
+
+      // Without a point and without needs, both are emptied.
+      await auth.updateProfile({
+        shelter: { zone: '', location: null, hours: '', needs: [], needsNote: '' },
+      });
+      const emptied = fetchMock.mock.calls[1]?.[1]?.body as FormData;
+      expect(emptied.get('latitude')).toBe('0');
+      expect(emptied.get('longitude')).toBe('0');
+      expect(emptied.getAll('needs')).toEqual(['']);
+    });
   });
 });

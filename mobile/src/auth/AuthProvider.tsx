@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import { getClient, onSuspended, restoreSession } from '@/api/client';
 import { forgetPushToken } from '@/features/push/api';
+import type { Point } from '@/utils/geo';
 import { notify } from '@/utils/notify';
 import type { PickedImage } from '@/utils/pickPhoto';
 import { appendFile, uploadFetch } from '@/utils/upload';
@@ -24,6 +25,34 @@ import { normalizeUsername, type SignUpValues } from './validation';
 /** A verified account of a constituted shelter or of an independent rescuer. */
 export const ACCOUNT_KINDS = ['shelter', 'rescuer'] as const;
 export type AccountKind = (typeof ACCOUNT_KINDS)[number];
+
+/** What a shelter or a rescuer can say it needs. */
+export const NEEDS = [
+  'food',
+  'medicine',
+  'blankets',
+  'volunteers',
+  'foster',
+  'transport',
+  'other',
+] as const;
+export type Need = (typeof NEEDS)[number];
+
+/** Same limits as the server (server/pb_migrations/…_shelter_profile.js). */
+export const ZONE_MAX = 120;
+export const HOURS_MAX = 200;
+export const NEEDS_NOTE_MAX = 300;
+
+/** Where a verified shelter or rescuer is, when it attends and what it needs. */
+export interface ShelterProfile {
+  /** The area or the address, in text. */
+  zone: string;
+  /** An optional point on the map. */
+  location: Point | null;
+  hours: string;
+  needs: Need[];
+  needsNote: string;
+}
 
 /** Public profile plus the owner's own email. */
 export interface User {
@@ -39,6 +68,8 @@ export interface User {
   accountKind: AccountKind | '';
   /** The name a verified shelter or rescuer shows ('' for everyone else). */
   publicName: string;
+  /** Only on a verified shelter or rescuer. */
+  shelter?: ShelterProfile;
   /** Kept by the server (follows). */
   followerCount: number;
   followingCount: number;
@@ -66,6 +97,8 @@ export interface ProfileChanges {
   bio?: string;
   /** New photo, `null` to remove it, or leave out to keep it. */
   avatar?: PickedImage | null;
+  /** The whole shelter or rescuer profile (only a verified account has one). */
+  shelter?: ShelterProfile;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
@@ -82,8 +115,23 @@ export function avatarUrl(client: PocketBase, user: User, thumb = '400x400'): st
   );
 }
 
+function toShelterProfile(record: RecordModel): ShelterProfile {
+  const latitude = Number(record.latitude ?? 0);
+  const longitude = Number(record.longitude ?? 0);
+  const needs = Array.isArray(record.needs) ? record.needs : [];
+  return {
+    zone: String(record.zone ?? ''),
+    // The server stores 0, 0 when there is no point.
+    location: latitude === 0 && longitude === 0 ? null : { latitude, longitude },
+    hours: String(record.hours ?? ''),
+    needs: NEEDS.filter((need) => needs.includes(need)),
+    needsNote: String(record.needsNote ?? ''),
+  };
+}
+
 export function toUser(record: RecordModel | null | undefined): User | null {
   if (!record) return null;
+  const accountKind = ACCOUNT_KINDS.find((kind) => kind === record.accountKind) ?? '';
   return {
     id: record.id,
     collectionId: record.collectionId,
@@ -92,8 +140,9 @@ export function toUser(record: RecordModel | null | undefined): User | null {
     bio: String(record.bio ?? ''),
     avatar: String(record.avatar ?? ''),
     verified: Boolean(record.verified),
-    accountKind: ACCOUNT_KINDS.find((kind) => kind === record.accountKind) ?? '',
+    accountKind,
     publicName: String(record.publicName ?? ''),
+    ...(accountKind ? { shelter: toShelterProfile(record) } : {}),
     followerCount: Number(record.followerCount ?? 0),
     followingCount: Number(record.followingCount ?? 0),
   };
@@ -196,7 +245,7 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
   );
 
   const updateProfile = useCallback(
-    async ({ username, bio, avatar }: ProfileChanges) => {
+    async ({ username, bio, avatar, shelter }: ProfileChanges) => {
       const id = client.authStore.record?.id;
       if (!id) throw new Error('Not signed in');
       const data = new FormData();
@@ -206,6 +255,17 @@ export function AuthProvider({ children, client: injected }: AuthProviderProps) 
         data.append('avatar', '');
       } else if (avatar) {
         await appendFile(data, 'avatar', avatar);
+      }
+      if (shelter) {
+        data.append('zone', shelter.zone.trim());
+        data.append('latitude', String(shelter.location?.latitude ?? 0));
+        data.append('longitude', String(shelter.location?.longitude ?? 0));
+        data.append('hours', shelter.hours.trim());
+        // An empty value empties the list.
+        for (const need of shelter.needs.length > 0 ? shelter.needs : ['']) {
+          data.append('needs', need);
+        }
+        data.append('needsNote', shelter.needsNote.trim());
       }
       // The SDK updates the saved session with the new profile.
       await client.collection(USERS).update(id, data, { fetch: uploadFetch });

@@ -47,7 +47,7 @@ onRecordCreateRequest((e) => {
 // `approved` to `revoked`; a rejected or revoked request can still be approved.
 // - `approved` makes the account a shelter's or a rescuer's, with the request's public name,
 //   and leaves an earlier approved request as `replaced`.
-// - `revoked` makes it a regular account again.
+// - `revoked` makes it a regular account again, without its shelter or rescuer profile.
 // The person is told each result in the app.
 onRecordUpdateRequest((e) => {
   const record = e.record;
@@ -105,8 +105,10 @@ onRecordUpdateRequest((e) => {
     user.set('publicName', record.getString('publicName'));
     e.app.save(user);
   } else if (status === 'revoked') {
+    const { clearShelterProfile } = require(`${__hooks}/lib/accounts.js`);
     user.set('accountKind', '');
     user.set('publicName', '');
+    clearShelterProfile(user);
     e.app.save(user);
   }
   notifyFromPawly(e.app, { recipient: userId, type: `verification_${status}` });
